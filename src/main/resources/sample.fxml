@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.web.WebView?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="700.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <WebView fx:id="webView" layoutX="151.0" layoutY="85.0" prefHeight="422.0" prefWidth="500.0" AnchorPane.bottomAnchor="78.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" />
+      <Slider fx:id="zoomSlider" layoutX="14.0" layoutY="454.0" max="20.0" value="15.0" />
+      <Label fx:id="zoomLabel" layoutX="173.0" layoutY="453.0" text="Label" />
+      <ListView fx:id="pointList" layoutX="500.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</AnchorPane>
