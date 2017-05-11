@@ -2,25 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LeafLet Maps</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
-          integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
-          crossorigin=""/>
+    <title>Title</title>
     <script src="jquery.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
             integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
             crossorigin=""></script>
     <script src="Leaflet.Editable.js"></script>
-    <script src="toolBar.js"></script>
-    <script src="handlers.js"></script>
     <script>
-        var map;
-        var startPoint = [43.1249, 1.254];
-        var currentZoom = 10;
+        $(function () {
+            L.MyHandler = L.Handler.extend({
+                addHooks:function () {
+                    L.DomEvent.on(document, 'click', this._doSome, this);
+                },
 
-        var points = [];
+                removeHooks: function () {
+                    L.DomEvent.off(document, 'click', this._doSome, this);
+                },
 
-        function onMapLoad() {
+                _doSome: function (event) {
+                    console.log("event!")
+                }
+            });
+
+            var map;
+            var startPoint = [43.1249, 1.254];
+            L.Map.addInitHook('addHandler', 'myclick', L.MyHandler);
 
             map = L.map('mapid',{"editable":true}).setView(startPoint, 10);
 
@@ -35,26 +41,8 @@
 
 
 
-            map.on("editable:vertex:deleted", handlers.deleteVertex);
 
-            map.on("editable:vertex:new", handlers.creteNewVertex)
-
-
-            //map.addHandler('click', L.MyHandler);
-
-
-        }
-
-        $(function () {
-
-            onMapLoad();
-
-            addToolBar(map);
-            $('#clickBtn').click(function (e) {
-                console.log(points)
-            })
         })
-
     </script>
     <style>
         #mapid {
@@ -62,11 +50,8 @@
             height: 400px;
         }
     </style>
-
 </head>
 <body>
-<div id="mapid"></div>
-<div id="clickBtn">Click</div>
-<div id="result">rr</div>
+    <div id="mapid"></div>
 </body>
 </html>

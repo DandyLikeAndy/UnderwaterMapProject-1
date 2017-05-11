@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="Leaflet.Editable.js" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/src/main/resources/Leaflet.Editable.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/src/main/resources/Leaflet.Editable.js" />
+    </CLASSES>
+    <DOCUMENTATION>
+      <root url="http://leaflet.github.io/Leaflet.Editable/doc/api.html" />
+    </DOCUMENTATION>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
