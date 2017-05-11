@@ -6,11 +6,11 @@ var handlers = {};
 (function () {
     L.MyHandler = L.Handler.extend({
         addHooks:function () {
-            L.DomEvent.on(document, 'click', this._doSome, this);
+            L.DomEvent.on(L.Map, 'click', this._doSome, this);
         },
 
         removeHooks: function () {
-            L.DomEvent.off(document, 'click', this._doSome, this);
+            L.DomEvent.off(L.Map, 'click', this._doSome, this);
         },
 
         _doSome: function (event) {
@@ -37,6 +37,10 @@ var handlers = {};
 
     handlers.stopCreatingLine = function (e) {
         console.log("stop creating:");
-        console.log(e.target);
+        console.log(e.layer instanceof L.Polyline);
+    }
+
+    handlers.addNewLayer = function (e) {
+        console.log("add layer")
     }
 })();

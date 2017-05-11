@@ -37,7 +37,9 @@
 
             map.on("editable:vertex:deleted", handlers.deleteVertex);
 
-            map.on("editable:vertex:new", handlers.creteNewVertex)
+            map.on("editable:vertex:new", handlers.creteNewVertex);
+
+            map.on("editable:drawing:end", handlers.stopCreatingLine)
 
 
             //map.addHandler('click', L.MyHandler);
