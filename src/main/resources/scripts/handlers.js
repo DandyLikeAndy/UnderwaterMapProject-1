@@ -23,12 +23,15 @@ var handlers = {};
     handlers.deleteVertex = function (e) {
         console.log("deleted vertex:");
         console.log(e.latlng);
+        JAVA.deletePoint(e);
     };
 
     handlers.creteNewVertex = function (e) {
+        e.myField = "field";
         console.log("vertex created");
         console.log(e);
-        points.push(e.latlng);
+        points.push(e);
+        JAVA.addPoint(e);
     };
 
     handlers.createLine = function (e) {
@@ -36,11 +39,25 @@ var handlers = {};
     };
 
     handlers.stopCreatingLine = function (e) {
+        e.layer.setStyle({"weight":10});
         console.log("stop creating:");
         console.log(e.layer instanceof L.Polyline);
-    }
+        console.log(e.layer.getLatLngs());
+        lines[e.layer._leaflet_id] = e.layer;
+        console.log(lines);
+        JAVA.log("create");
+        JAVA.addLine(e.layer);
+    };
 
     handlers.addNewLayer = function (e) {
         console.log("add layer")
+    }
+
+    handlers.clickPoint = function (e) {
+        JAVA.clickPoint(e);
+    }
+
+    handlers.clickLine = function (e) {
+        JAVA.log("Click")
     }
 })();
