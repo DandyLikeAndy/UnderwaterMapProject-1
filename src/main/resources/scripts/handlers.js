@@ -35,7 +35,16 @@ var handlers = {};
     };
 
     handlers.createLine = function (e) {
+        var line = e.target;
+        line.on('mouseover', function (e) {
+            line.setStyle({
+                color: 'blue',
+                opacity: 1,
+                weight: 5
+            });
+        })
         console.log("Create");
+        console.log(e);
     };
 
     handlers.stopCreatingLine = function (e) {
@@ -45,8 +54,20 @@ var handlers = {};
         console.log(e.layer.getLatLngs());
         lines[e.layer._leaflet_id] = e.layer;
         console.log(lines);
-        JAVA.log("create");
-        JAVA.addLine(e.layer);
+
+        var line = e.layer;
+        line.on('mouseover', function (e) {
+            this.setStyle({
+                color: 'blue',
+                opacity: 1,
+                weight: 5
+            });
+        })
+        console.log("Create");
+        console.log(e);
+
+        //JAVA.log("create");
+        //JAVA.addLine(e.layer);
     };
 
     handlers.addNewLayer = function (e) {

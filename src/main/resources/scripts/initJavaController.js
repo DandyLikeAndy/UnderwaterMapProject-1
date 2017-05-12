@@ -4,11 +4,11 @@
 function initJava() {
     var obj = {};
     obj.log = function (msg) {
-       // javaController.log(msg);
+       //javaController.log(msg);
     };
 
     obj.addLine = function (line) {
-        javaController.addLine(line);
+        //javaController.addLine(line);
     };
 
     obj.addPoint = function (point) {
@@ -28,7 +28,7 @@ function initJava() {
     obj.clickPoint = function (point) {
         //point.cancel();
         var id = point.vertex._leaflet_id;
-        javaController.clickPoint(id);
+        //javaController.clickPoint(id);
     }
 
     return obj;
