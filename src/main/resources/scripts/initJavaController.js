@@ -4,11 +4,11 @@
 function initJava() {
     var obj = {};
     obj.log = function (msg) {
-       //javaController.log(msg);
+       javaController.log(msg);
     };
 
     obj.addLine = function (line) {
-        //javaController.addLine(line);
+        javaController.addLine(line);
     };
 
     obj.addPoint = function (point) {

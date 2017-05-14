@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" debug="true">
 <head>
     <meta charset="UTF-8">
     <title>LeafLet Maps</title>
@@ -14,6 +14,8 @@
     <script src="scripts/toolBar.js"></script>
     <script src="scripts/handlers.js"></script>
     <script src="scripts/initJavaController.js"></script>
+   <!-- <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>-->
+
     <script>
         var map;
         var startPoint = [43.1249, 1.254];
@@ -22,7 +24,7 @@
 
         var points = [];
         var lines = {};
-
+        var selectedLine;
         function onMapLoad() {
 
             map = L.map('mapid',{"editable":true}).setView(startPoint, 10);
@@ -48,6 +50,7 @@
             map.on("editable:vertex:click", handlers.clickPoint);
 
             map.on("editable:drawing:click", handlers.clickLine);
+
 
             ////////////add delete shape
 /*
@@ -83,6 +86,17 @@
         var getFromJava = function(msg){
             var parsed = JSON.parse(msg);
             JAVA.log("ID: "+parsed.id+" NAME: "+parsed.name)
+        }
+
+        function selectLine(id) {
+            if (selectedLine != undefined) unSelectLine();
+            var line = lines[id];
+            selectedLine = line;
+            line.setStyle({"color":"red"});
+        }
+
+        function unSelectLine() {
+            selectedLine.setStyle({"color":"blue"})
         }
 
 

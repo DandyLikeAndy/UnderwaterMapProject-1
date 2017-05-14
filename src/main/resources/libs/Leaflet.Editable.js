@@ -643,7 +643,7 @@
 
         options: {
             opacity: 0.5,
-            className: 'leaflet-div-icon leaflet-middle-icon',
+            className: 'leaflet-div-icon leaflet-middle-icon my-class',
             draggable: true
         },
 

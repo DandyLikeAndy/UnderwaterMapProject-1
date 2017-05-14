@@ -13,6 +13,11 @@ public class TrackPoint {
     public TrackPoint() {
     }
 
+    public TrackPoint(double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
+    }
+
     public TrackPoint(int id, double lat, double lng) {
         this.id = id;
         this.lat = lat;

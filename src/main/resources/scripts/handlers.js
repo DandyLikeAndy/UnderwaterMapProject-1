@@ -31,7 +31,25 @@ var handlers = {};
         console.log("vertex created");
         console.log(e);
         points.push(e);
-        JAVA.addPoint(e);
+
+
+
+        e.vertex.on("mouseover", function () {
+            var distance;
+            var index = e.layer._latlngs.indexOf(e.latlng);
+            console.log("index: "+index);
+            console.log("lengs: "+e.layer._latlngs.length);
+
+
+            if (index == e.layer._latlngs.length-1){
+                distance = 0;
+            } else {
+                distance = e.latlng.distanceTo(e.layer._latlngs[index+1]);
+            }
+            handlers.showPopup(e.latlng, distance)
+        })
+
+        //JAVA.addPoint(e);
     };
 
     handlers.createLine = function (e) {
@@ -53,21 +71,19 @@ var handlers = {};
         console.log(e.layer instanceof L.Polyline);
         console.log(e.layer.getLatLngs());
         lines[e.layer._leaflet_id] = e.layer;
-        console.log(lines);
+        var latlngs = e.layer.getLatLngs();
 
-        var line = e.layer;
-        line.on('mouseover', function (e) {
-            this.setStyle({
-                color: 'blue',
-                opacity: 1,
-                weight: 5
-            });
-        })
-        console.log("Create");
-        console.log(e);
-
-        //JAVA.log("create");
-        //JAVA.addLine(e.layer);
+        var line = {};
+        line.id = e.layer._leaflet_id;
+        line.points = [];
+        for (var l in latlngs){
+            line.points.push({lat:latlngs[l].lat, lng:latlngs[l].lng});
+            line.points.lat = latlngs[l].lat;
+            line.points.lng = latlngs[l].lng;
+        }
+        console.log(line);
+        JAVA.log("create");
+        JAVA.addLine(JSON.stringify(line));
     };
 
     handlers.addNewLayer = function (e) {
@@ -80,5 +96,16 @@ var handlers = {};
 
     handlers.clickLine = function (e) {
         JAVA.log("Click")
+    }
+
+    handlers.hoverMarker = function (e) {
+        console.log(e);
+    }
+
+    handlers.showPopup = function (latlng, distance) {
+        var popup = L.popup()
+            .setLatLng(latlng)
+            .setContent('<p>lat: '+latlng.lat+'<br />lng: '+latlng.lng+'<br />distance: '+distance+'</p>')
+            .openOn(map);
     }
 })();
