@@ -83,6 +83,67 @@ function addToolBar(map) {
 
     });
 
+    L.MyIcon = L.DivIcon.extend({
+        options: {
+            'number': '',
+            'elem': ''
+        },
+        createIcon: function (elem) {
+            var divElem = L.divIcon().createIcon(elem);
+            var numdiv = document.createElement('div');
+            numdiv.setAttribute("class", "number");
+            numdiv.innerHTML = this.options['number'] || '';
+            divElem.appendChild(numdiv);
+
+            this.options.elem = numdiv;
+            return divElem;
+        },
+        updateIcon: function (num) {
+            this.options.number = num;
+            this.options.elem.innerHTML = num;
+        }
+    });
+
+    L.StartIcon = L.MyIcon.extend({
+        options: {
+            'imgPath':'start-flag-big.png'
+        },
+        createIcon: function (elem) {
+            var divElem = L.divIcon().createIcon(elem);
+            var numdiv = document.createElement('div');
+            numdiv.setAttribute("class", "number");
+            numdiv.innerHTML = this.options['number'] || '';
+            var img = document.createElement('img');
+            img.setAttribute("src", this.options.imgPath);
+            img.setAttribute("class", 'start-icon');
+            divElem.appendChild(img);
+            //divElem.appendChild(numdiv);
+
+            this.options.elem = numdiv;
+            return divElem;
+        }
+    });
+
+    L.FinishIcon = L.MyIcon.extend({
+        options: {
+            'imgPath':'finish-flag-big.png'
+        },
+        createIcon: function (elem) {
+            var divElem = L.divIcon().createIcon(elem);
+            var numdiv = document.createElement('div');
+            numdiv.setAttribute("class", "finish-number");
+            numdiv.innerHTML = this.options['number'] || '';
+            var img = document.createElement('img');
+            img.setAttribute("src", this.options.imgPath);
+            img.setAttribute("class", 'start-icon');
+            divElem.appendChild(img);
+            divElem.appendChild(numdiv);
+
+            this.options.elem = numdiv;
+            return divElem;
+        }
+    });
+
     map.addControl(new L.NewMarkerControl());
     map.addControl(new L.NewLineControl());
     map.addControl(new L.NewPolygonControl());

@@ -37,8 +37,8 @@ var handlers = {};
         e.vertex.on("mouseover", function () {
             var distance;
             var index = e.layer._latlngs.indexOf(e.latlng);
-            console.log("index: "+index);
-            console.log("lengs: "+e.layer._latlngs.length);
+            //console.log("index: "+index);
+            //console.log("lengs: "+e.layer._latlngs.length);
 
 
             if (index == e.layer._latlngs.length-1){
@@ -47,43 +47,51 @@ var handlers = {};
                 distance = e.latlng.distanceTo(e.layer._latlngs[index+1]);
             }
             handlers.showPopup(e.latlng, distance)
-        })
+        });
+
+
+        var index = e.layer._latlngs.indexOf(e.vertex.latlng);
+
+        console.log("index = "+index);
+        console.log("length = " + e.layer._latlngs.length)
+        if (index != e.layer._latlngs.length-1){
+            console.log("update icons")
+            var arr = e.layer._latlngs;
+            for (var i = index+1; i<arr.length; i++){
+                arr[i].__vertex.options.icon.updateIcon(i);
+            }
+        }
+        if (index == 0){
+            e.vertex.setIcon(new L.StartIcon({'number': index}));
+        } else e.vertex.setIcon(new L.MyIcon({'number': index}));
 
         //JAVA.addPoint(e);
     };
 
-    handlers.createLine = function (e) {
-        var line = e.target;
-        line.on('mouseover', function (e) {
-            line.setStyle({
-                color: 'blue',
-                opacity: 1,
-                weight: 5
-            });
-        })
-        console.log("Create");
-        console.log(e);
-    };
+
 
     handlers.stopCreatingLine = function (e) {
-        e.layer.setStyle({"weight":10});
-        console.log("stop creating:");
-        console.log(e.layer instanceof L.Polyline);
-        console.log(e.layer.getLatLngs());
-        lines[e.layer._leaflet_id] = e.layer;
-        var latlngs = e.layer.getLatLngs();
+        if (e.layer instanceof L.Polyline ) {
+            e.layer.setStyle({"weight":10});
+            lines[e.layer._leaflet_id] = e.layer;
+            var latlngs = e.layer.getLatLngs();
 
-        var line = {};
-        line.id = e.layer._leaflet_id;
-        line.points = [];
-        for (var l in latlngs){
-            line.points.push({lat:latlngs[l].lat, lng:latlngs[l].lng});
-            line.points.lat = latlngs[l].lat;
-            line.points.lng = latlngs[l].lng;
+
+            var line = {};
+            line.id = e.layer._leaflet_id;
+            line.points = [];
+            for (var l in latlngs){
+                line.points.push({lat:latlngs[l].lat, lng:latlngs[l].lng});
+                line.points.lat = latlngs[l].lat;
+                line.points.lng = latlngs[l].lng;
+            }
+            JAVA.log("create");
+            JAVA.addLine(JSON.stringify(line));
+
+            e.layer._latlngs[ e.layer._latlngs.length-1].__vertex.setIcon(new L.FinishIcon({'number':e.layer._latlngs.length-1}));
+            console.log(e)
         }
-        console.log(line);
-        JAVA.log("create");
-        JAVA.addLine(JSON.stringify(line));
+
     };
 
     handlers.addNewLayer = function (e) {

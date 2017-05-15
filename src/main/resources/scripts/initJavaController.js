@@ -16,13 +16,13 @@ function initJava() {
         obj.id = point.vertex._leaflet_id;
         obj.lat = point.latlng.lat;
         obj.lng = point.latlng.lng;
-        //javaController.addPoint(JSON.stringify(obj));
-        //javaController.log("add point: "+JSON.stringify(obj));
+        javaController.addPoint(JSON.stringify(obj));
+        javaController.log("add point: "+JSON.stringify(obj));
     };
 
     obj.deletePoint = function (point) {
         var id = point.vertex._leaflet_id;
-        javaController.deletePoint(id);
+        //javaController.deletePoint(id);
     };
 
     obj.clickPoint = function (point) {
