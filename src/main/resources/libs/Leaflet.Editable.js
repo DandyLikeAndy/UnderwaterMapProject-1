@@ -715,6 +715,7 @@
             this.latlngs.splice(this.index(), 0, e.latlng);
             this.editor.refresh();
             var icon = this._icon;
+            console.log(e.latlng);
             var marker = this.editor.addVertexMarker(e.latlng, this.latlngs);
             this.editor.onNewVertex(marker);
             /* Hack to workaround browser not firing touchend when element is no more on DOM */
