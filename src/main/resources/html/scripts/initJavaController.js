@@ -4,11 +4,11 @@
 function initJava() {
     var obj = {};
     obj.log = function (msg) {
-       javaController.log(msg);
+       //javaController.log(msg);
     };
 
     obj.addLine = function (line) {
-        javaController.addLine(line);
+        //javaController.addLine(line);
     };
 
     obj.addPoint = function (point) {
@@ -16,8 +16,8 @@ function initJava() {
         obj.id = point.vertex._leaflet_id;
         obj.lat = point.latlng.lat;
         obj.lng = point.latlng.lng;
-        javaController.addPoint(JSON.stringify(obj));
-        javaController.log("add point: "+JSON.stringify(obj));
+        //javaController.addPoint(JSON.stringify(obj));
+        //javaController.log("add point: "+JSON.stringify(obj));
     };
 
     obj.deletePoint = function (point) {
@@ -29,7 +29,11 @@ function initJava() {
         //point.cancel();
         var id = point.vertex._leaflet_id;
         //javaController.clickPoint(id);
-    }
+    };
+
+    obj.returnTilesImg = function(img){
+        javaController.getTilesImgFromWeb(img)
+    };
 
     return obj;
 }

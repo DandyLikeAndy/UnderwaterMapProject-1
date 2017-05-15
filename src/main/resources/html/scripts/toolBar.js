@@ -106,7 +106,7 @@ function addToolBar(map) {
 
     L.StartIcon = L.MyIcon.extend({
         options: {
-            'imgPath':'start-flag-big.png'
+            'imgPath':'img/start-flag-big.png'
         },
         createIcon: function (elem) {
             var divElem = L.divIcon().createIcon(elem);
@@ -126,7 +126,7 @@ function addToolBar(map) {
 
     L.FinishIcon = L.MyIcon.extend({
         options: {
-            'imgPath':'finish-flag-big.png'
+            'imgPath':'img/finish-flag-big.png'
         },
         createIcon: function (elem) {
             var divElem = L.divIcon().createIcon(elem);

@@ -1,4 +1,4 @@
-package sample;
+package app;
 
 import com.google.gson.Gson;
 import javafx.beans.property.IntegerProperty;
@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
@@ -14,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -58,6 +56,11 @@ public class Controller {
         sendToWeb();
     }
 
+    @FXML
+    public void getTilesFromWeb(){
+        window.call("getTilesImg");
+    }
+
     public void initialize() {
 
         pointList.setItems(points);
@@ -78,7 +81,7 @@ public class Controller {
         webView.setZoom(1);
         webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
-        webEngine.load(getClass().getResource("/drawTest.html").toExternalForm());
+        webEngine.load(getClass().getResource("/html/start.html").toExternalForm());
 
 /*
         zoomLabel.textProperty().bindBidirectional(zoom, new StringConverter<Number>() {
@@ -105,26 +108,35 @@ public class Controller {
 
         webEngine.getLoadWorker()
                 .stateProperty()
-                .addListener(new ChangeListener<Worker.State>() {
-                                 public void changed(ObservableValue<? extends Worker.State> ov, Worker.State oldState, Worker.State newState) {
-                                     if (newState == Worker.State.SUCCEEDED) {
-                                         System.out.println("Change");
-                                         window = (JSObject) webEngine.executeScript("window");
-                                         window.setMember("javaController", controller);
+                .addListener((ov, oldState, newState) -> {
+                            if (newState == Worker.State.SUCCEEDED) {
+                                System.out.println("Change");
+                                window = (JSObject) webEngine.executeScript("window");
+                                window.setMember("javaController", controller);
 
-                                        /* // all next classes are from org.w3c.dom domain
-                                         org.w3c.dom.events.EventListener listener = (ev) -> {
-                                             System.out.println("#" + (org.w3c.dom.Element) ev.getTarget());
-                                         };
+                                resizeMap();
 
-                                         org.w3c.dom.Document doc = webEngine.getDocument();
-                                         org.w3c.dom.Element el = doc.getElementById("mapid");
-                                         ((org.w3c.dom.events.EventTarget) el).addEventListener("click", listener, false);*/
+                                setHandlers();
+                       /* // all next classes are from org.w3c.dom domain
+                        org.w3c.dom.events.EventListener listener = (ev) -> {
+                            System.out.println("#" + (org.w3c.dom.Element) ev.getTarget());
+                        };
 
-                                     }
-                                 }
-                             }
+                        org.w3c.dom.Document doc = webEngine.getDocument();
+                        org.w3c.dom.Element el = doc.getElementById("mapid");
+                        ((org.w3c.dom.events.EventTarget) el).addEventListener("click", listener, false);*/
+
+                            }
+                        }
                 );
+
+
+    }
+
+    private void setHandlers(){
+        webView.widthProperty().addListener((observable, oldValue, newValue) -> {
+            resizeMap();
+        });
     }
 
 
@@ -166,8 +178,20 @@ public class Controller {
         });
     }
 
-    private void selectLineToWeb(int id){
+    private void selectLineToWeb(int id) {
         window.call("selectLine", id);
+    }
+
+    private void resizeMap() {
+        window.call("resizeMap", webView.getWidth(), webView.getHeight());
+    }
+
+    public void getTilesImgFromWeb(String imgs){
+        String[] tilesImgs = imgs.split(",");
+        for (String i :
+                tilesImgs) {
+            System.out.println("img = "+i);
+        }
     }
 
 

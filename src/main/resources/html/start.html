@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
           integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
           crossorigin=""/>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
     <script src="libs/jquery.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
             integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
@@ -16,58 +17,6 @@
     <script src="scripts/initJavaController.js"></script>
    <!-- <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>-->
 
-    <style type='text/css'>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            width: 100%;
-        }
-
-        .number {
-            position: relative;
-            bottom: 5px;
-            right: 5px;
-            color: black;
-            font-size: 20px;
-            background-color: aliceblue;
-            width: 20px;
-            height: 20px;
-            border-bottom-color: black;
-            border-style: solid;
-            border-width: 1px;
-            padding: 3px;
-        }
-        .finish-number {
-            position: relative;
-            bottom: 55px;
-            right: 5px;
-            color: black;
-            font-size: 20px;
-            background-color: aliceblue;
-            width: 20px;
-            height: 20px;
-            border-bottom-color: black;
-            border-style: solid;
-            border-width: 1px;
-            padding: 3px;
-        }
-        .start-icon{
-            position: relative;
-            bottom: 50px;
-            right: 15px;
-        }
-
-
-
-    </style>
 
     <script>
         var map;
@@ -139,6 +88,10 @@
         var getFromJava = function(msg){
             var parsed = JSON.parse(msg);
             JAVA.log("ID: "+parsed.id+" NAME: "+parsed.name)
+        };
+
+        function resizeMap(width, height) {
+            $('#mapid').css({'width':width, 'height':height})
         }
 
         function selectLine(id) {
@@ -150,6 +103,15 @@
 
         function unSelectLine() {
             selectedLine.setStyle({"color":"blue"})
+        }
+
+        function getTilesImg() {
+            var imgs = "";
+            $('.leaflet-tile-container').find("img").each(function (i) {
+                console.log($(this).attr('src'))
+                imgs += $(this).attr('src')+",";
+            });
+            JAVA.returnTilesImg(imgs);
         }
 
 

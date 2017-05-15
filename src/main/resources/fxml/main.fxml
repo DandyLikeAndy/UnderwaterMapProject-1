@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+   <children>
+      <WebView fx:id="webView" layoutX="151.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="742.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="390.0" AnchorPane.topAnchor="10.0" />
+      <Slider fx:id="zoomSlider" layoutX="14.0" layoutY="872.0" max="20.0" value="15.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
+      <Label fx:id="zoomLabel" layoutX="154.0" layoutY="871.0" text="Label" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="154.0" />
+      <Button layoutX="191.0" layoutY="867.0" mnemonicParsing="false" onAction="#sendBtnAction" text="Send" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="191.0" />
+      <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0">
+         <children>
+          <TitledPane animated="false" prefWidth="250.0" text="Tracks">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="linesList" prefHeight="200.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" prefWidth="250.0" text="Points">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="pointList" prefHeight="300.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" prefWidth="250.0" text="Point Options">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </TitledPane>
+         </children>
+      </VBox>
+      <Button layoutX="242.0" layoutY="867.0" mnemonicParsing="false" onAction="#getTilesFromWeb" text="GetTiles" />
+   </children>
+</AnchorPane>
