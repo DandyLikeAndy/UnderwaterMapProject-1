@@ -144,9 +144,9 @@ function addToolBar(map) {
         }
     });
 
-    map.addControl(new L.NewMarkerControl());
+    /*map.addControl(new L.NewMarkerControl());
     map.addControl(new L.NewLineControl());
     map.addControl(new L.NewPolygonControl());
     map.addControl(new L.NewRectangleControl());
-    map.addControl(new L.NewCircleControl());
+    map.addControl(new L.NewCircleControl());*/
 }

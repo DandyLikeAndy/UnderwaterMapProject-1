@@ -4,11 +4,11 @@
 function initJava() {
     var obj = {};
     obj.log = function (msg) {
-       //javaController.log(msg);
+       javaController.log(msg);
     };
 
     obj.addLine = function (line) {
-        //javaController.addLine(line);
+        javaController.addLine(line);
     };
 
     obj.addPoint = function (point) {
@@ -33,6 +33,17 @@ function initJava() {
 
     obj.returnTilesImg = function(img){
         javaController.getTilesImgFromWeb(img)
+    };
+
+    obj.setStatus = function (msg) {
+        javaController.setStatus(msg);
+    };
+
+    obj.setMouseCoords = function (string) {
+        javaController.setMouseCoordsFromWeb(string);
+    };
+    obj.setDistance = function (msg) {
+        javaController.setDistanceFromWeb(msg);
     };
 
     return obj;

@@ -20,20 +20,24 @@
 
     <script>
         var map;
-        var startPoint = [43.1249, 1.254];
-        var currentZoom = 10;
+        var startPoint = [59.583921, 31.192010];
+        var currentZoom = 13;
         var JAVA = {};
+
+        let lastPoint = startPoint;
 
         var points = [];
         var lines = {};
         var selectedLine;
         function onMapLoad() {
 
-            map = L.map('mapid',{"editable":true}).setView(startPoint, 10);
+            map = L.map('mapid',{"editable":true}).setView(startPoint, 13);
 
 
             map.myclick.enable();
 
+            //http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png
+            //file:///C:/Users/User/IdeaProjects/testOpenLayer/tiles/opentopomap.org/{z}/{x}/{y}.png
             L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -52,6 +56,8 @@
             map.on("editable:vertex:click", handlers.clickPoint);
 
             map.on("editable:drawing:click", handlers.clickLine);
+
+            map.on('mousemove', handlers.mouseMove);
 
 
             ////////////add delete shape
@@ -112,6 +118,29 @@
                 imgs += $(this).attr('src')+",";
             });
             JAVA.returnTilesImg(imgs);
+        }
+
+        function startTrack() {
+            map.editTools.startPolyline();
+            JAVA.setStatus("Start polyline")
+        }
+        function startRegion() {
+            map.editTools.startRectangle();
+            JAVA.setStatus("Start region")
+        }
+        function addMarker() {
+            map.editTools.startMarker();
+            JAVA.setStatus("Add marker")
+        }
+        function zoomPlus() {
+            map.setZoom(map.getZoom()+1);
+            JAVA.setStatus("Map zoomed up");
+            return map.getZoom();
+        }
+        function zoomMinus() {
+            map.setZoom(map.getZoom()-1);
+            JAVA.setStatus("Map zoomed down");
+            return map.getZoom();
         }
 
 

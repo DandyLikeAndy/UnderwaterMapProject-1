@@ -1,47 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" stylesheets="@javaFXCSS.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <WebView fx:id="webView" layoutX="151.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="742.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="390.0" AnchorPane.topAnchor="10.0" />
-      <Slider fx:id="zoomSlider" layoutX="14.0" layoutY="872.0" max="20.0" value="15.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
-      <Label fx:id="zoomLabel" layoutX="154.0" layoutY="871.0" text="Label" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="154.0" />
-      <Button layoutX="191.0" layoutY="867.0" mnemonicParsing="false" onAction="#sendBtnAction" text="Send" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="191.0" />
-      <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0">
+      <WebView fx:id="webView" layoutX="151.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="742.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="30.0" />
+      <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" styleClass="right-panel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <children>
-          <TitledPane animated="false" prefWidth="250.0" text="Tracks">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ListView fx:id="linesList" prefHeight="200.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </TitledPane>
-          <TitledPane animated="false" prefWidth="250.0" text="Points">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ListView fx:id="pointList" prefHeight="300.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </TitledPane>
-          <TitledPane animated="false" prefWidth="250.0" text="Point Options">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </TitledPane>
+            <Label text="Track List">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </VBox>
-      <Button layoutX="242.0" layoutY="867.0" mnemonicParsing="false" onAction="#getTilesFromWeb" text="GetTiles" />
+      <AnchorPane prefHeight="200.0" prefWidth="50.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#openMenu">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="NAVICON" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#startTrack">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CODE_FORK" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#addMarker">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="MAP_MARKER" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#startRegion">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="OBJECT_UNGROUP" size="24" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox layoutY="708.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#getTilesFromWeb">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CLOUD_DOWNLOAD" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#zoomPlus">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" size="30" />
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#zoomMinus">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="MINUS" size="30" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="7.0" layoutY="770.0" prefHeight="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <HBox layoutX="-47.0" layoutY="-36.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Zoom:" />
+                  <Label fx:id="zoomLabel" text="16" />
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Status:" />
+                  <Label fx:id="statusLabel" text="Label" />
+               </children>
+            </HBox>
+            <HBox prefHeight="30.0" prefWidth="422.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Coords: " />
+                  <Label fx:id="mouseCoords" prefHeight="17.0" prefWidth="369.0" text="Coords" />
+               </children>
+            </HBox>
+            <HBox layoutX="904.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Distance: " />
+                  <Label fx:id="distanceLabel" text="Distance" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

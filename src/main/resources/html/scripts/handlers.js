@@ -41,6 +41,7 @@ var handlers = {};
             //console.log("lengs: "+e.layer._latlngs.length);
 
 
+            lastPoint = e.latlng;
             if (index == e.layer._latlngs.length-1){
                 distance = 0;
             } else {
@@ -74,13 +75,13 @@ var handlers = {};
         if (e.layer instanceof L.Polyline ) {
             e.layer.setStyle({"weight":10});
             lines[e.layer._leaflet_id] = e.layer;
-            var latlngs = e.layer.getLatLngs();
+            let latlngs = e.layer.getLatLngs();
 
 
-            var line = {};
+            let line = {};
             line.id = e.layer._leaflet_id;
             line.points = [];
-            for (var l in latlngs){
+            for (let l in latlngs){
                 line.points.push({lat:latlngs[l].lat, lng:latlngs[l].lng});
                 line.points.lat = latlngs[l].lat;
                 line.points.lng = latlngs[l].lng;
@@ -115,5 +116,10 @@ var handlers = {};
             .setLatLng(latlng)
             .setContent('<p>lat: '+latlng.lat+'<br />lng: '+latlng.lng+'<br />distance: '+distance+'</p>')
             .openOn(map);
+    };
+
+    handlers.mouseMove = function (e) {
+        JAVA.setDistance(e.latlng.distanceTo(lastPoint));
+       JAVA.setMouseCoords(e.latlng.lat + ", " + e.latlng.lng);
     }
 })();

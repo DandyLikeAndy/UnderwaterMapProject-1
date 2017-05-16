@@ -1,25 +1,35 @@
 package app;
 
 import com.google.gson.Gson;
+import com.sun.deploy.net.HttpUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
+import models.TrackItem;
 import models.TrackLine;
 import models.TrackPoint;
 import netscape.javascript.JSObject;
+import utills.HttpDownloadUtility;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -28,28 +38,45 @@ public class Controller {
     WebView webView;
 
     @FXML
-    Slider zoomSlider;
-
-    @FXML
     Label zoomLabel;
 
     @FXML
-    ListView<TrackPoint> pointList;
+    Label statusLabel;
 
     @FXML
-    ListView<TrackLine> linesList;
+    TreeView<TrackItem> tracksTreeView;
+
+    @FXML
+    Label mouseCoords;
 
     ObservableList<TrackPoint> points = FXCollections.observableArrayList();
     ObservableList<TrackLine> lines = FXCollections.observableArrayList();
 
     WebEngine webEngine;
 
-    IntegerProperty zoom = new SimpleIntegerProperty();
-
     JSObject window;
 
     Gson gson = new Gson();
 
+    SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
+    SimpleObjectProperty<String> status = new SimpleObjectProperty<>();
+
+    @FXML
+    public void zoomMinus() {
+        int val = (int) window.call("zoomMinus");
+        zoomProperty.set(val);
+    }
+
+    @FXML
+    public void zoomPlus() {
+        int val = (int) window.call("zoomPlus");
+        zoomProperty.set(val);
+    }
+
+    @FXML
+    public void openMenu() {
+
+    }
 
     @FXML
     public void sendBtnAction() {
@@ -57,25 +84,29 @@ public class Controller {
     }
 
     @FXML
-    public void getTilesFromWeb(){
+    public void getTilesFromWeb() {
         window.call("getTilesImg");
     }
 
+    @FXML
+    public void startTrack() {
+        window.call("startTrack");
+    }
+
+    @FXML
+    Label distanceLabel;
+
+    @FXML
+    public void startRegion() {
+        window.call("startRegion");
+    }
+
+    @FXML
+    public void addMarker() {
+        window.call("addMarker");
+    }
+
     public void initialize() {
-
-        pointList.setItems(points);
-        linesList.setItems(lines);
-
-        linesList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                TrackLine selectedLine = linesList.getSelectionModel().getSelectedItem();
-                int id = selectedLine.getId();
-                selectLineToWeb(id);
-                points.clear();
-                points.addAll(selectedLine.getPoints());
-            }
-        });
 
 
         webView.setZoom(1);
@@ -83,27 +114,7 @@ public class Controller {
         webEngine.setJavaScriptEnabled(true);
         webEngine.load(getClass().getResource("/html/start.html").toExternalForm());
 
-/*
-        zoomLabel.textProperty().bindBidirectional(zoom, new StringConverter<Number>() {
-            @Override
-            public String toString(Number object) {
-                return String.valueOf(object);
-            }
 
-            @Override
-            public Number fromString(String string) {
-                return null;
-            }
-        });*/
-
-        /*zoom.bindBidirectional(zoomSlider.valueProperty());
-
-        zoom.addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                setZoomToMap(newValue.intValue());
-            }
-        });
-*/
         final Controller controller = this;
 
         webEngine.getLoadWorker()
@@ -117,6 +128,8 @@ public class Controller {
                                 resizeMap();
 
                                 setHandlers();
+
+                                initTreeView();
                        /* // all next classes are from org.w3c.dom domain
                         org.w3c.dom.events.EventListener listener = (ev) -> {
                             System.out.println("#" + (org.w3c.dom.Element) ev.getTarget());
@@ -133,22 +146,60 @@ public class Controller {
 
     }
 
-    private void setHandlers(){
+    private void setHandlers() {
         webView.widthProperty().addListener((observable, oldValue, newValue) -> {
             resizeMap();
         });
+
+        webView.heightProperty().addListener((observable, oldValue, newValue) -> {
+            resizeMap();
+        });
+
+        zoomLabel.textProperty().bindBidirectional(zoomProperty, new StringConverter<Number>() {
+            @Override
+            public String toString(Number object) {
+                return String.valueOf(object);
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        });
+
+        statusLabel.textProperty().bindBidirectional(status);
+
     }
 
+    private void initTreeView() {
 
-    //jsObject.call("setMap", sExtend);
-   /* private void setZoomToMap(int zoom) {
-        webEngine.executeScript("setZoom(" + String.valueOf(zoom) + ")");
-    }*/
+        TreeItem<TrackItem> root = new TreeItem<>(new TrackLine());
+        tracksTreeView.setRoot(root);
+        tracksTreeView.setShowRoot(false);
+
+        /*tracksTreeView.setCellFactory(new Callback<TreeView<TrackItem>, TreeCell<TrackItem>>() {
+            @Override
+            public TreeCell<TrackItem> call(TreeView<TrackItem> param) {
+                return null;
+            }
+        });
+*/
+        lines.addListener((ListChangeListener<TrackItem>) c -> {
+            c.next();
+            TrackItem addedTrack = c.getAddedSubList().get(0);
+            TreeItem<TrackItem> item = new TreeItem<>(addedTrack);
+
+            ((TrackLine) addedTrack).getPoints().forEach(p -> {
+                TreeItem<TrackItem> point = new TreeItem<>(p);
+                item.getChildren().add(point);
+            });
+
+            root.getChildren().add(item);
+        });
 
 
-    /*public void setZoom(int zoom) {
-        this.zoom.setValue(zoom);
-    }*/
+    }
+
 
     public void log(String value) {
         System.out.println("From web: " + value);
@@ -172,10 +223,17 @@ public class Controller {
         //window.call("getFromJava", gson.toJson(new User("GHJ", 2)));
     }
 
-    public void clickPoint(int id) {
-        points.stream().filter(p -> p.getId() == id).findFirst().ifPresent(p -> {
-            pointList.getSelectionModel().select(p);
-        });
+
+    public void setStatus(String status) {
+        this.status.set(status);
+    }
+
+    public void setMouseCoordsFromWeb(String coords){
+        mouseCoords.setText(coords);
+    }
+
+    public void setDistanceFromWeb(String distance){
+        distanceLabel.setText(distance);
     }
 
     private void selectLineToWeb(int id) {
@@ -186,12 +244,21 @@ public class Controller {
         window.call("resizeMap", webView.getWidth(), webView.getHeight());
     }
 
-    public void getTilesImgFromWeb(String imgs){
+
+    public void getTilesImgFromWeb(String imgs) throws IOException {
         String[] tilesImgs = imgs.split(",");
         for (String i :
                 tilesImgs) {
-            System.out.println("img = "+i);
+            System.out.println("img = " + i);
         }
+
+        HttpDownloadUtility.addCallbacks(new HttpDownloadUtility.Callback() {
+            @Override
+            public void call(String msg) {
+                setStatus(msg);
+            }
+        });
+        HttpDownloadUtility.loadTiles(Arrays.asList(tilesImgs));
     }
 
 

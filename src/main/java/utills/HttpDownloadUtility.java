@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ import java.util.List;
 public class HttpDownloadUtility {
     private static final int BUFFER_SIZE = 4096;
     private static final String dir = "tiles";
+    private static List<Callback> callbacks = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         List<String> list = new ArrayList<>();
@@ -29,13 +31,14 @@ public class HttpDownloadUtility {
 
     /**
      * Downloads a file from a URL
+     *
      * @param fileURL HTTP URL of the file to be downloaded
      * @param saveDir path of the directory to save the file
      * @throws IOException
      */
     public static void downloadFile(String fileURL, String saveDir)
             throws IOException {
-        System.out.println("load to "+saveDir);
+        System.out.println("load to " + saveDir);
         URL url = new URL(fileURL);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         int responseCode = httpConn.getResponseCode();
@@ -65,6 +68,10 @@ public class HttpDownloadUtility {
             System.out.println("Content-Length = " + contentLength);
             System.out.println("fileName = " + fileName);
 
+            String[] msg = {"Downloading file:= " + fileName} ;
+
+            callbacks.forEach(c->c.call(msg[0]));
+
             // opens input stream from the HTTP connection
             InputStream inputStream = httpConn.getInputStream();
             String saveFilePath = saveDir + File.separator + fileName;
@@ -82,26 +89,41 @@ public class HttpDownloadUtility {
             inputStream.close();
 
             System.out.println("File downloaded");
+            callbacks.forEach(c->c.call("File downloaded"));
         } else {
             System.out.println("No file to download. Server replied HTTP code: " + responseCode);
+            callbacks.forEach(c->c.call("No file to download. Server replied HTTP code: " + responseCode));
         }
         httpConn.disconnect();
     }
 
     public static void loadTiles(List<String> urls) throws IOException {
         Path path = Paths.get(dir);
-        if (!Files.exists(path)){
+        if (!Files.exists(path)) {
             Files.createDirectory(path);
         }
 
         urls.forEach(url -> {
-            url.replace("http://", "");
+            url = prepareUrl(url);
+            System.out.println("url " + url);
             String[] arr = url.split("/");
-            String z = arr[2];
-            String x = arr[3];
-            String y = arr[4];
+            System.out.println(Arrays.toString(arr));
+            String vendorFolder = arr[2];
+            String[] vendorFolderArr = vendorFolder.split("\\.");
+            vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];
+            String z = arr[3];
+            String x = arr[4];
+            String y = arr[5];
+            System.out.println(z + " " + x + " " + y);
 
-            Path zPath = path.resolve(z);
+            Path vendorFolderPath = path.resolve(vendorFolder);
+            if (!Files.exists(vendorFolderPath)) try {
+                Files.createDirectory(vendorFolderPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Path zPath = vendorFolderPath.resolve(z);
             if (!Files.exists(zPath)) try {
                 Files.createDirectory(zPath);
             } catch (IOException e) {
@@ -118,10 +140,29 @@ public class HttpDownloadUtility {
             //Path yPath = xPath.resolve(y);
 
             try {
-                downloadFile(url, xPath.toAbsolutePath().toString());
+                if (!isFileExist(y, xPath.toAbsolutePath()))
+                    downloadFile(url, xPath.toAbsolutePath().toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static void addCallbacks(Callback callback){
+        callbacks.add(callback);
+    }
+
+
+
+    private static String prepareUrl(String url) {
+        return url.replace("http://", "https://");
+    }
+
+    private static boolean isFileExist(String fileName, Path path) {
+        return Files.exists(path.resolve(fileName));
+    }
+
+    public interface Callback{
+        public void call(String msg);
     }
 }
