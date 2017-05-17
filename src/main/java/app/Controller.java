@@ -2,6 +2,7 @@ package app;
 
 import com.google.gson.Gson;
 import com.sun.deploy.net.HttpUtils;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -63,24 +64,17 @@ public class Controller {
 
     @FXML
     public void zoomMinus() {
-        int val = (int) window.call("zoomMinus");
-        zoomProperty.set(val);
+        window.call("zoomMinus");
     }
 
     @FXML
     public void zoomPlus() {
-        int val = (int) window.call("zoomPlus");
-        zoomProperty.set(val);
+        window.call("zoomPlus");
     }
 
     @FXML
     public void openMenu() {
 
-    }
-
-    @FXML
-    public void sendBtnAction() {
-        sendToWeb();
     }
 
     @FXML
@@ -130,6 +124,9 @@ public class Controller {
                                 setHandlers();
 
                                 initTreeView();
+
+                                setZoom((int)window.call("getZoom"));
+
                        /* // all next classes are from org.w3c.dom domain
                         org.w3c.dom.events.EventListener listener = (ev) -> {
                             System.out.println("#" + (org.w3c.dom.Element) ev.getTarget());
@@ -236,6 +233,10 @@ public class Controller {
         distanceLabel.setText(distance);
     }
 
+    public void setZoom(int zoom){
+        zoomProperty.set(zoom);
+    }
+
     private void selectLineToWeb(int id) {
         window.call("selectLine", id);
     }
@@ -252,12 +253,7 @@ public class Controller {
             System.out.println("img = " + i);
         }
 
-        HttpDownloadUtility.addCallbacks(new HttpDownloadUtility.Callback() {
-            @Override
-            public void call(String msg) {
-                setStatus(msg);
-            }
-        });
+        HttpDownloadUtility.addCallbacks(msg -> Platform.runLater(() -> setStatus(msg)));
         HttpDownloadUtility.loadTiles(Arrays.asList(tilesImgs));
     }
 

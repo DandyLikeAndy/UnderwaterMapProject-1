@@ -122,4 +122,8 @@ var handlers = {};
         JAVA.setDistance(e.latlng.distanceTo(lastPoint));
        JAVA.setMouseCoords(e.latlng.lat + ", " + e.latlng.lng);
     }
+
+    handlers.setZoom = function () {
+        JAVA.setZoom(map.getZoom());
+    }
 })();

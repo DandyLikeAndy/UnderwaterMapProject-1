@@ -31,7 +31,7 @@
         var selectedLine;
         function onMapLoad() {
 
-            map = L.map('mapid',{"editable":true}).setView(startPoint, 13);
+            map = L.map('mapid',{"editable":true, "zoomControl":false}).setView(startPoint, 13);
 
 
             map.myclick.enable();
@@ -58,6 +58,8 @@
             map.on("editable:drawing:click", handlers.clickLine);
 
             map.on('mousemove', handlers.mouseMove);
+
+            map.on('zoomend', handlers.setZoom)
 
 
             ////////////add delete shape
@@ -135,11 +137,12 @@
         function zoomPlus() {
             map.setZoom(map.getZoom()+1);
             JAVA.setStatus("Map zoomed up");
-            return map.getZoom();
         }
         function zoomMinus() {
             map.setZoom(map.getZoom()-1);
             JAVA.setStatus("Map zoomed down");
+        }
+        function getZoom() {
             return map.getZoom();
         }
 

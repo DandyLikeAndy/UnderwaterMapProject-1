@@ -45,6 +45,9 @@ function initJava() {
     obj.setDistance = function (msg) {
         javaController.setDistanceFromWeb(msg);
     };
+    obj.setZoom = function (zoom) {
+        javaController.setZoom(zoom);
+    }
 
     return obj;
 }
