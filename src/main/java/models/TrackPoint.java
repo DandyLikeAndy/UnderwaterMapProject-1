@@ -3,7 +3,6 @@ package models;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
-import java.util.function.DoublePredicate;
 
 /**
  * Created by User on 12.05.2017.
