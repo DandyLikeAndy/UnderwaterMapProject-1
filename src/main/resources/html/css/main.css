@@ -11,34 +11,41 @@ body {
 
 .number {
     position: relative;
-    bottom: 5px;
-    right: 5px;
-    color: black;
+    bottom: 10px;
+    right: 10px;
+    color: white;
     font-size: 20px;
-    background-color: aliceblue;
+    background-color: blue;
     width: 20px;
     height: 20px;
-    border-bottom-color: black;
+    border-color: blue;
     border-style: solid;
-    border-width: 1px;
-    padding: 3px;
+    border-width: 5px;
+    border-radius: 50%;
+    padding-bottom: 5px;
+    padding-left: 5px;
 }
 .finish-number {
     position: relative;
-    bottom: 55px;
-    right: 5px;
-    color: black;
+    bottom: 60px;
+    right: 10px;
+    color: white;
     font-size: 20px;
-    background-color: aliceblue;
+    background-color: blue;
     width: 20px;
     height: 20px;
-    border-bottom-color: black;
+    border-color: blue;
     border-style: solid;
-    border-width: 1px;
-    padding: 3px;
+    border-width: 5px;
+    border-radius: 50%;
+    padding-bottom: 5px;
+    padding-left: 5px;
 }
 .start-icon{
     position: relative;
     bottom: 50px;
     right: 15px;
+}
+.leaflet-div-icon{
+    border-radius: 50%;
 }

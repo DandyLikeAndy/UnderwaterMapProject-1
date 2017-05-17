@@ -1,5 +1,6 @@
 package models;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -10,10 +11,14 @@ import java.util.List;
  * Created by User on 12.05.2017.
  */
 public class TrackLine implements TrackItem{
-    int id;
-    double length;
-    List<TrackPoint> points = new ArrayList<>();
-    String name;
+
+    private int id;
+    private double length;
+    private ObservableList<TrackPoint> points = FXCollections.observableArrayList();
+    private String name;
+    private LineTypes type;
+
+
 
     public TrackLine(){
         name = "Unnamed Track";
@@ -22,7 +27,9 @@ public class TrackLine implements TrackItem{
         this.id = id;
     }
     public TrackLine(int id, List<TrackPoint> points){
+        this();
         this.id = id;
+        this.points.addAll(points);
     }
 
     public int getId() {
@@ -46,20 +53,36 @@ public class TrackLine implements TrackItem{
         this.length = length;
     }
 
-    public List<TrackPoint> getPoints() {
+    public ObservableList<TrackPoint> getPoints() {
         return points;
     }
 
-    public void setPoints(List<TrackPoint> points) {
+    public void setPoints(ObservableList<TrackPoint> points) {
         this.points = points;
+    }
+
+    public void addPoint(TrackPoint point){
+        points.add(point);
     }
 
     public void setName(String name){
         this.name = name;
     }
 
+    public LineTypes getType() {
+        return type;
+    }
+
+    public void setType(LineTypes type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return id +" " + name;
+    }
+
+    public static enum LineTypes{
+        TRACK, RREGION, CIRCLE
     }
 }

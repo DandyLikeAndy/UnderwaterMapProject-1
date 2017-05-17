@@ -1,6 +1,7 @@
 package app;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.deploy.net.HttpUtils;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -20,9 +21,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import models.TrackItem;
-import models.TrackLine;
-import models.TrackPoint;
+import models.*;
 import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
 
@@ -57,7 +56,7 @@ public class Controller {
 
     JSObject window;
 
-    Gson gson = new Gson();
+    Gson gson;
 
     SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
     SimpleObjectProperty<String> status = new SimpleObjectProperty<>();
@@ -102,6 +101,10 @@ public class Controller {
 
     public void initialize() {
 
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(TrackPoint.class, new PointConverter());
+        builder.registerTypeAdapter(TrackLine.class, new LineConverter());
+        gson = builder.create();
 
         webView.setZoom(1);
         webEngine = webView.getEngine();
@@ -174,13 +177,30 @@ public class Controller {
         tracksTreeView.setRoot(root);
         tracksTreeView.setShowRoot(false);
 
-        /*tracksTreeView.setCellFactory(new Callback<TreeView<TrackItem>, TreeCell<TrackItem>>() {
+        tracksTreeView.setCellFactory(param -> new TreeCell<TrackItem>(){
             @Override
-            public TreeCell<TrackItem> call(TreeView<TrackItem> param) {
-                return null;
+            public void updateItem(TrackItem item, boolean empty) {
+                super.updateItem(item, empty);
+                //setDisclosureNode(null);
+
+                if (empty) {
+                    setText("");
+                    setGraphic(null);
+                } else {
+                    String name = item.getName();
+                    int id = item.getId();
+                    /*if (name.equals("root")){
+                        name = "Files";
+                        //pseudoClassStateChanged(firstElementPseudoClass, true);
+                        setDisclosureNode(null);
+
+                    }*/
+                    setText("id: "+id+" name: "+name);
+
+                }
             }
         });
-*/
+
         lines.addListener((ListChangeListener<TrackItem>) c -> {
             c.next();
             TrackItem addedTrack = c.getAddedSubList().get(0);
@@ -207,9 +227,10 @@ public class Controller {
         points.add(trackPoint);
     }
 
-    public void addLine(String line) {
+    public void addLineFromWeb(String line) {
+        System.out.println(line);
         TrackLine trackLine = gson.fromJson(line, TrackLine.class);
-        lines.add(gson.fromJson(line, TrackLine.class));
+        lines.add(trackLine);
     }
 
     public void deletePoint(int id) {

@@ -1,6 +1,42 @@
 /**
  * Created by User on 12.05.2017.
  */
+/*let javaController = {
+    log: function () {
+
+    },
+    addLineFromWeb: function (line) {
+
+    },
+    addPoint: function (point) {
+
+    },
+    deletePoint: function (p) {
+
+    },
+    clickPoint: function (p) {
+
+    },
+    getTilesImgFromWeb: function (i) {
+
+    },
+    setStatus: function (s) {
+
+    },
+    setMouseCoordsFromWeb: function (c) {
+
+    },
+    setDistanceFromWeb: function (f) {
+
+    },
+    setZoom: function (z) {
+
+    }
+
+
+
+};*/
+
 function initJava() {
     var obj = {};
     obj.log = function (msg) {
@@ -8,7 +44,7 @@ function initJava() {
     };
 
     obj.addLine = function (line) {
-        javaController.addLine(line);
+        javaController.addLineFromWeb(line);
     };
 
     obj.addPoint = function (point) {

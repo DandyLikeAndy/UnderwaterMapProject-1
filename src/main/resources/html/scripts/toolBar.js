@@ -143,8 +143,8 @@ function addToolBar(map) {
             return divElem;
         }
     });
-
-    /*map.addControl(new L.NewMarkerControl());
+/*
+    map.addControl(new L.NewMarkerControl());
     map.addControl(new L.NewLineControl());
     map.addControl(new L.NewPolygonControl());
     map.addControl(new L.NewRectangleControl());
