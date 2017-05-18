@@ -2,20 +2,28 @@ package app;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import models.*;
 import netscape.javascript.JSObject;
+import org.w3c.dom.Document;
 import utills.HttpDownloadUtility;
 
 import java.io.IOException;
@@ -119,7 +127,6 @@ public class Controller {
                                 initTreeView();
 
                                 setZoom((int)window.call("getZoom"));
-
                        /* // all next classes are from org.w3c.dom domain
                         org.w3c.dom.events.EventListener listener = (ev) -> {
                             System.out.println("#" + (org.w3c.dom.Element) ev.getTarget());
@@ -186,6 +193,17 @@ public class Controller {
 
                     }*/
                     setText("id: "+id+" name: "+name);
+
+
+                    ToggleButton showBtn = new ToggleButton("");
+                    FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.EYE_SLASH);
+                    showBtn.setGraphic(icon1);
+                    Button delBtn = new Button("");
+                    FontAwesomeIconView icon2 = new FontAwesomeIconView(FontAwesomeIcon.TIMES);
+                    delBtn.setGraphic(icon2);
+                    HBox hBox = new HBox(showBtn, delBtn);
+
+                    setGraphic(hBox);
 
                 }
             }

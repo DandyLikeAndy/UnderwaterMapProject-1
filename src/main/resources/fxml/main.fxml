@@ -12,39 +12,39 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" stylesheets="@javaFXCSS.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <WebView fx:id="webView" layoutX="151.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="742.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="30.0" />
+      <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="30.0" />
       <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" styleClass="right-panel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <children>
-            <Label text="Track List">
+            <Label text="Layers">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" />
+            <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" styleClass="layers-tree" />
          </children>
       </VBox>
-      <AnchorPane prefHeight="200.0" prefWidth="50.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
+      <AnchorPane prefHeight="880.0" prefWidth="36.0" styleClass="left-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="20.0">
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#openMenu">
                      <graphic>
-                        <FontAwesomeIconView glyphName="NAVICON" size="30" />
+                        <FontAwesomeIconView glyphName="NAVICON" size="24" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#startTrack">
                      <graphic>
-                        <FontAwesomeIconView glyphName="CODE_FORK" size="30" />
+                        <FontAwesomeIconView glyphName="CODE_FORK" size="24" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#addMarker">
                      <graphic>
-                        <FontAwesomeIconView glyphName="MAP_MARKER" size="30" />
+                        <FontAwesomeIconView glyphName="MAP_MARKER" size="24" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#startRegion">
                      <graphic>
-                        <FontAwesomeIconView glyphName="OBJECT_UNGROUP" size="24" />
+                        <FontAwesomeIconView glyphName="OBJECT_UNGROUP" size="20" />
                      </graphic>
                   </Button>
                </children>
@@ -53,17 +53,17 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#getTilesFromWeb">
                      <graphic>
-                        <FontAwesomeIconView glyphName="CLOUD_DOWNLOAD" size="30" />
+                        <FontAwesomeIconView glyphName="CLOUD_DOWNLOAD" size="24" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#zoomPlus">
                      <graphic>
-                        <FontAwesomeIconView glyphName="PLUS" size="30" />
+                        <FontAwesomeIconView glyphName="PLUS" size="24" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#zoomMinus">
                      <graphic>
-                        <FontAwesomeIconView glyphName="MINUS" size="30" />
+                        <FontAwesomeIconView glyphName="MINUS" size="24" />
                      </graphic>
                   </Button>
                </children>

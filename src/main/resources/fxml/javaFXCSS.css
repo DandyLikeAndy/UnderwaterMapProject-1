@@ -1,13 +1,21 @@
+.root{
+    -icons-color: black;
+}
 .left-panel .button{
     -fx-pref-width: 40px;
     -fx-pref-height: 40px;
     -fx-background-color: transparent;
     -fx-padding: 10 0 0 0;
 }
+.layers-tree .button, .layers-tree .toggle-button{
+    -fx-pref-width: 5px;
+    -fx-pref-height: 5px;
+    -fx-background-color: transparent;
+}
 .left-panel .button:hover{
     -fx-pref-width: 40px;
     -fx-pref-height: 40px;
-    -fx-background-color: darkgray;
+
     -fx-padding: 10 0 0 0;
 }
 .tree-view, .stack-pane, .tree-cell {
@@ -34,4 +42,9 @@
     -fx-border-color: transparent;
     -fx-border-width: 0px;
 }
+.layers-tree .glyph-icon{ -fx-text-fill: -icons-color; -fx-fill: -icons-color; -glyph-size: 12px; }
+
+.glyph-icon{ -fx-text-fill: -icons-color; -fx-fill: -icons-color; -glyph-size: 24px; }
+
+.glyph-icon:hover{ -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 0); }
 

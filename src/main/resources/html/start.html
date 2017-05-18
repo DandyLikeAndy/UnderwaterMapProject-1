@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
           integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
           crossorigin=""/>
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
     <script src="libs/jquery.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
             integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
@@ -15,8 +15,6 @@
     <script src="scripts/toolBar.js"></script>
     <script src="scripts/handlers.js"></script>
     <script src="scripts/initJavaController.js"></script>
-   <!-- <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>-->
-
 
     <script>
         var map;
@@ -31,7 +29,7 @@
         var selectedLine;
         function onMapLoad() {
 
-            map = L.map('mapid',{"editable":true, "zoomControl":false}).setView(startPoint, 13);
+            map = L.map('mapid', {"editable": true, "zoomControl": false}).setView(startPoint, 13);
 
 
             map.myclick.enable();
@@ -46,7 +44,6 @@
             polyline.enableEdit();*/
 
 
-
             map.on("editable:vertex:deleted", handlers.deleteVertex);
 
             map.on("editable:vertex:new", handlers.creteNewVertex);
@@ -59,22 +56,23 @@
 
             map.on('mousemove', handlers.mouseMove);
 
-            map.on('zoomend', handlers.setZoom)
+            map.on('zoomend', handlers.setZoom);
+
+            map.on("editable:vertex:drag", handlers.dragVertex)
 
 
             ////////////add delete shape
-/*
-            var deleteShape = function (e) {
-                console.log(this);
-                console.log(e.latlng)
-                if ((e.originalEvent.ctrlKey || e.originalEvent.metaKey) && this.editEnabled()) this.editor.deleteShapeAt(e.latlng);
-            };
-            map.on('layeradd', function (e) {
-                if (e.layer instanceof L.Path) e.layer.on('click', L.DomEvent.stop).on('click', deleteShape, e.layer);
-                if (e.layer instanceof L.Path) e.layer.on('dblclick', L.DomEvent.stop).on('dblclick', e.layer.toggleEdit);
-                console.log("add layer")
-            });*/
-
+            /*
+                        var deleteShape = function (e) {
+                            console.log(this);
+                            console.log(e.latlng)
+                            if ((e.originalEvent.ctrlKey || e.originalEvent.metaKey) && this.editEnabled()) this.editor.deleteShapeAt(e.latlng);
+                        };
+                        map.on('layeradd', function (e) {
+                            if (e.layer instanceof L.Path) e.layer.on('click', L.DomEvent.stop).on('click', deleteShape, e.layer);
+                            if (e.layer instanceof L.Path) e.layer.on('dblclick', L.DomEvent.stop).on('dblclick', e.layer.toggleEdit);
+                            console.log("add layer")
+                        });*/
 
 
             //map.addHandler('click', L.MyHandler);
@@ -93,31 +91,31 @@
         });
 
 
-        var getFromJava = function(msg){
+        var getFromJava = function (msg) {
             var parsed = JSON.parse(msg);
-            JAVA.log("ID: "+parsed.id+" NAME: "+parsed.name)
+            JAVA.log("ID: " + parsed.id + " NAME: " + parsed.name)
         };
 
         function resizeMap(width, height) {
-            $('#mapid').css({'width':width, 'height':height})
+            $('#mapid').css({'width': width, 'height': height})
         }
 
         function selectLine(id) {
             if (selectedLine != undefined) unSelectLine();
             var line = lines[id];
             selectedLine = line;
-            line.setStyle({"color":"red"});
+            line.setStyle({"color": "red"});
         }
 
         function unSelectLine() {
-            selectedLine.setStyle({"color":"blue"})
+            selectedLine.setStyle({"color": "blue"})
         }
 
         function getTilesImg() {
             var imgs = "";
             $('.leaflet-tile-container').find("img").each(function (i) {
                 console.log($(this).attr('src'))
-                imgs += $(this).attr('src')+",";
+                imgs += $(this).attr('src') + ",";
             });
             JAVA.returnTilesImg(imgs);
         }
@@ -135,11 +133,11 @@
             JAVA.setStatus("Add marker")
         }
         function zoomPlus() {
-            map.setZoom(map.getZoom()+1);
+            map.setZoom(map.getZoom() + 1);
             JAVA.setStatus("Map zoomed up");
         }
         function zoomMinus() {
-            map.setZoom(map.getZoom()-1);
+            map.setZoom(map.getZoom() - 1);
             JAVA.setStatus("Map zoomed down");
         }
         function getZoom() {
@@ -147,12 +145,16 @@
         }
 
 
-
     </script>
     <style>
         #mapid {
             width: 750px;
             height: 750px;
+        }
+
+        #FirebugLite {
+            width: 300px;
+            height: 300px;
         }
     </style>
 

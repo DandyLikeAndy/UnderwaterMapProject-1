@@ -21,6 +21,9 @@ var handlers = {};
     L.Map.addInitHook('addHandler', 'myclick', L.MyHandler);
 
     handlers.deleteVertex = function (e) {
+        if (e.vertex.circle != undefined) {
+            e.vertex.circle.remove();
+        }
         console.log("deleted vertex:");
         console.log(e.latlng);
         JAVA.deletePoint(e);
@@ -28,43 +31,44 @@ var handlers = {};
 
     handlers.creteNewVertex = function (e) {
         e.myField = "field";
-        console.log("vertex created");
-        console.log(e);
+        //console.log("vertex created");
+        //console.log(e);
         points.push(e);
 
 
+        if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
+            let circle = new L.circle(e.latlng, {radius:50}).addTo(map);
 
-        e.vertex.on("mouseover", function () {
-            var distance;
-            var index = e.layer._latlngs.indexOf(e.latlng);
-            //console.log("index: "+index);
-            //console.log("lengs: "+e.layer._latlngs.length);
+            e.vertex.circle = circle;
 
+            let index = e.layer._latlngs.indexOf(e.vertex.latlng);
 
-            lastPoint = e.latlng;
-            if (index == e.layer._latlngs.length-1){
+            if (index != e.layer._latlngs.length-1){
+                let arr = e.layer._latlngs;
+                for (let i = index+1; i<arr.length; i++){
+                    arr[i].__vertex.options.icon.updateIcon(i);
+                }
+            }
+            if (index == 0){
+                e.vertex.setIcon(new L.StartIcon({'number': index}));
+            } else e.vertex.setIcon(new L.MyIcon({'number': index}));
+        }
+
+        e.vertex.on("mouseover", function (e) {
+
+            let distance;
+            let index = e.latlng.__vertex.latlngs.indexOf(e.latlng);
+
+            if (index == e.latlng.__vertex.latlngs.length-1){
                 distance = 0;
             } else {
-                distance = e.latlng.distanceTo(e.layer._latlngs[index+1]);
+                distance = e.latlng.distanceTo(e.latlng.__vertex.latlngs[index+1]);
             }
             handlers.showPopup(e.latlng, distance)
         });
 
 
-        var index = e.layer._latlngs.indexOf(e.vertex.latlng);
 
-        console.log("index = "+index);
-        console.log("length = " + e.layer._latlngs.length)
-        if (index != e.layer._latlngs.length-1){
-            console.log("update icons")
-            var arr = e.layer._latlngs;
-            for (var i = index+1; i<arr.length; i++){
-                arr[i].__vertex.options.icon.updateIcon(i);
-            }
-        }
-        if (index == 0){
-            e.vertex.setIcon(new L.StartIcon({'number': index}));
-        } else e.vertex.setIcon(new L.MyIcon({'number': index}));
 
         //JAVA.addPoint(e);
     };
@@ -72,7 +76,7 @@ var handlers = {};
 
 
     handlers.stopCreatingLine = function (e) {
-        if (e.layer instanceof L.Polyline ) {
+        if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)) {
             e.layer.setStyle({"weight":10});
             lines[e.layer._leaflet_id] = e.layer;
             let latlngs = e.layer.getLatLngs();
@@ -90,7 +94,6 @@ var handlers = {};
             JAVA.addLine(JSON.stringify(line));
 
             e.layer._latlngs[ e.layer._latlngs.length-1].__vertex.setIcon(new L.FinishIcon({'number':e.layer._latlngs.length-1}));
-            console.log(e)
         }
 
     };
@@ -125,5 +128,10 @@ var handlers = {};
 
     handlers.setZoom = function () {
         JAVA.setZoom(map.getZoom());
+    }
+
+    handlers.dragVertex = function (e) {
+        if (e.vertex.circle == undefined) return;
+        e.vertex.circle.redraw();
     }
 })();
