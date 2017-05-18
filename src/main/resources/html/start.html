@@ -112,7 +112,7 @@
         }
 
         function getTilesImg() {
-            var imgs = "";
+            let imgs = "";
             $('.leaflet-tile-container').find("img").each(function (i) {
                 console.log($(this).attr('src'))
                 imgs += $(this).attr('src') + ",";
@@ -142,6 +142,28 @@
         }
         function getZoom() {
             return map.getZoom();
+        }
+
+        function setPointsRadius(radius){
+            for (i in lines){
+                const line = lines[i];
+                for (p in line._latlngs){
+                    line._latlngs[p].__vertex.circle.setRadius(200)
+                }
+            }
+        }
+
+        function setPointRadius(pointId, radius) {
+            //console.log(lines);
+            for (i in lines){
+                const line = lines[i];
+                const latlngs = line.getLatLngs();
+                for (p in latlngs){
+                    if (latlngs[p].__vertex._leaflet_id == pointId){
+                        latlngs[p].__vertex.circle.setRadius(radius);
+                    }
+                }
+            }
         }
 
 

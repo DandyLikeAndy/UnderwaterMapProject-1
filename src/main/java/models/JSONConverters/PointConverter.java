@@ -1,6 +1,7 @@
-package models;
+package models.JSONConverters;
 
 import com.google.gson.*;
+import models.TrackPoint;
 
 import java.lang.reflect.Type;
 

@@ -33,8 +33,6 @@ var handlers = {};
         e.myField = "field";
         //console.log("vertex created");
         //console.log(e);
-        points.push(e);
-
 
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
             let circle = new L.circle(e.latlng, {radius:50}).addTo(map);
@@ -85,14 +83,16 @@ var handlers = {};
             let line = {};
             line.id = e.layer._leaflet_id;
             line.points = [];
+
             for (let l in latlngs){
-                line.points.push({lat:latlngs[l].lat, lng:latlngs[l].lng});
-                line.points.lat = latlngs[l].lat;
-                line.points.lng = latlngs[l].lng;
+                let vertex = e.layer._latlngs[l].__vertex;
+                line.points.push({id:vertex._leaflet_id,lat:latlngs[l].lat, lng:latlngs[l].lng});
+               /* line.points.lat = latlngs[l].lat;
+                line.points.lng = latlngs[l].lng;*/
             }
             JAVA.log("create");
             JAVA.addLine(JSON.stringify(line));
-
+            console.log(line);
             e.layer._latlngs[ e.layer._latlngs.length-1].__vertex.setIcon(new L.FinishIcon({'number':e.layer._latlngs.length-1}));
         }
 

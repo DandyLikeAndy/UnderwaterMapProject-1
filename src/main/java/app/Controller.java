@@ -4,13 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
-import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -22,8 +18,9 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import models.*;
+import models.JSONConverters.LineConverter;
+import models.JSONConverters.PointConverter;
 import netscape.javascript.JSObject;
-import org.w3c.dom.Document;
 import utills.HttpDownloadUtility;
 
 import java.io.IOException;
@@ -192,11 +189,11 @@ public class Controller {
                         setDisclosureNode(null);
 
                     }*/
-                    setText("id: "+id+" name: "+name);
+                    setText("id: "+id+" "+name);
 
 
                     ToggleButton showBtn = new ToggleButton("");
-                    FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.EYE_SLASH);
+                    FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.EYE);
                     showBtn.setGraphic(icon1);
                     Button delBtn = new Button("");
                     FontAwesomeIconView icon2 = new FontAwesomeIconView(FontAwesomeIcon.TIMES);
