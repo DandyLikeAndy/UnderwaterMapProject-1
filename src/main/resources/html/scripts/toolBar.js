@@ -143,9 +143,19 @@ function addToolBar(map) {
             return divElem;
         }
     });
-    map.addControl(new L.NewMarkerControl());
-    map.addControl(new L.NewLineControl());
-    map.addControl(new L.NewPolygonControl());
-    map.addControl(new L.NewRectangleControl());
-    map.addControl(new L.NewCircleControl());
+
+    let toolBars = {};
+    toolBars.marker = new L.NewMarkerControl();
+    toolBars.line = new L.NewLineControl();
+    toolBars.polygon = new L.NewPolygonControl();
+    toolBars.rectangle = new L.NewRectangleControl();
+    toolBars.circle = new L.NewCircleControl();
+
+    map.addControl(toolBars.marker);
+    map.addControl(toolBars.line);
+    map.addControl(toolBars.polygon);
+    map.addControl(toolBars.rectangle);
+    map.addControl(toolBars.circle);
+
+    return toolBars;
 }

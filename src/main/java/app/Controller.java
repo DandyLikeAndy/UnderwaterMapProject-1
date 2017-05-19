@@ -116,6 +116,7 @@ public class Controller {
                                 System.out.println("Change");
                                 window = (JSObject) webEngine.executeScript("window");
                                 window.setMember("javaController", controller);
+                                window.call("initJavaController");
 
                                 resizeMap();
 

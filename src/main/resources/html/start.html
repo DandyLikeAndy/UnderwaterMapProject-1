@@ -17,10 +17,13 @@
     <script src="scripts/initJavaController.js"></script>
 
     <script>
+        // @flow
         var map;
         var startPoint = [59.583921, 31.192010];
         var currentZoom = 13;
         var JAVA = {};
+
+        let tools;
 
         let lastPoint = startPoint;
 
@@ -84,7 +87,7 @@
 
             onMapLoad();
 
-            addToolBar(map);
+            tools = addToolBar(map);
 
             JAVA = initJava();
 
@@ -165,6 +168,30 @@
                 }
             }
         }
+
+
+        function initJavaController() {
+            JAVA = initJava();
+            removeToolBars();
+        }
+
+        function removeToolBars() {
+            for (let t in tools){
+                map.removeControl(tools[t]);
+            }
+
+        }
+
+        var baseLayers = {
+            "Mapbox": mapbox,
+            "OpenStreetMap": osm
+        };
+        var overlays = {
+            "Marker": marker,
+            "Roads": roadsLayer
+        };
+        L.control.layers(baseLayers, overlays).addTo(map);
+
 
 
     </script>
