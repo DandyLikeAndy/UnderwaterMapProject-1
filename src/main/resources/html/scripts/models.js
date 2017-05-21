@@ -71,6 +71,15 @@ class Point {
         this._lat = latlngs.lat;
         this._lng = latlngs.lng;
     }
+
+    toJSON(){
+        let obj = {};
+        obj.id = this.id;
+        obj.lat = this.lat;
+        obj.lng = this.lng;
+        obj.pos = this.pos;
+        return obj;
+    }
 }
 
 class Track{
@@ -111,15 +120,24 @@ class Track{
 
     addPoint(point){
         this._points.set(point.id,point);
+        console.log("set")
     }
 
-
+    toJSON(){
+        let obj = {};
+        obj.id = this.id;
+        obj.length = this.length;
+        obj.name = this.name;
+        obj.points = [];
+        for(let p of this.points.values()) {
+           obj.points.push(p);
+        }
+        return obj;
+    }
 
 }
 let trac = new Track();
-trac.addPoint(new Point(12,12,2));
+trac.addPoint(new Point(12,12,1));
 trac.addPoint(new Point(12, 23,3));
-console.log(trac);
-let m = new Map();
-console.log(m.get(22));
+console.log(JSON.stringify(trac));
 

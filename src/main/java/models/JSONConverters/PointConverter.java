@@ -1,25 +1,30 @@
 package models.JSONConverters;
 
 import com.google.gson.*;
-import models.Waipoint;
+import models.Waypoint;
 
 import java.lang.reflect.Type;
 
 /**
  * Created by User on 17.05.2017.
  */
-public class PointConverter implements JsonSerializer<Waipoint>, JsonDeserializer<Waipoint> {
+public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserializer<Waypoint> {
     @Override
-    public Waipoint deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public Waypoint deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
         double lat = object.get("lat").getAsDouble();
         double lng = object.get("lng").getAsDouble();
-        return new Waipoint(lat, lng);
+        int id = object.get("id").getAsInt();
+        int position = object.get("pos").getAsInt();
+        Waypoint waypoint = new Waypoint(lat, lng);
+        waypoint.setId(id);
+        waypoint.setPosition(position);
+        return new Waypoint(lat, lng);
 
     }
 
     @Override
-    public JsonElement serialize(Waipoint point, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(Waypoint point, Type type, JsonSerializationContext jsonSerializationContext) {
         return null;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by User on 12.05.2017.
  */
-public class Waipoint implements TrackItem{
+public class Waypoint implements TrackItem{
     private int id;
     private DoubleProperty lat = new SimpleDoubleProperty();
     private DoubleProperty lng = new SimpleDoubleProperty();
@@ -22,18 +22,19 @@ public class Waipoint implements TrackItem{
     private List<Behavior> behaviors;
     private String name;
     private PointTypes type;
+    private int position;
 
-    public Waipoint() {
+    public Waypoint() {
         this.name = "Track Point";
     }
 
-    public Waipoint(double lat, double lng) {
+    public Waypoint(double lat, double lng) {
         this.lat.set(lat);
         this.lng.set(lng);
         this.name = "Track Point";
     }
 
-    public Waipoint(int id, double lat, double lng) {
+    public Waypoint(int id, double lat, double lng) {
         this.id = id;
         this.lat.set(lat);
         this.lng.set(lng);
@@ -42,7 +43,7 @@ public class Waipoint implements TrackItem{
         this.name = "Track Point";
     }
 
-    public Waipoint(int id, double lat, double lng, double azimuth, double distance) {
+    public Waypoint(int id, double lat, double lng, double azimuth, double distance) {
         this.id = id;
         this.lat.set(lat);
         this.lng.set(lng);
@@ -146,6 +147,14 @@ public class Waipoint implements TrackItem{
 
     public void setBehaviors(List<Behavior> behaviors) {
         this.behaviors = behaviors;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override

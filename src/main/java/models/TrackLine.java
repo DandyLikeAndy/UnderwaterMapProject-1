@@ -13,7 +13,7 @@ public class TrackLine implements TrackItem{
 
     private int id;
     private double length;
-    private ObservableList<Waipoint> points = FXCollections.observableArrayList();
+    private ObservableList<Waypoint> points = FXCollections.observableArrayList();
     private String name;
     private LineTypes type;
 
@@ -25,7 +25,7 @@ public class TrackLine implements TrackItem{
     public TrackLine(int id){
         this.id = id;
     }
-    public TrackLine(int id, List<Waipoint> points){
+    public TrackLine(int id, List<Waypoint> points){
         this();
         this.id = id;
         this.points.addAll(points);
@@ -52,15 +52,15 @@ public class TrackLine implements TrackItem{
         this.length = length;
     }
 
-    public ObservableList<Waipoint> getPoints() {
+    public ObservableList<Waypoint> getPoints() {
         return points;
     }
 
-    public void setPoints(ObservableList<Waipoint> points) {
+    public void setPoints(ObservableList<Waypoint> points) {
         this.points = points;
     }
 
-    public void addPoint(Waipoint point){
+    public void addPoint(Waypoint point){
         points.add(point);
     }
 

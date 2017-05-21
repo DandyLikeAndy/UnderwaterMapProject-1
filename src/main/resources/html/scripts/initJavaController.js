@@ -1,7 +1,7 @@
 /**
  * Created by User on 12.05.2017.
  */
-let javaController = {
+/*let javaController = {
     log: function () {
 
     },
@@ -31,8 +31,11 @@ let javaController = {
     },
     setZoom: function (z) {
 
+    },
+    updatePoint: function (p) {
+
     }
-};
+};*/
 
 function initJava() {
     var obj = {};
@@ -80,7 +83,10 @@ function initJava() {
     };
     obj.setZoom = function (zoom) {
         javaController.setZoom(zoom);
-    }
+    };
+    obj.updatePoint = function (point) {
+        javaController.updatePoint(JSON.stringify(point));
+    };
 
     return obj;
 }

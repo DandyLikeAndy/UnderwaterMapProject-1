@@ -44,7 +44,7 @@ public class Controller {
     @FXML
     Label mouseCoords;
 
-    ObservableList<Waipoint> points = FXCollections.observableArrayList();
+    ObservableList<Waypoint> points = FXCollections.observableArrayList();
     ObservableList<TrackLine> lines = FXCollections.observableArrayList();
 
     WebEngine webEngine;
@@ -97,7 +97,7 @@ public class Controller {
     public void initialize() {
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Waipoint.class, new PointConverter());
+        builder.registerTypeAdapter(Waypoint.class, new PointConverter());
         builder.registerTypeAdapter(TrackLine.class, new LineConverter());
         gson = builder.create();
 
@@ -229,8 +229,8 @@ public class Controller {
     }
 
     public void addPoint(String point) {
-        Waipoint waipoint = gson.fromJson(point, Waipoint.class);
-        points.add(waipoint);
+        Waypoint waypoint = gson.fromJson(point, Waypoint.class);
+        points.add(waypoint);
     }
 
     public void addLineFromWeb(String line) {

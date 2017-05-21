@@ -27,12 +27,13 @@ var handlers = {};
         }
         let layerId = e.layer._leaflet_id;
         lines.get(layerId).points.delete(e.vertex._leaflet_id);
+        handlers.updatePositions(lines.get(layerId));
         JAVA.deletePoint(e);
     };
 
     handlers.creteNewVertex = function (e) {
-        //console.log("vertex created");
-        //console.log(e);
+        console.log("vertex created");
+        console.log(e);
 
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
             let layerId = e.layer._leaflet_id;
@@ -58,13 +59,11 @@ var handlers = {};
 
             e.vertex.circle = circle;
 
-            let index = e.layer._latlngs.indexOf(e.vertex.latlng);
+            e.vertex.point = point;
+            let index = e.vertex.latlngs.indexOf(e.vertex.latlng);
 
-            if (index != e.layer._latlngs.length-1){
-                let arr = e.layer._latlngs;
-                for (let i = index+1; i<arr.length; i++){
-                    arr[i].__vertex.options.icon.updateIcon(i);
-                }
+            if (index != e.vertex.latlngs.length-1){
+                handlers.updatePositions(track);
             }
             if (index == 0){
                 e.vertex.setIcon(new L.StartIcon({'number': index}));
@@ -180,12 +179,12 @@ var handlers = {};
     }
 
     handlers.updatePositions = function(track) {
-        let i = 0;
         for(let point of track.points.values()) {
-            if (point.pos != i) {
-                point.pos = i;
+            if (point.pos != point.vertex.latlngs.indexOf(point.vertex.latlng)) {
+                point.pos = point.vertex.latlngs.indexOf(point.vertex.latlng);
+                point.vertex.options.icon.updateIcon(point.pos);
+                JAVA.updatePoint(point);
             }
         }
-
     }
 })();
