@@ -25,17 +25,35 @@ var handlers = {};
         if (e.vertex.circle != undefined) {
             e.vertex.circle.remove();
         }
-        console.log("deleted vertex:");
-        console.log(e.latlng);
+        let layerId = e.layer._leaflet_id;
+        lines.get(layerId).points.delete(e.vertex._leaflet_id);
         JAVA.deletePoint(e);
     };
 
     handlers.creteNewVertex = function (e) {
-        e.myField = "field";
         //console.log("vertex created");
         //console.log(e);
 
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
+            let layerId = e.layer._leaflet_id;
+            let track = lines.get(layerId);
+
+            console.log("track "+layerId);
+            console.log(track);
+            if (track == undefined){
+                if (tempLine != null){
+                    track = tempLine;
+                } else {
+                    track = new Track();
+                    track.id = layerId;
+                    tempLine = track;
+                    console.log("new track")
+                }
+
+            }
+
+            let point = new Point();
+
             let circle = new L.circle(e.latlng, {radius:50}).addTo(map);
 
             e.vertex.circle = circle;
@@ -51,7 +69,23 @@ var handlers = {};
             if (index == 0){
                 e.vertex.setIcon(new L.StartIcon({'number': index}));
             } else e.vertex.setIcon(new L.MyIcon({'number': index}));
+
+            point.vertex = e.vertex;
+            point.circle = circle;
+            point.id = e.vertex._leaflet_id;
+            point.lat = e.latlng.lat;
+            point.lng = e.latlng.lng;
+            point.pos = index;
+            point.circleRadius = 50;
+
+            e.vertex.point = point;
+
+            console.log("track2 "+layerId);
+            console.log(track);
+
+            track.addPoint(point);
         }
+
 
         e.vertex.on("mouseover", function (e) {
 
@@ -77,9 +111,15 @@ var handlers = {};
     handlers.stopCreatingLine = function (e) {
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)) {
             e.layer.setStyle({"weight":10});
-            lines[e.layer._leaflet_id] = e.layer;
+            let lineId = e.layer._leaflet_id;
+            //lines.set(lineId, e.layer);
             let latlngs = e.layer.getLatLngs();
 
+            lines.set(lineId, tempLine);
+            tempLine = null;
+
+            console.log("lines:");
+            console.log(lines);
 
             let line = {};
             line.id = e.layer._leaflet_id;
@@ -132,7 +172,20 @@ var handlers = {};
     }
 
     handlers.dragVertex = function (e) {
-        if (e.vertex.circle == undefined) return;
-        e.vertex.circle.redraw();
+        console.log(e);
+        if (e.vertex.circle != undefined) {
+            e.vertex.circle.redraw();
+        }
+        e.vertex.point.latlngs = e.latlng;
+    }
+
+    handlers.updatePositions = function(track) {
+        let i = 0;
+        for(let point of track.points.values()) {
+            if (point.pos != i) {
+                point.pos = i;
+            }
+        }
+
     }
 })();

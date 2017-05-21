@@ -66,17 +66,19 @@ class Point {
     set circleRadius(r){
         this._circle.setRadius(r);
     }
+
+    set latlngs(latlngs){
+        this._lat = latlngs.lat;
+        this._lng = latlngs.lng;
+    }
 }
 
 class Track{
-    constructor(id, name, length, points){
+    constructor(id, name = "Unnamed track", length = 0, points = new Map()){
         this._id = id;
         this._name = name;
         this._length = length;
-        this._points = new Map();
-        for (let p in points){
-            this._points.set(points[p].id, points[p]);
-        }
+        this._points = points;
     }
 
     get id() {
@@ -110,6 +112,14 @@ class Track{
     addPoint(point){
         this._points.set(point.id,point);
     }
+
+
+
 }
 let trac = new Track();
+trac.addPoint(new Point(12,12,2));
+trac.addPoint(new Point(12, 23,3));
+console.log(trac);
+let m = new Map();
+console.log(m.get(22));
 

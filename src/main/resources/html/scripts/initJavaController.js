@@ -32,9 +32,6 @@ let javaController = {
     setZoom: function (z) {
 
     }
-
-
-
 };
 
 function initJava() {

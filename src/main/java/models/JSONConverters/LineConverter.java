@@ -2,7 +2,7 @@ package models.JSONConverters;
 
 import com.google.gson.*;
 import models.TrackLine;
-import models.TrackPoint;
+import models.Waipoint;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ public class LineConverter implements JsonSerializer<TrackLine>, JsonDeserialize
     @Override
     public TrackLine deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
-        ArrayList<TrackPoint> pointsArr = new ArrayList<>();
+        ArrayList<Waipoint> pointsArr = new ArrayList<>();
         int id = object.get("id").getAsInt();
         JsonArray points = object.getAsJsonArray("points");
         points.forEach(p->{
-            pointsArr.add(jsonDeserializationContext.deserialize(p, TrackPoint.class));
+            pointsArr.add(jsonDeserializationContext.deserialize(p, Waipoint.class));
         });
         return new TrackLine(id, pointsArr);
     }

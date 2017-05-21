@@ -15,9 +15,9 @@
     <script src="scripts/toolBar.js"></script>
     <script src="scripts/handlers.js"></script>
     <script src="scripts/initJavaController.js"></script>
+    <script src="scripts/models.js"></script>
 
     <script>
-        // @flow
         var map;
         var startPoint = [59.583921, 31.192010];
         var currentZoom = 13;
@@ -27,8 +27,10 @@
 
         let lastPoint = startPoint;
 
+        let tempLine = null;
+
         var points = [];
-        var lines = {};
+        var lines = new Map();
         var selectedLine;
         function onMapLoad() {
 
@@ -182,15 +184,6 @@
 
         }
 
-        var baseLayers = {
-            "Mapbox": mapbox,
-            "OpenStreetMap": osm
-        };
-        var overlays = {
-            "Marker": marker,
-            "Roads": roadsLayer
-        };
-        L.control.layers(baseLayers, overlays).addTo(map);
 
 
 
