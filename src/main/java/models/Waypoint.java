@@ -159,9 +159,9 @@ public class Waypoint implements TrackItem{
 
     @Override
     public String toString() {
-        return  id +
-                ": lat=" + lat +
-                ", lng=" + lng;
+        return  position +
+                ": lat=" + lat.get() +
+                ", lng=" + lng.get();
     }
 
     public static enum PointTypes{

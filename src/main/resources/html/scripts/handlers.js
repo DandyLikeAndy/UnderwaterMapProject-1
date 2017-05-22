@@ -1,7 +1,6 @@
 /**
  * Created by User on 11.05.2017.
  */
-// @flow
 var handlers = {};
 
 (function () {
@@ -32,15 +31,14 @@ var handlers = {};
     };
 
     handlers.creteNewVertex = function (e) {
-        console.log("vertex created");
-        console.log(e);
+        //console.log("vertex created");
+        //console.log(e);
 
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
             let layerId = e.layer._leaflet_id;
             let track = lines.get(layerId);
-
-            console.log("track "+layerId);
-            console.log(track);
+            //console.log("track "+layerId);
+            //console.log(track);
             if (track == undefined){
                 if (tempLine != null){
                     track = tempLine;
@@ -48,12 +46,14 @@ var handlers = {};
                     track = new Track();
                     track.id = layerId;
                     tempLine = track;
-                    console.log("new track")
+                    JAVA.log("new track")
                 }
 
             }
 
+
             let point = new Point();
+
 
             let circle = new L.circle(e.latlng, {radius:50}).addTo(map);
 
@@ -78,10 +78,6 @@ var handlers = {};
             point.circleRadius = 50;
 
             e.vertex.point = point;
-
-            console.log("track2 "+layerId);
-            console.log(track);
-
             track.addPoint(point);
         }
 
@@ -115,24 +111,8 @@ var handlers = {};
             let latlngs = e.layer.getLatLngs();
 
             lines.set(lineId, tempLine);
+            JAVA.addLine(JSON.stringify(tempLine));
             tempLine = null;
-
-            console.log("lines:");
-            console.log(lines);
-
-            let line = {};
-            line.id = e.layer._leaflet_id;
-            line.points = [];
-
-            for (let l in latlngs){
-                let vertex = e.layer._latlngs[l].__vertex;
-                line.points.push({id:vertex._leaflet_id,lat:latlngs[l].lat, lng:latlngs[l].lng});
-               /* line.points.lat = latlngs[l].lat;
-                line.points.lng = latlngs[l].lng;*/
-            }
-            JAVA.log("create");
-            JAVA.addLine(JSON.stringify(line));
-            console.log(line);
             e.layer._latlngs[ e.layer._latlngs.length-1].__vertex.setIcon(new L.FinishIcon({'number':e.layer._latlngs.length-1}));
         }
 
@@ -140,7 +120,7 @@ var handlers = {};
 
     handlers.addNewLayer = function (e) {
         console.log("add layer")
-    }
+    };
 
     handlers.clickPoint = function (e) {
         JAVA.clickPoint(e);

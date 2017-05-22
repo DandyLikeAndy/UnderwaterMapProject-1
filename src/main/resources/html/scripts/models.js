@@ -2,11 +2,9 @@
  * Created by Anton on 19.05.2017.
  */
 class Point {
-    constructor(lat, lng, id, vertex, circle, pos){
+    constructor(lat, lng, id, pos = 8){
         this._lng = lng;
         this._lat = lat;
-        this._vertex = vertex;
-        this._circle = circle;
         this._id = id;
         this._pos = pos;
     }
@@ -72,6 +70,22 @@ class Point {
         this._lng = latlngs.lng;
     }
 
+    set distance(value){
+        this._distance = value;
+    }
+
+    get distance(){
+        return this._distance;
+    }
+
+    set athimuth(val){
+        this._azimuth = val;
+    }
+
+    get azimuth(){
+        return this._azimuth;
+    }
+
     toJSON(){
         let obj = {};
         obj.id = this.id;
@@ -120,7 +134,6 @@ class Track{
 
     addPoint(point){
         this._points.set(point.id,point);
-        console.log("set")
     }
 
     toJSON(){
@@ -137,7 +150,7 @@ class Track{
 
 }
 let trac = new Track();
-trac.addPoint(new Point(12,12,1));
-trac.addPoint(new Point(12, 23,3));
+trac.addPoint(new Point(12,12,1, 9));
+trac.addPoint(new Point(12, 23,3,8));
 console.log(JSON.stringify(trac));
 

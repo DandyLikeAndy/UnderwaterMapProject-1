@@ -7,6 +7,8 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -43,6 +45,28 @@ public class Controller {
 
     @FXML
     Label mouseCoords;
+
+    @FXML
+    private Label azumuthLabel;
+
+    @FXML
+    private Label indexLabel;
+
+    @FXML
+    private Label latLabel;
+
+    @FXML
+    private Label lngLabel;
+
+    @FXML
+    private Label depthLabel;
+
+    @FXML
+    private Label pointDistanceLabel;
+
+    @FXML
+    private Label radiusLabel;
+
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
     ObservableList<TrackLine> lines = FXCollections.observableArrayList();
@@ -183,14 +207,18 @@ public class Controller {
                     setGraphic(null);
                 } else {
                     String name = item.getName();
-                    int id = item.getId();
+                    if (item.getClass().getName().equals("models.Waypoint")){
+                        setText(((Waypoint)item).getPosition()+" point");
+                    } else {
+                        setText(name);
+                    }
                     /*if (name.equals("root")){
                         name = "Files";
                         //pseudoClassStateChanged(firstElementPseudoClass, true);
                         setDisclosureNode(null);
 
                     }*/
-                    setText("id: "+id+" "+name);
+
 
 
                     ToggleButton showBtn = new ToggleButton("");
@@ -204,6 +232,15 @@ public class Controller {
                     setGraphic(hBox);
 
                 }
+            }
+
+        });
+
+        tracksTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            TreeItem<TrackItem> selectedItem = (TreeItem<TrackItem>) newValue;
+            TrackItem item = selectedItem.getValue();
+            if (item.getClass().getName().equals("models.Waypoint")){
+                fillPointDescription((Waypoint)item);
             }
         });
 
@@ -221,6 +258,16 @@ public class Controller {
         });
 
 
+    }
+
+    private void fillPointDescription(Waypoint point){
+        indexLabel.setText(String.valueOf(point.getPosition()));
+        latLabel.setText(String.valueOf(point.getLat()));
+        lngLabel.setText(String.valueOf(point.getLng()));
+        depthLabel.setText(String.valueOf(point.getDepth()));
+        radiusLabel.setText(String.valueOf(point.getCapture_radius()));
+        pointDistanceLabel.setText(String.valueOf(point.getDistance()));
+        azumuthLabel.setText(String.valueOf(point.getAzimuth()));
     }
 
 

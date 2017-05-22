@@ -19,7 +19,7 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         Waypoint waypoint = new Waypoint(lat, lng);
         waypoint.setId(id);
         waypoint.setPosition(position);
-        return new Waypoint(lat, lng);
+        return waypoint;
 
     }
 

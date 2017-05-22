@@ -29,6 +29,7 @@ public class TrackLine implements TrackItem{
         this();
         this.id = id;
         this.points.addAll(points);
+
     }
 
     public int getId() {
@@ -78,7 +79,7 @@ public class TrackLine implements TrackItem{
 
     @Override
     public String toString() {
-        return id +" " + name;
+        return id +" "+points;
     }
 
     public static enum LineTypes{
