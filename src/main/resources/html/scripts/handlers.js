@@ -60,14 +60,20 @@ var handlers = {};
             e.vertex.circle = circle;
 
             e.vertex.point = point;
-            let index = e.vertex.latlngs.indexOf(e.vertex.latlng);
+            var index = e.vertex.latlngs.indexOf(e.vertex.latlng);
 
+            JAVA.log("add icon")
             if (index != e.vertex.latlngs.length-1){
+                JAVA.log("update")
                 handlers.updatePositions(track);
             }
             if (index == 0){
+                JAVA.log("add icon2")
                 e.vertex.setIcon(new L.StartIcon({'number': index}));
-            } else e.vertex.setIcon(new L.MyIcon({'number': index}));
+            } else{
+                JAVA.log("add icon3");
+                e.vertex.setIcon(new L.MyIcon({'number': index}));
+            }
 
             point.vertex = e.vertex;
             point.circle = circle;
@@ -151,7 +157,6 @@ var handlers = {};
     }
 
     handlers.dragVertex = function (e) {
-        console.log(e);
         if (e.vertex.circle != undefined) {
             e.vertex.circle.redraw();
         }
@@ -159,11 +164,12 @@ var handlers = {};
     }
 
     handlers.updatePositions = function(track) {
+
         for(let point of track.points.values()) {
             if (point.pos != point.vertex.latlngs.indexOf(point.vertex.latlng)) {
                 point.pos = point.vertex.latlngs.indexOf(point.vertex.latlng);
                 point.vertex.options.icon.updateIcon(point.pos);
-                JAVA.updatePoint(point);
+                JAVA.updatePoint(point, track.id);
             }
         }
     }

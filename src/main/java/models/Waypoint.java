@@ -14,8 +14,8 @@ public class Waypoint implements TrackItem{
     private int id;
     private DoubleProperty lat = new SimpleDoubleProperty();
     private DoubleProperty lng = new SimpleDoubleProperty();
-    private double azimuth;
-    private double distance;
+    private DoubleProperty azimuth = new SimpleDoubleProperty();
+    private DoubleProperty distance = new SimpleDoubleProperty();
     private double depth;
     private double capture_radius;
     private List<PointTask> tasks;
@@ -38,8 +38,8 @@ public class Waypoint implements TrackItem{
         this.id = id;
         this.lat.set(lat);
         this.lng.set(lng);
-        this.azimuth = 0;
-        this.distance = 0;
+        this.azimuth.set(0);
+        this.distance.set(0);
         this.name = "Track Point";
     }
 
@@ -47,8 +47,8 @@ public class Waypoint implements TrackItem{
         this.id = id;
         this.lat.set(lat);
         this.lng.set(lng);
-        this.azimuth = azimuth;
-        this.distance = distance;
+        this.azimuth.setValue(azimuth);
+        this.distance.set(0);
         this.name = "Track Point";
     }
 
@@ -90,19 +90,19 @@ public class Waypoint implements TrackItem{
     }
 
     public double getAzimuth() {
-        return azimuth;
+        return azimuth.get();
     }
 
     public void setAzimuth(double azimuth) {
-        this.azimuth = azimuth;
+        this.azimuth.setValue(azimuth);
     }
 
     public double getDistance() {
-        return distance;
+        return distance.get();
     }
 
     public void setDistance(double distance) {
-        this.distance = distance;
+        this.distance.set(distance);
     }
 
     public void setName(String name){

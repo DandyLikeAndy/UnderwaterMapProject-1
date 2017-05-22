@@ -1,5 +1,6 @@
 package app;
 
+import JSBridge.JsBridge;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -22,11 +23,13 @@ import javafx.util.StringConverter;
 import models.*;
 import models.JSONConverters.LineConverter;
 import models.JSONConverters.PointConverter;
+import models.repository.Repository;
 import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -77,17 +80,21 @@ public class Controller {
 
     Gson gson;
 
+    JsBridge jsBridge;
+
+    Repository repository;
+
     SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
     SimpleObjectProperty<String> status = new SimpleObjectProperty<>();
 
     @FXML
     public void zoomMinus() {
-        window.call("zoomMinus");
+        jsBridge.zoomMinus();
     }
 
     @FXML
     public void zoomPlus() {
-        window.call("zoomPlus");
+        jsBridge.zoomPlus();
     }
 
     @FXML
@@ -97,12 +104,12 @@ public class Controller {
 
     @FXML
     public void getTilesFromWeb() {
-        window.call("getTilesImg");
+        jsBridge.getTiles();
     }
 
     @FXML
     public void startTrack() {
-        window.call("startTrack");
+        jsBridge.startTrac();
     }
 
     @FXML
@@ -110,12 +117,12 @@ public class Controller {
 
     @FXML
     public void startRegion() {
-        window.call("startRegion");
+        jsBridge.startRegion();
     }
 
     @FXML
     public void addMarker() {
-        window.call("addMarker");
+        jsBridge.addMarker();
     }
 
     public void initialize() {
@@ -140,9 +147,11 @@ public class Controller {
                                 System.out.println("Change");
                                 window = (JSObject) webEngine.executeScript("window");
                                 window.setMember("javaController", controller);
-                                window.call("initJavaController");
+                                repository = Repository.getInstance();
+                                jsBridge = new JsBridge(window, repository);
+                                jsBridge.initJavaController();
 
-                                resizeMap();
+                                jsBridge.resizeMap(webView.getWidth(), webView.getHeight());
 
                                 setHandlers();
 
@@ -167,11 +176,11 @@ public class Controller {
 
     private void setHandlers() {
         webView.widthProperty().addListener((observable, oldValue, newValue) -> {
-            resizeMap();
+            jsBridge.resizeMap(webView.getWidth(), webView.getHeight());
         });
 
         webView.heightProperty().addListener((observable, oldValue, newValue) -> {
-            resizeMap();
+            jsBridge.resizeMap(webView.getWidth(), webView.getHeight());
         });
 
         zoomLabel.textProperty().bindBidirectional(zoomProperty, new StringConverter<Number>() {
@@ -240,11 +249,11 @@ public class Controller {
             TreeItem<TrackItem> selectedItem = (TreeItem<TrackItem>) newValue;
             TrackItem item = selectedItem.getValue();
             if (item.getClass().getName().equals("models.Waypoint")){
-                fillPointDescription((Waypoint)item);
+                repository.setCurrentPoint((Waypoint) item);
             }
         });
 
-        lines.addListener((ListChangeListener<TrackItem>) c -> {
+        repository.getLines().addListener((ListChangeListener<TrackItem>) c -> {
             c.next();
             TrackItem addedTrack = c.getAddedSubList().get(0);
             TreeItem<TrackItem> item = new TreeItem<>(addedTrack);
@@ -255,6 +264,10 @@ public class Controller {
             });
 
             root.getChildren().add(item);
+        });
+
+        repository.currentPointProperty().addListener((observable, oldValue, newValue) -> {
+            fillPointDescription(newValue);
         });
 
 
@@ -281,19 +294,14 @@ public class Controller {
     }
 
     public void addLineFromWeb(String line) {
-        System.out.println(line);
+        //System.out.println(line);
         TrackLine trackLine = gson.fromJson(line, TrackLine.class);
-        lines.add(trackLine);
+        repository.addLine(trackLine);
     }
 
     public void deletePoint(int id) {
         points.removeAll(points.stream().filter(p -> p.getId() == id).collect(Collectors.toList()));
     }
-
-    private void sendToWeb() {
-        //window.call("getFromJava", gson.toJson(new User("GHJ", 2)));
-    }
-
 
     public void setStatus(String status) {
         this.status.set(status);
@@ -311,14 +319,12 @@ public class Controller {
         zoomProperty.set(zoom);
     }
 
-    private void selectLineToWeb(int id) {
-        window.call("selectLine", id);
-    }
+    public void updatePoint(String point, int lineId){
+        Waypoint waypoint = gson.fromJson(point, Waypoint.class);
 
-    private void resizeMap() {
-        window.call("resizeMap", webView.getWidth(), webView.getHeight());
+        TrackLine line = repository.getLines().filtered(line1 -> line1.getId() == lineId).get(0);
+        line.updatePoint(waypoint);
     }
-
 
     public void getTilesImgFromWeb(String imgs) throws IOException {
         String[] tilesImgs = imgs.split(",");

@@ -3,8 +3,12 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by User on 12.05.2017.
@@ -14,6 +18,7 @@ public class TrackLine implements TrackItem{
     private int id;
     private double length;
     private ObservableList<Waypoint> points = FXCollections.observableArrayList();
+    private SortedList<Waypoint> waypointSortedList = new SortedList<>(points, (o1, o2) -> ((Integer)o1.getPosition()).compareTo(o2.getPosition()));
     private String name;
     private LineTypes type;
 
@@ -54,7 +59,7 @@ public class TrackLine implements TrackItem{
     }
 
     public ObservableList<Waypoint> getPoints() {
-        return points;
+        return waypointSortedList;
     }
 
     public void setPoints(ObservableList<Waypoint> points) {
@@ -80,6 +85,20 @@ public class TrackLine implements TrackItem{
     @Override
     public String toString() {
         return id +" "+points;
+    }
+
+    public void updatePoint(Waypoint waypoint) {
+        Waypoint target = points.filtered(new Predicate<Waypoint>() {
+            @Override
+            public boolean test(Waypoint p) {
+                return p.getId() == waypoint.getId();
+            }
+        }).get(0);
+
+        target.setPosition(waypoint.getPosition());
+        target.setAzimuth(waypoint.getAzimuth());
+        target.setLat(waypoint.getLat());
+        target.setLng(waypoint.getLng());
     }
 
     public static enum LineTypes{
