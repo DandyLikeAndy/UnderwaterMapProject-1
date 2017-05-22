@@ -16,9 +16,11 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         double lng = object.get("lng").getAsDouble();
         int id = object.get("id").getAsInt();
         int position = object.get("pos").getAsInt();
+        int radius = object.get("radius").getAsInt();
         Waypoint waypoint = new Waypoint(lat, lng);
         waypoint.setId(id);
         waypoint.setPosition(position);
+        waypoint.setCapture_radius(radius);
         return waypoint;
 
     }

@@ -63,6 +63,11 @@ class Point {
 
     set circleRadius(r){
         this._circle.setRadius(r);
+        this._radius = r;
+    }
+
+    get circleRadius(){
+        return this._radius;
     }
 
     set latlngs(latlngs){
@@ -92,6 +97,7 @@ class Point {
         obj.lat = this.lat;
         obj.lng = this.lng;
         obj.pos = this.pos;
+        obj.radius = this.circleRadius;
         return obj;
     }
 }

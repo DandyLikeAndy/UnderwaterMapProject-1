@@ -55,7 +55,7 @@ var handlers = {};
             let point = new Point();
 
 
-            let circle = new L.circle(e.latlng, {radius:50}).addTo(map);
+            let circle = new L.circle(e.latlng, {radius:currentRadius}).addTo(map);
 
             e.vertex.circle = circle;
 
@@ -75,7 +75,7 @@ var handlers = {};
             point.lat = e.latlng.lat;
             point.lng = e.latlng.lng;
             point.pos = index;
-            point.circleRadius = 50;
+            point.circleRadius = currentRadius;
 
             e.vertex.point = point;
             track.addPoint(point);
