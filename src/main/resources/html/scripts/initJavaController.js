@@ -1,7 +1,7 @@
 /**
  * Created by User on 12.05.2017.
  */
-let javaController = {
+/*let javaController = {
     log: function () {
 
     },
@@ -35,7 +35,7 @@ let javaController = {
     updatePoint: function (p) {
 
     }
-};
+};*/
 
 function initJava() {
     var obj = {};
