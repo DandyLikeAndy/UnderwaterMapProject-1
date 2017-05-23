@@ -2,11 +2,13 @@
  * Created by Anton on 19.05.2017.
  */
 class Point {
-    constructor(lat, lng, id, pos = 8){
+    constructor(lat, lng, id, pos = 8, azimuth = 123, distance = 0){
         this._lng = lng;
         this._lat = lat;
         this._id = id;
         this._pos = pos;
+        this._azimuth = azimuth;
+        this._distance = distance;
     }
 
     set id(val){
@@ -70,9 +72,9 @@ class Point {
         return this._radius;
     }
 
-    set latlngs(latlngs){
-        this._lat = latlngs.lat;
-        this._lng = latlngs.lng;
+    set latlngs(val){
+        this._lat = val.lat;
+        this._lng = val.lng;
     }
 
     set distance(value){
@@ -83,12 +85,20 @@ class Point {
         return this._distance;
     }
 
-    set athimuth(val){
+    set azimuth(val){
         this._azimuth = val;
     }
 
     get azimuth(){
         return this._azimuth;
+    }
+
+    set line(line){
+        this._line = line;
+    }
+
+    get line(){
+        return this._line;
     }
 
     toJSON(){
@@ -98,6 +108,8 @@ class Point {
         obj.lng = this.lng;
         obj.pos = this.pos;
         obj.radius = this.circleRadius;
+        obj.azimuth = this.azimuth;
+        obj.distance = this.distance;
         return obj;
     }
 }

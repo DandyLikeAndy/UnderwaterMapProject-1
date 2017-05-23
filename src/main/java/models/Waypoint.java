@@ -1,7 +1,9 @@
 package models;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import models.behavors.Behavior;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class Waypoint implements TrackItem{
     private List<Behavior> behaviors;
     private String name;
     private PointTypes type;
-    private int position;
+    private IntegerProperty position = new SimpleIntegerProperty();
 
     public Waypoint() {
         this.name = "Track Point";
@@ -150,11 +152,23 @@ public class Waypoint implements TrackItem{
     }
 
     public int getPosition() {
-        return position;
+        return position.get();
     }
 
     public void setPosition(int position) {
-        this.position = position;
+        this.position.setValue(position);
+    }
+
+    public IntegerProperty positionProperty(){
+        return position;
+    }
+
+    public DoubleProperty distanceProperty(){
+        return distance;
+    }
+
+    public DoubleProperty azimuthProperty(){
+        return azimuth;
     }
 
     @Override

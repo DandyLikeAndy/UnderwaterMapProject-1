@@ -42,7 +42,7 @@
 
             //http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png
             //file:///C:/Users/User/IdeaProjects/testOpenLayer/tiles/opentopomap.org/{z}/{x}/{y}.png
-            L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            L.tileLayer('file:///C:\Users\User\IdeaProjects\testOpenLayer\tiles\opentopomap.org/{z}/{x}/{y}.png', {
                 attribution: ''
             }).addTo(map);
 
@@ -64,7 +64,9 @@
 
             map.on('zoomend', handlers.setZoom);
 
-            map.on("editable:vertex:drag", handlers.dragVertex)
+            map.on("editable:vertex:drag", handlers.dragVertex);
+
+            map.on("editable:vertex:dragend ", handlers.dragEndVertex)
 
 
             ////////////add delete shape

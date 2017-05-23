@@ -1,7 +1,6 @@
-/**
- * Created by User on 12.05.2017.
- */
-/*let javaController = {
+
+/*
+let javaController = {
     log: function () {
 
     },
@@ -34,8 +33,12 @@
     },
     updatePoint: function (p) {
 
+    },
+    updateTrack: function (t) {
+
     }
-};*/
+};
+*/
 
 function initJava() {
     var obj = {};
@@ -47,18 +50,13 @@ function initJava() {
         javaController.addLineFromWeb(line);
     };
 
-    obj.addPoint = function (point) {
-        var obj = {};
-        obj.id = point.vertex._leaflet_id;
-        obj.lat = point.latlng.lat;
-        obj.lng = point.latlng.lng;
-        //javaController.addPoint(JSON.stringify(obj));
+    obj.addPoint = function (point, trackId) {
+        javaController.addPoint(JSON.stringify(point), trackId);
         //javaController.log("add point: "+JSON.stringify(obj));
     };
 
-    obj.deletePoint = function (point) {
-        var id = point.vertex._leaflet_id;
-        //javaController.deletePoint(id);
+    obj.deletePoint = function (pointId, layerId) {
+        javaController.deletePoint(pointId, layerId);
     };
 
     obj.clickPoint = function (point) {
@@ -87,6 +85,10 @@ function initJava() {
     obj.updatePoint = function (point) {
         javaController.updatePoint(JSON.stringify(point));
     };
+    obj.updateTrack = function (track) {
+
+        javaController.updateTrack(JSON.stringify(track));
+    }
 
     return obj;
 }

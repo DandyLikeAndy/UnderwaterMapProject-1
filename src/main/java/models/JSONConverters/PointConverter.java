@@ -21,6 +21,8 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         waypoint.setId(id);
         waypoint.setPosition(position);
         waypoint.setCapture_radius(radius);
+        waypoint.setDistance(object.get("distance").getAsDouble());
+        waypoint.setAzimuth(object.get("azimuth").getAsDouble());
         return waypoint;
 
     }

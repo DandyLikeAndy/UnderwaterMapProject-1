@@ -8,8 +8,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -29,7 +27,6 @@ import utills.HttpDownloadUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -255,22 +252,60 @@ public class Controller {
 
         repository.getLines().addListener((ListChangeListener<TrackItem>) c -> {
             c.next();
-            TrackItem addedTrack = c.getAddedSubList().get(0);
-            TreeItem<TrackItem> item = new TreeItem<>(addedTrack);
+            if (c.wasAdded()){
+                TrackItem addedTrack = c.getAddedSubList().get(0);
+                TreeItem<TrackItem> item = new TreeItem<>(addedTrack);
 
-            ((TrackLine) addedTrack).getPoints().forEach(p -> {
-                TreeItem<TrackItem> point = new TreeItem<>(p);
-                item.getChildren().add(point);
-            });
+                ((TrackLine) addedTrack).getPoints().forEach(p -> {
+                    TreeItem<TrackItem> point = new TreeItem<>(p);
+                    item.getChildren().add(point);
+                });
 
-            root.getChildren().add(item);
+                root.getChildren().add(item);
+
+                ((TrackLine) addedTrack).getPoints().addListener((ListChangeListener<Waypoint>) c1 -> {
+                    c1.next();
+                    if (c1.wasAdded()){
+                        Waypoint addedPoint = c1.getAddedSubList().get(0);
+                        TreeItem<TrackItem> point = new TreeItem<>(addedPoint);
+                        item.getChildren().add(point);
+                        item.getChildren().sort(this::comparator);
+                    } else if (c1.wasRemoved()){
+                        System.out.println("removed");
+                        Waypoint removedPoint = c1.getRemoved().get(0);
+                        item.getChildren().stream()
+                                .filter(trackItemTreeItem -> trackItemTreeItem.getValue().equals(removedPoint))
+                                .findFirst().ifPresent(trackItemTreeItem -> {
+                                    item.getChildren().remove(trackItemTreeItem);
+                                });
+                        item.getChildren().sort(this::comparator);
+                    }
+                });
+            }
+
+            /*if (c.wasUpdated()){
+                TrackItem updatedTrack = c.getList().get(0);
+                System.out.println();
+            }*/
+
         });
 
-        repository.currentPointProperty().addListener((observable, oldValue, newValue) -> {
-            fillPointDescription(newValue);
+        repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
+            c.next();
+            if (!c.wasRemoved()){
+                fillPointDescription(c.getList().get(0));
+            }
         });
+    }
+    private int comparator(TreeItem<TrackItem> o1, TreeItem<TrackItem>  o2){
 
-
+        if (((Waypoint)o1.getValue()).getPosition() > ((Waypoint)o2.getValue()).getPosition()){
+            return 1;
+        }
+        if (((Waypoint)o1.getValue()).getPosition() < ((Waypoint)o2.getValue()).getPosition()){
+            return -1;
+        }
+        return 0;
     }
 
     private void fillPointDescription(Waypoint point){
@@ -288,9 +323,10 @@ public class Controller {
         System.out.println("From web: " + value);
     }
 
-    public void addPoint(String point) {
+    public void addPoint(String point, String trackId) {
         Waypoint waypoint = gson.fromJson(point, Waypoint.class);
-        points.add(waypoint);
+        repository.getLines().stream().filter(l->l.getId() == Integer.parseInt(trackId))
+                .findFirst().ifPresent(t -> t.addPoint(waypoint));
     }
 
     public void addLineFromWeb(String line) {
@@ -299,8 +335,9 @@ public class Controller {
         repository.addLine(trackLine);
     }
 
-    public void deletePoint(int id) {
-        points.removeAll(points.stream().filter(p -> p.getId() == id).collect(Collectors.toList()));
+    public void deletePoint(int id, int lineId) {
+        System.out.println("delete");
+        repository.deletePoint(id, lineId);
     }
 
     public void setStatus(String status) {
@@ -318,6 +355,16 @@ public class Controller {
     public void setZoom(int zoom){
         zoomProperty.set(zoom);
     }
+
+    public void updateTrack(String track){
+        System.out.println(track);
+        TrackLine trackLine = gson.fromJson(track, TrackLine.class);
+        repository.getLines().stream().filter(t -> trackLine.getId() == t.getId()).findFirst().ifPresent(t -> {
+            repository.updateTrack(t, trackLine);
+        });
+    }
+
+
 
     public void updatePoint(String point, int lineId){
         Waypoint waypoint = gson.fromJson(point, Waypoint.class);
