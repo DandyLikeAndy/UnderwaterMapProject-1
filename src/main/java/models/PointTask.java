@@ -11,6 +11,10 @@ public class PointTask {
     public PointTask() {
     }
 
+    public PointTask(String name){
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

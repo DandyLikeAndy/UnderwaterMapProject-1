@@ -71,6 +71,7 @@ public class Repository {
 
 
 
+
     public void addLine(TrackLine line){
         lines.add(line);
     }
@@ -82,7 +83,7 @@ public class Repository {
     public void deletePoint(int pointId, int lineId){
         TrackLine track = lines.stream().filter(l->l.getId() == lineId).findFirst().get();
         Waypoint waypoint = track.getPoints().stream().filter(p->p.getId() == pointId).findFirst().get();
-        //track.getPoints().remove(waypoint);
+        track.removePoint(waypoint);
     }
 
     public void updateTrack(TrackLine target, TrackLine source){
@@ -97,4 +98,6 @@ public class Repository {
             targetPoint.setCapture_radius(sourcePoint.getCapture_radius());
         });
     }
+
+
 }

@@ -30,7 +30,7 @@ var handlers = {};
         handlers.updatePositions(lines.get(layerId));
         JAVA.log("delete "+e.vertex.point.id+" "+layerId);
         JAVA.deletePoint(e.vertex.point.id, layerId);
-        //JAVA.updateTrack(e.vertex.point.line);
+        JAVA.updateTrack(e.vertex.point.line);
     };
 
     handlers.creteNewVertex = function (e) {

@@ -167,6 +167,10 @@ public class Waypoint implements TrackItem{
         return distance;
     }
 
+    public void addTask(PointTask task){
+        tasks.add(task);
+    }
+
     public DoubleProperty azimuthProperty(){
         return azimuth;
     }

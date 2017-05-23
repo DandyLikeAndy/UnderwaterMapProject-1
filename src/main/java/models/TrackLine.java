@@ -68,6 +68,10 @@ public class TrackLine implements TrackItem{
         points.add(point);
     }
 
+    public void removePoint(Waypoint waypoint){
+        if (points.contains(waypoint)) points.remove(waypoint);
+    }
+
     public void setName(String name){
         this.name = name;
     }

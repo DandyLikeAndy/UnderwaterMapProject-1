@@ -1,3 +1,7 @@
+.scroll-pane{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
 .root{
     -icons-color: black;
 }
@@ -42,6 +46,7 @@
     -fx-border-color: transparent;
     -fx-border-width: 0px;
 }
+
 .layers-tree .glyph-icon{ -fx-text-fill: -icons-color; -fx-fill: -icons-color; -glyph-size: 12px; }
 
 .glyph-icon{ -fx-text-fill: -icons-color; -fx-fill: -icons-color; -glyph-size: 24px; }
