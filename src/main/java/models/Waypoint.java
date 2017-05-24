@@ -4,8 +4,11 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import models.behavors.Behavior;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,8 +23,8 @@ public class Waypoint implements TrackItem{
     private DoubleProperty distance = new SimpleDoubleProperty();
     private double depth;
     private double capture_radius;
-    private List<PointTask> tasks;
-    private List<Behavior> behaviors;
+    private ObservableList<PointTask> tasks = FXCollections.observableArrayList();
+    private List<Behavior> behaviors = new ArrayList<>();
     private String name;
     private PointTypes type;
     private IntegerProperty position = new SimpleIntegerProperty();
@@ -135,11 +138,11 @@ public class Waypoint implements TrackItem{
         this.capture_radius = capture_radius;
     }
 
-    public List<PointTask> getTasks() {
+    public ObservableList<PointTask> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<PointTask> tasks) {
+    public void setTasks(ObservableList<PointTask> tasks) {
         this.tasks = tasks;
     }
 

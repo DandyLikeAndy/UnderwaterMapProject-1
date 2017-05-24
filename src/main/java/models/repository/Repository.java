@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.util.Callback;
+import models.PointTask;
 import models.TrackLine;
 import models.Waypoint;
 
@@ -36,6 +37,7 @@ public class Repository {
     //private ObjectProperty<Waypoint> currentPoint = new SimpleObjectProperty<>();
     private ObjectProperty<TrackLine> currentLine = new SimpleObjectProperty<>();
     private ObservableList<Waypoint> currentPoint = FXCollections.observableArrayList(param -> new Observable[]{param.lngProperty(),param.latProperty(),param.positionProperty(),param.distanceProperty(),param.azimuthProperty()});
+    private ObservableList<PointTask> currentTasks = FXCollections.observableArrayList();
 
     public static void setInstance(Repository instance) {
         Repository.instance = instance;
@@ -68,6 +70,7 @@ public class Repository {
     public void setCurrentPoint(Waypoint currentPoint) {
         this.currentPoint.add(0,currentPoint);
     }
+
 
 
 

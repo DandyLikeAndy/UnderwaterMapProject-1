@@ -1,6 +1,7 @@
 package app;
 
 import JSBridge.JsBridge;
+import Views.TaskView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -18,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import models.*;
 import models.JSONConverters.LineConverter;
@@ -28,6 +30,7 @@ import utills.HttpDownloadUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -60,9 +63,10 @@ public class Controller {
     private AnchorPane tasksPane;
     @FXML
     private AnchorPane behaviorsPane;
-
-    private TreeView<String> tasksTree;
-    private TreeView<String> behaviorsTree;
+    @FXML
+    private ListView<PointTask> tasksListView;
+    @FXML
+    Label distanceLabel;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -106,8 +110,6 @@ public class Controller {
         jsBridge.startTrac();
     }
 
-    @FXML
-    Label distanceLabel;
 
     @FXML
     public void startRegion() {
@@ -117,6 +119,15 @@ public class Controller {
     @FXML
     public void addMarker() {
         jsBridge.addMarker();
+    }
+
+    @FXML
+    public void addTask(){
+        repository.currentPointProperty().get(0).addTask(new PointTask("new"));
+    }
+
+    @FXML
+    public void deleteTask(){
     }
 
     public void initialize() {
@@ -151,7 +162,7 @@ public class Controller {
 
                                 initTreeView();
 
-                                //initTasksBehaviorsPane();
+                                initTasksBehaviorsPane();
 
                                 setZoom((int) window.call("getZoom"));
                        /* // all next classes are from org.w3c.dom domain
@@ -195,20 +206,15 @@ public class Controller {
 
     }
 
-    private void initTasksBehaviorsPane(){
-        tasksTree = new TreeView<>();
-        TreeItem<String> root = new TreeItem<>();
-        tasksTree.setRoot(root);
-        tasksPane.getChildren().add(tasksTree);
-
+    private void initTasksBehaviorsPane() {
         repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
-            Waypoint point = c.getList().get(0);
-            tasksTree.getRoot().getChildren().clear();
-            point.getTasks().forEach(t->{
-                tasksTree.getRoot().getChildren().add(new TreeItem<>(t.getName()));
-            });
+            Waypoint waypoin = c.getList().get(0);
+            ObservableList<PointTask> tasks = waypoin.getTasks();
+            tasksListView.setItems(tasks);
         });
+
+        tasksListView.setCellFactory((ListView<PointTask> l)->new TaskView());
     }
 
     private void initTreeView() {
@@ -285,7 +291,6 @@ public class Controller {
                         item.getChildren().add(point);
                         item.getChildren().sort(this::comparator);
                     } else if (c1.wasRemoved()) {
-                        System.out.println("removed");
                         Waypoint removedPoint = c1.getRemoved().get(0);
                         item.getChildren().stream()
                                 .filter(trackItemTreeItem -> trackItemTreeItem.getValue().equals(removedPoint))
@@ -377,7 +382,7 @@ public class Controller {
     }
 
     public void updateTrack(String track) {
-        System.out.println(track);
+        //System.out.println(track);
         TrackLine trackLine = gson.fromJson(track, TrackLine.class);
         repository.getLines().stream().filter(t -> trackLine.getId() == t.getId()).findFirst().ifPresent(t -> {
             repository.updateTrack(t, trackLine);
