@@ -17,6 +17,7 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -71,6 +72,16 @@ public class Controller {
     private ListView<Behavior> behaviorListView;
     @FXML
     Label distanceLabel;
+    @FXML
+    AnchorPane pointProperties;
+    @FXML
+    AnchorPane properties;
+    @FXML
+    GridPane trackInfo;
+    @FXML
+    Label trackLengthLabel;
+    @FXML
+    TextField trackNameField;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -126,24 +137,20 @@ public class Controller {
     }
 
     @FXML
-    public void addTask(){
+    public void addTask() {
         repository.currentPointProperty().get(0).addTask(new PointTask("new"));
     }
 
     @FXML
-    public void deleteTask(){
+    public void deleteTask() {
         repository.currentPointProperty().get(0).deleteTask(tasksListView.getSelectionModel().getSelectedItems().get(0));
     }
 
     @FXML
-    public void addBehavior(){
+    public void addBehavior() {
         repository.currentPointProperty().get(0).addBehavior(new Behavior());
     }
-    @FXML
-    public void deleteBehavior(){
-        repository.currentPointProperty().get(0).deleteBehavior(behaviorListView.getSelectionModel().getSelectedItems().get(0));
-        System.out.println(behaviorListView.getSelectionModel().getSelectedItems().get(0));
-    }
+
 
     public void initialize() {
 
@@ -194,6 +201,8 @@ public class Controller {
                 );
 
 
+
+
     }
 
     private void setHandlers() {
@@ -231,8 +240,8 @@ public class Controller {
             behaviorListView.setItems(waypoint.getBehaviors());
         });
 
-        tasksListView.setCellFactory((ListView<PointTask> l)->new TaskView());
-        behaviorListView.setCellFactory((ListView<Behavior> l)->new BehaviorView());
+        tasksListView.setCellFactory((ListView<PointTask> l) -> new TaskView());
+        behaviorListView.setCellFactory((ListView<Behavior> l) -> new BehaviorView());
     }
 
     private void initTreeView() {
@@ -285,6 +294,13 @@ public class Controller {
             TrackItem item = selectedItem.getValue();
             if (item.getClass().getName().equals("models.Waypoint")) {
                 repository.setCurrentPoint((Waypoint) item);
+                trackInfo.setVisible(false);
+                pointProperties.setVisible(true);
+            } else if(item.getClass().getName().equals("models.TrackLine")){
+                pointProperties.setVisible(false);
+                trackInfo.setVisible(true);
+                trackNameField.setText(((TrackLine)item).getName());
+                trackLengthLabel.setText(String.valueOf(((TrackLine)item).getLength()));
             }
         });
 

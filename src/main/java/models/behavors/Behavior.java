@@ -11,10 +11,9 @@ public class Behavior {
     Map<String, Object> options;
     
     public Behavior(){
-        type = BEHAVIOR_TYPE.DIVE;
         name = BEHAVIOR_TYPE.DIVE.getName();
         options = new HashMap<>();
-        type.getOptionsList().forEach(o->options.put(o, "empty"));
+        setType(BEHAVIOR_TYPE.DIVE);
     }
 
     public Behavior(String name) {
@@ -65,6 +64,7 @@ public class Behavior {
 
     public void setType(BEHAVIOR_TYPE type) {
         this.type = type;
+        type.getOptionsList().forEach(o->options.put(o, "empty"));
     }
 
     public static enum BEHAVIOR_TYPE{

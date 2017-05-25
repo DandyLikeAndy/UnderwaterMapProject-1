@@ -70,7 +70,14 @@ public class BehaviorView extends ListCell<Behavior> {
         final int[] rowIndex = {0};
         options.forEach(o->{
             gridPane.add(new Label(o), 0, rowIndex[0]);
-            gridPane.add(new Label("empty"), 1, rowIndex[0]);
+            String value = (String) behavior.getOptions().get(o);
+            TextField textField = new TextField(value);
+            gridPane.add(textField, 1, rowIndex[0]);
+
+            textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                behavior.getOptions().put(o, newValue);
+            });
+
             rowIndex[0]++;
         });
     }

@@ -24,6 +24,7 @@ public class TrackLine implements TrackItem{
 
     public TrackLine(){
         name = "Unnamed Track";
+        length = 0;
     }
     public TrackLine(int id){
         this.id = id;

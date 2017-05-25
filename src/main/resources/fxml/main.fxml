@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -34,81 +35,102 @@
                   <Font size="24.0" />
                </font>
             </Label>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <ScrollPane prefHeight="551.0" prefWidth="250.0" VBox.vgrow="ALWAYS">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="235.0">
+                <AnchorPane fx:id="properties" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="235.0">
                      <children>
-                        <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="pointProperties" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="126.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="74.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Index" />
+                                    <Label text="Latitude" GridPane.rowIndex="1" />
+                                    <Label text="Longtitude" GridPane.rowIndex="2" />
+                                    <Label text="Depth" GridPane.rowIndex="3" />
+                                    <Label text="Capture radius" GridPane.rowIndex="6" />
+                                    <Label text="Distance" GridPane.rowIndex="4" />
+                                    <Label text="Azimuth" GridPane.rowIndex="5" />
+                                    <Label fx:id="indexLabel" text="Label" GridPane.columnIndex="1" />
+                                    <Label fx:id="latLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label fx:id="lngLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label fx:id="depthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label fx:id="pointDistanceLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label fx:id="azumuthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="radiusLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                 </children>
+                              </GridPane>
+                              <TabPane prefHeight="300.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="220.0">
+                                <tabs>
+                                  <Tab text="Tasks">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
+                                             <children>
+                                                <ScrollPane fx:id="tasksPane" hbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <content>
+                                                      <ListView fx:id="tasksListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
+                                                   </content>
+                                                </ScrollPane>
+                                                <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
+                                                  <buttons>
+                                                    <Button mnemonicParsing="false" onAction="#addTask" text="Add" />
+                                                      <Button mnemonicParsing="false" onAction="#deleteTask" text="Delete" />
+                                                  </buttons>
+                                                </ButtonBar>
+                                             </children>
+                                          </AnchorPane>
+                                    </content>
+                                  </Tab>
+                                  <Tab text="Behaviors">
+                                    <content>
+                                      <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <ScrollPane AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <content>
+                                                      <ListView fx:id="behaviorListView" maxHeight="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
+                                                   </content>
+                                                </ScrollPane>
+                                                <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
+                                                  <buttons>
+                                                    <Button mnemonicParsing="false" onAction="#addBehavior" text="Add" />
+                                                  </buttons>
+                                                </ButtonBar>
+                                             </children>
+                                          </AnchorPane>
+                                    </content>
+                                  </Tab>
+                                </tabs>
+                              </TabPane>
+                           </children>
+                        </AnchorPane>
+                        <GridPane fx:id="trackInfo">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="112.0" minWidth="10.0" prefWidth="81.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="154.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="10.0" prefWidth="49.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="151.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Index" />
-                              <Label text="Latitude" GridPane.rowIndex="1" />
-                              <Label text="Longtitude" GridPane.rowIndex="2" />
-                              <Label text="Depth" GridPane.rowIndex="3" />
-                              <Label text="Capture radius" GridPane.rowIndex="6" />
-                              <Label text="Distance" GridPane.rowIndex="4" />
-                              <Label text="Azimuth" GridPane.rowIndex="5" />
-                              <Label fx:id="indexLabel" text="Label" GridPane.columnIndex="1" />
-                              <Label fx:id="latLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label fx:id="lngLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label fx:id="depthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label fx:id="pointDistanceLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label fx:id="azumuthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label fx:id="radiusLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label text="Name" />
+                              <Label text="Length" GridPane.rowIndex="1" />
+                              <TextField fx:id="trackNameField" prefHeight="25.0" prefWidth="139.0" GridPane.columnIndex="1" />
+                              <Label fx:id="trackLengthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
-                        <TabPane prefHeight="300.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
-                          <tabs>
-                            <Tab text="Tasks">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
-                                       <children>
-                                          <ScrollPane fx:id="tasksPane" hbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <content>
-                                                <ListView fx:id="tasksListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
-                                             </content>
-                                          </ScrollPane>
-                                          <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
-                                            <buttons>
-                                              <Button mnemonicParsing="false" onAction="#addTask" text="Add" />
-                                                <Button mnemonicParsing="false" onAction="#deleteTask" text="Delete" />
-                                            </buttons>
-                                          </ButtonBar>
-                                       </children></AnchorPane>
-                              </content>
-                            </Tab>
-                            <Tab text="Behaviors">
-                              <content>
-                                <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <ScrollPane AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <content>
-                                                <ListView fx:id="behaviorListView" maxHeight="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
-                                             </content>
-                                          </ScrollPane>
-                                          <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
-                                            <buttons>
-                                              <Button mnemonicParsing="false" onAction="#addBehavior" text="Add" />
-                                                <Button mnemonicParsing="false" onAction="#deleteBehavior" text="Delete" />
-                                            </buttons>
-                                          </ButtonBar>
-                                       </children></AnchorPane>
-                              </content>
-                            </Tab>
-                          </tabs>
-                        </TabPane>
                      </children>
                   </AnchorPane>
               </content>
