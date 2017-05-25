@@ -4,12 +4,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TitledPane;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import models.behavors.Behavior;
 
 import javax.lang.model.AnnotatedConstruct;
@@ -23,6 +23,7 @@ public class BehaviorView extends ListCell<Behavior> {
     private ChoiceBox<Behavior.BEHAVIOR_TYPE> choiceBox;
     private GridPane gridPane;
     private TitledPane titledPane;
+    private HBox hBox;
 
 
     @Override
@@ -32,22 +33,33 @@ public class BehaviorView extends ListCell<Behavior> {
             setText("");
             setGraphic(null);
         } else {
+            hBox = new HBox();
+            Button deleteButton  = new Button("del");
             behavior = item;
             ObservableList<Behavior.BEHAVIOR_TYPE> behavior_types = FXCollections.observableArrayList(Behavior.BEHAVIOR_TYPE.values());
             choiceBox = new ChoiceBox<>(behavior_types);
             gridPane = new GridPane();
             titledPane = new TitledPane();
             titledPane.setContent(gridPane);
-            titledPane.setGraphic(choiceBox);
+            hBox.getChildren().add(choiceBox);
+            hBox.getChildren().add(deleteButton);
+
+            titledPane.setGraphic(hBox);
+            titledPane.setExpanded(false);
             setGraphic(titledPane);
 
             choiceBox.setValue(item.getType());
+
 
             fillOptions();
 
             choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
                 behavior.setType(newValue);
                 fillOptions();
+            });
+
+            deleteButton.setOnAction(event -> {
+                this.getListView().getItems().remove(behavior);
             });
         }
     }

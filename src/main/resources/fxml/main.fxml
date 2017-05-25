@@ -29,6 +29,11 @@
                </font>
             </Label>
             <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" styleClass="layers-tree" />
+            <Label text="Point properties">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
             <ScrollPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="235.0">
@@ -88,9 +93,9 @@
                               <content>
                                 <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ScrollPane>
+                                          <ScrollPane AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                <ListView fx:id="behaviorListView" prefHeight="200.0" prefWidth="200.0" />
+                                                <ListView fx:id="behaviorListView" maxHeight="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
                                              </content>
                                           </ScrollPane>
                                           <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">

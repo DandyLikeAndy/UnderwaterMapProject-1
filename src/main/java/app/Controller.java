@@ -142,6 +142,7 @@ public class Controller {
     @FXML
     public void deleteBehavior(){
         repository.currentPointProperty().get(0).deleteBehavior(behaviorListView.getSelectionModel().getSelectedItems().get(0));
+        System.out.println(behaviorListView.getSelectionModel().getSelectedItems().get(0));
     }
 
     public void initialize() {
