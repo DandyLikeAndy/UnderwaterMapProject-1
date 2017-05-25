@@ -9,9 +9,13 @@ public class PointTask {
     String objectve;
 
     public PointTask() {
+        name = "empty";
+        objectve = "empty";
+        target = "empty";
     }
 
     public PointTask(String name){
+        this();
         this.name = name;
     }
 

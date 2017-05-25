@@ -11,7 +11,10 @@ public class Behavior {
     Map<String, Object> options;
     
     public Behavior(){
-        
+        type = BEHAVIOR_TYPE.DIVE;
+        name = BEHAVIOR_TYPE.DIVE.getName();
+        options = new HashMap<>();
+        type.getOptionsList().forEach(o->options.put(o, "empty"));
     }
 
     public Behavior(String name) {
@@ -59,7 +62,11 @@ public class Behavior {
     public BEHAVIOR_TYPE getType(){
         return this.type;
     }
-    
+
+    public void setType(BEHAVIOR_TYPE type) {
+        this.type = type;
+    }
+
     public static enum BEHAVIOR_TYPE{
         COMMUNICATION("communications"), DIVE("dive", "servo_1", "servo_2", "servo_3", "servo_4","servo_5", "time_out"),
         WAIPOINT("waipoint", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out"),
@@ -76,12 +83,16 @@ public class Behavior {
             optionsList.addAll(Arrays.asList(opt));
         }
 
-        public List<String> getOptionsList(){
+        public ArrayList<String> getOptionsList(){
             return this.optionsList;
         }
 
         public String getName(){
             return this.name;
+        }
+        @Override
+        public String toString(){
+            return getName();
         }
     }
 

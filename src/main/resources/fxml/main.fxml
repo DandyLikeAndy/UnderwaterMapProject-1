@@ -68,9 +68,13 @@
                           <tabs>
                             <Tab text="Tasks">
                               <content>
-                                <AnchorPane fx:id="tasksPane" minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
                                        <children>
-                                          <ListView fx:id="tasksListView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ScrollPane fx:id="tasksPane" hbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <content>
+                                                <ListView fx:id="tasksListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
+                                             </content>
+                                          </ScrollPane>
                                           <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
                                             <buttons>
                                               <Button mnemonicParsing="false" onAction="#addTask" text="Add" />
@@ -82,7 +86,20 @@
                             </Tab>
                             <Tab text="Behaviors">
                               <content>
-                                <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ScrollPane>
+                                             <content>
+                                                <ListView fx:id="behaviorListView" prefHeight="200.0" prefWidth="200.0" />
+                                             </content>
+                                          </ScrollPane>
+                                          <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
+                                            <buttons>
+                                              <Button mnemonicParsing="false" onAction="#addBehavior" text="Add" />
+                                                <Button mnemonicParsing="false" onAction="#deleteBehavior" text="Delete" />
+                                            </buttons>
+                                          </ButtonBar>
+                                       </children></AnchorPane>
                               </content>
                             </Tab>
                           </tabs>

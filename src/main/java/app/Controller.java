@@ -1,6 +1,7 @@
 package app;
 
 import JSBridge.JsBridge;
+import Views.BehaviorView;
 import Views.TaskView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +25,7 @@ import javafx.util.StringConverter;
 import models.*;
 import models.JSONConverters.LineConverter;
 import models.JSONConverters.PointConverter;
+import models.behavors.Behavior;
 import models.repository.Repository;
 import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
@@ -60,11 +62,13 @@ public class Controller {
     @FXML
     private Label radiusLabel;
     @FXML
-    private AnchorPane tasksPane;
+    private ScrollPane tasksPane;
     @FXML
     private AnchorPane behaviorsPane;
     @FXML
     private ListView<PointTask> tasksListView;
+    @FXML
+    private ListView<Behavior> behaviorListView;
     @FXML
     Label distanceLabel;
 
@@ -128,6 +132,16 @@ public class Controller {
 
     @FXML
     public void deleteTask(){
+        repository.currentPointProperty().get(0).deleteTask(tasksListView.getSelectionModel().getSelectedItems().get(0));
+    }
+
+    @FXML
+    public void addBehavior(){
+        repository.currentPointProperty().get(0).addBehavior(new Behavior());
+    }
+    @FXML
+    public void deleteBehavior(){
+        repository.currentPointProperty().get(0).deleteBehavior(behaviorListView.getSelectionModel().getSelectedItems().get(0));
     }
 
     public void initialize() {
@@ -209,12 +223,15 @@ public class Controller {
     private void initTasksBehaviorsPane() {
         repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
             c.next();
-            Waypoint waypoin = c.getList().get(0);
-            ObservableList<PointTask> tasks = waypoin.getTasks();
+            Waypoint waypoint = c.getList().get(0);
+            ObservableList<PointTask> tasks = waypoint.getTasks();
             tasksListView.setItems(tasks);
+
+            behaviorListView.setItems(waypoint.getBehaviors());
         });
 
         tasksListView.setCellFactory((ListView<PointTask> l)->new TaskView());
+        behaviorListView.setCellFactory((ListView<Behavior> l)->new BehaviorView());
     }
 
     private void initTreeView() {
