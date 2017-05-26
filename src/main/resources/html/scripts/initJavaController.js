@@ -1,5 +1,4 @@
 
-/*
 let javaController = {
     log: function () {
 
@@ -38,7 +37,6 @@ let javaController = {
 
     }
 };
-*/
 
 function initJava() {
     var obj = {};
