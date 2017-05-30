@@ -332,9 +332,10 @@ public class Controller {
                 FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.CLOSE);
                 showBtn.setGraphic(icon1);
                 showBtn.setOnAction(event -> {
-                    deletePoint(item.getId(), repository.getLines().filtered(trackLine -> {
-                        return trackLine.getPoints().stream().anyMatch(waypoint -> waypoint.getId() == item.getId());
-                    }).get(0).getId());
+                    jsBridge.deletePoint(item.getId(), repository.getLines()
+                            .filtered(trackLine -> trackLine.getPoints().stream()
+                                    .anyMatch(waypoint -> waypoint.getId() == item.getId()))
+                            .get(0).getId());
                 });
                 hBox.getChildren().add(showBtn);
                 if (empty) {
@@ -473,7 +474,6 @@ public class Controller {
     }
 
     public void deletePoint(int id, int lineId) {
-        System.out.println("delete");
         repository.deletePoint(id, lineId);
     }
 

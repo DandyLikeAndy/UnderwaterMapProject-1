@@ -181,6 +181,16 @@
             removeToolBars();
         }
 
+        function deletePoint(pointId, lineId) {
+            JAVA.log("start");
+            let line = lines.get(lineId);
+            JAVA.log(line.id);
+            let point = line.points.get(pointId);
+            JAVA.log(point.id);
+            map.removeLayer(point.vertex);
+            JAVA.log("end");
+        }
+
         function removeToolBars() {
             for (let t in tools){
                 map.removeControl(tools[t]);

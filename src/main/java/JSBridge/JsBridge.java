@@ -52,5 +52,9 @@ public class JsBridge {
         window.call("initJavaController");
     }
 
+    public void deletePoint(int pointId, int layerId){
+        window.call("deletePoint", pointId, layerId);
+    }
+
 
 }
