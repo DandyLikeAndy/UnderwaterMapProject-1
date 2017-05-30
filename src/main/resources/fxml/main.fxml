@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
@@ -21,7 +22,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" stylesheets="@javaFXCSS.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="30.0" />
+      <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="40.0" />
       <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" styleClass="right-panel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <children>
             <Label text="Layers">
@@ -30,7 +31,7 @@
                </font>
             </Label>
             <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" styleClass="layers-tree" />
-            <Label text="Point properties">
+            <Label fx:id="optionsHeader" text="Track properties">
                <font>
                   <Font size="24.0" />
                </font>
@@ -123,12 +124,15 @@
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Name" />
                               <Label text="Length" GridPane.rowIndex="1" />
                               <TextField fx:id="trackNameField" prefHeight="25.0" prefWidth="139.0" GridPane.columnIndex="1" />
                               <Label fx:id="trackLengthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Points" GridPane.rowIndex="2" />
+                              <Label fx:id="pointsCountLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </children>
@@ -141,11 +145,6 @@
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#openMenu">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="NAVICON" size="24" />
-                     </graphic>
-                  </Button>
                   <Button mnemonicParsing="false" onAction="#startTrack">
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE_FORK" size="24" />
@@ -180,11 +179,16 @@
                         <FontAwesomeIconView glyphName="MINUS" size="24" />
                      </graphic>
                   </Button>
+                  <Button mnemonicParsing="false" onAction="#saveTrack">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_DOWN" />
+                     </graphic>
+                  </Button>
                </children>
             </VBox>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="7.0" layoutY="770.0" prefHeight="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <AnchorPane layoutX="7.0" layoutY="770.0" prefHeight="20.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <HBox layoutX="-47.0" layoutY="-36.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -212,5 +216,22 @@
             </HBox>
          </children>
       </AnchorPane>
+      <HBox layoutX="36.0" layoutY="-20.0" prefHeight="40.0" prefWidth="200.0" spacing="50.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="File">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label text="Map">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </HBox>
    </children>
 </AnchorPane>

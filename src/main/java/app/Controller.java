@@ -10,10 +10,14 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -21,9 +25,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import models.*;
+import models.JSONConverters.BehaviorConverter;
 import models.JSONConverters.LineConverter;
 import models.JSONConverters.PointConverter;
 import models.behavors.Behavior;
@@ -31,9 +39,16 @@ import models.repository.Repository;
 import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -82,6 +97,10 @@ public class Controller {
     Label trackLengthLabel;
     @FXML
     TextField trackNameField;
+    @FXML
+    Label pointsCountLabel;
+    @FXML
+    Label optionsHeader;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -151,12 +170,36 @@ public class Controller {
         repository.currentPointProperty().get(0).addBehavior(new Behavior());
     }
 
+    @FXML
+    public void saveTrack() {
+        String track = gson.toJson(repository.currentLineProperty().get(), TrackLine.class);
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File dir = directoryChooser.showDialog(properties.getScene().getWindow());
+        String fileName = repository.currentLineProperty().get().getName();
+        fileName.replace(" ", "_");
+        Path dirPath = dir.toPath().resolve(fileName + ".json");
+        if (Files.exists(dirPath)) {
+            System.out.println("File exist");
+        } else {
+            try {
+                Path target = Files.createFile(dirPath);
+                Files.write(dirPath, track.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(dirPath);
+    }
+
 
     public void initialize() {
 
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Waypoint.class, new PointConverter());
-        builder.registerTypeAdapter(TrackLine.class, new LineConverter());
+        builder.setPrettyPrinting()
+                .registerTypeAdapter(Waypoint.class, new PointConverter())
+                .registerTypeAdapter(TrackLine.class, new LineConverter())
+                .registerTypeAdapter(Behavior.class, new BehaviorConverter());
+
         gson = builder.create();
 
         webView.setZoom(1);
@@ -201,8 +244,6 @@ public class Controller {
                 );
 
 
-
-
     }
 
     private void setHandlers() {
@@ -227,6 +268,36 @@ public class Controller {
         });
 
         statusLabel.textProperty().bindBidirectional(status);
+        repository.currentLineProperty().addListener((observable, oldValue, newValue) -> {
+            trackNameField.setText((newValue).getName());
+            trackLengthLabel.setText(String.valueOf((newValue).getLength()));
+            pointsCountLabel.setText(String.valueOf(newValue.getPoints().size()));
+            trackLengthLabel.textProperty().bindBidirectional(newValue.lengthProperty(), new StringConverter<Number>() {
+                @Override
+                public String toString(Number object) {
+                    return String.valueOf(object);
+                }
+
+                @Override
+                public Number fromString(String string) {
+                    return null;
+                }
+            });
+            newValue.getPoints().addListener((ListChangeListener<Waypoint>) c -> {
+                c.next();
+                pointsCountLabel.setText(String.valueOf(newValue.getPoints().size()));
+            });
+        });
+
+        repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
+            c.next();
+            if (!c.wasRemoved()) {
+                fillPointDescription(c.getList().get(0));
+            }
+        });
+
+        trackNameField.textProperty().addListener((observable, oldValue, newValue) -> repository.currentLineProperty().getValue().setName(newValue));
+
 
     }
 
@@ -256,6 +327,16 @@ public class Controller {
                 super.updateItem(item, empty);
                 //setDisclosureNode(null);
 
+                HBox hBox = new HBox();
+                Button showBtn = new Button("");
+                FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.CLOSE);
+                showBtn.setGraphic(icon1);
+                showBtn.setOnAction(event -> {
+                    deletePoint(item.getId(), repository.getLines().filtered(trackLine -> {
+                        return trackLine.getPoints().stream().anyMatch(waypoint -> waypoint.getId() == item.getId());
+                    }).get(0).getId());
+                });
+                hBox.getChildren().add(showBtn);
                 if (empty) {
                     setText("");
                     setGraphic(null);
@@ -263,24 +344,25 @@ public class Controller {
                     String name = item.getName();
                     if (item.getClass().getName().equals("models.Waypoint")) {
                         setText(((Waypoint) item).getPosition() + " point");
-                    } else {
+                    } else if (item.getClass().getName().equals("models.TrackLine")) {
                         setText(name);
+                        ((TrackLine) item).nameProperty().addListener((observable, oldValue, newValue) -> {
+                            //setText(newValue);
+                            //System.out.println("change");
+                            treeViewProperty().getValue().refresh();
+                        });
+                        ToggleButton delBtn = new ToggleButton("");
+                        FontAwesomeIconView icon2 = new FontAwesomeIconView(FontAwesomeIcon.EYE);
+                        delBtn.setGraphic(icon2);
+                        hBox.getChildren().add(delBtn);
                     }
+
                     /*if (name.equals("root")){
                         name = "Files";
                         //pseudoClassStateChanged(firstElementPseudoClass, true);
                         setDisclosureNode(null);
 
                     }*/
-
-
-                    ToggleButton showBtn = new ToggleButton("");
-                    FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.EYE);
-                    showBtn.setGraphic(icon1);
-                    Button delBtn = new Button("");
-                    FontAwesomeIconView icon2 = new FontAwesomeIconView(FontAwesomeIcon.TIMES);
-                    delBtn.setGraphic(icon2);
-                    HBox hBox = new HBox(showBtn, delBtn);
 
                     setGraphic(hBox);
 
@@ -290,17 +372,18 @@ public class Controller {
         });
 
         tracksTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            TreeItem<TrackItem> selectedItem = (TreeItem<TrackItem>) newValue;
+            TreeItem<TrackItem> selectedItem = newValue;
             TrackItem item = selectedItem.getValue();
             if (item.getClass().getName().equals("models.Waypoint")) {
                 repository.setCurrentPoint((Waypoint) item);
                 trackInfo.setVisible(false);
                 pointProperties.setVisible(true);
-            } else if(item.getClass().getName().equals("models.TrackLine")){
+                optionsHeader.setText("Point properties");
+            } else if (item.getClass().getName().equals("models.TrackLine")) {
+                repository.setCurrentLine((TrackLine) item);
                 pointProperties.setVisible(false);
                 trackInfo.setVisible(true);
-                trackNameField.setText(((TrackLine)item).getName());
-                trackLengthLabel.setText(String.valueOf(((TrackLine)item).getLength()));
+                optionsHeader.setText("Track properties");
             }
         });
 
@@ -343,12 +426,7 @@ public class Controller {
 
         });
 
-        repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
-            c.next();
-            if (!c.wasRemoved()) {
-                fillPointDescription(c.getList().get(0));
-            }
-        });
+
     }
 
     private int comparator(TreeItem<TrackItem> o1, TreeItem<TrackItem> o2) {

@@ -69,7 +69,7 @@ public class Behavior {
 
     public static enum BEHAVIOR_TYPE{
         COMMUNICATION("communications"), DIVE("dive", "servo_1", "servo_2", "servo_3", "servo_4","servo_5", "time_out"),
-        WAIPOINT("waipoint", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out"),
+        WAYPOINT("waypoint", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out"),
         GPS_FIX("gps_fix"),
         EMERGENCY("emergency"),
         SURFACE("surface");

@@ -1,11 +1,16 @@
 package models;
 
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 
 import java.util.List;
+import java.util.function.DoublePredicate;
 import java.util.function.Predicate;
 
 /**
@@ -14,24 +19,24 @@ import java.util.function.Predicate;
 public class TrackLine implements TrackItem{
 
     private int id;
-    private double length;
+    private DoubleProperty length = new SimpleDoubleProperty();
     private ObservableList<Waypoint> points = FXCollections.observableArrayList();
     private SortedList<Waypoint> waypointSortedList = new SortedList<>(points, (o1, o2) -> ((Integer)o1.getPosition()).compareTo(o2.getPosition()));
-    private String name;
+    private ObjectProperty<String> name = new SimpleObjectProperty<>();
     private LineTypes type;
 
 
 
     public TrackLine(){
-        name = "Unnamed Track";
-        length = 0;
+        name.setValue("Unnamed Track");
+        length.setValue(0);
     }
     public TrackLine(int id){
+        this();
         this.id = id;
     }
     public TrackLine(int id, List<Waypoint> points){
-        this();
-        this.id = id;
+        this(id);
         this.points.addAll(points);
 
     }
@@ -42,7 +47,7 @@ public class TrackLine implements TrackItem{
 
     @Override
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public void setId(int id) {
@@ -50,11 +55,11 @@ public class TrackLine implements TrackItem{
     }
 
     public double getLength() {
-        return length;
+        return length.get();
     }
 
     public void setLength(double length) {
-        this.length = length;
+        this.length.setValue(length);
     }
 
     public ObservableList<Waypoint> getPoints() {
@@ -74,7 +79,7 @@ public class TrackLine implements TrackItem{
     }
 
     public void setName(String name){
-        this.name = name;
+        this.name.setValue(name);
     }
 
     public LineTypes getType() {
@@ -83,6 +88,14 @@ public class TrackLine implements TrackItem{
 
     public void setType(LineTypes type) {
         this.type = type;
+    }
+
+    public ObjectProperty<String> nameProperty(){
+        return name;
+    }
+
+    public DoubleProperty lengthProperty(){
+        return length;
     }
 
     @Override

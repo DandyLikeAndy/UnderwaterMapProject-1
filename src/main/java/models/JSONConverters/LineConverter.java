@@ -25,6 +25,14 @@ public class LineConverter implements JsonSerializer<TrackLine>, JsonDeserialize
 
     @Override
     public JsonElement serialize(TrackLine trackLine, Type type, JsonSerializationContext jsonSerializationContext) {
-        return null;
+        JsonObject result = new JsonObject();
+        result.addProperty("name", trackLine.getName());
+
+        JsonArray points = new JsonArray();
+        result.add("waypoints", points);
+        trackLine.getPoints().forEach(p->{
+            points.add(jsonSerializationContext.serialize(p, Waypoint.class));
+        });
+        return result;
     }
 }

@@ -71,17 +71,18 @@ public class Repository {
         this.currentPoint.add(0,currentPoint);
     }
 
+    public void setCurrentLine(TrackLine line){
+        this.currentLine.setValue(line);
+    }
 
-
-
+    public ObjectProperty<TrackLine> currentLineProperty(){
+        return currentLine;
+    }
 
     public void addLine(TrackLine line){
         lines.add(line);
     }
 
-    public void setCurrentLine(TrackLine line){
-
-    }
 
     public void deletePoint(int pointId, int lineId){
         TrackLine track = lines.stream().filter(l->l.getId() == lineId).findFirst().get();
