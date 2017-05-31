@@ -22,6 +22,7 @@ var handlers = {};
     L.Map.addInitHook('addHandler', 'myclick', L.MyHandler);
 
     handlers.deleteVertex = function (e) {
+        console.log(e);
         if (e.vertex.circle != undefined) {
             e.vertex.circle.remove();
         }

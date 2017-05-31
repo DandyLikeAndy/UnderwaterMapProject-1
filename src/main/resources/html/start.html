@@ -187,7 +187,8 @@
             JAVA.log(line.id);
             let point = line.points.get(pointId);
             JAVA.log(point.id);
-            map.removeLayer(point.vertex);
+            //map.removeLayer(point.vertex);
+            point.vertex.delete();
             JAVA.log("end");
         }
 
