@@ -194,6 +194,7 @@
             let line = lines.get(lineId);
             line.layer.remove();
             lines.delete(lineId);
+            JAVA.deleteLine(lineId);
         }
 
         function removeToolBars() {

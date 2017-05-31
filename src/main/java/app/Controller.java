@@ -419,6 +419,10 @@ public class Controller {
                         item.getChildren().sort(this::comparator);
                     }
                 });
+            } else if(c.wasRemoved()){
+                TrackLine line = (TrackLine) c.getRemoved().get(0);
+                TreeItem<TrackItem> item = tracksTreeView.getRoot().getChildren().stream().filter(i-> i.getValue().equals(line)).findFirst().get();
+                tracksTreeView.getRoot().getChildren().remove(item);
             }
 
             /*if (c.wasUpdated()){
@@ -476,6 +480,10 @@ public class Controller {
 
     public void deletePoint(int id, int lineId) {
         repository.deletePoint(id, lineId);
+    }
+
+    public void deleteLine(int id){
+        repository.deleteLine(id);
     }
 
     public void setStatus(String status) {

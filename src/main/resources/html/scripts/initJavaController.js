@@ -37,6 +37,8 @@ let javaController = {
     updateTrack: function (t) {
 
     }
+    deleteLine: function(l){
+    }
 };
 */
 
@@ -88,6 +90,10 @@ function initJava() {
     obj.updateTrack = function (track) {
 
         javaController.updateTrack(JSON.stringify(track));
+    };
+
+    obj.deleteLine = function(id){
+        javaController.deleteLine(id);
     }
 
     return obj;

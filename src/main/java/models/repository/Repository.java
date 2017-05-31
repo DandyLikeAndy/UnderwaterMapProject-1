@@ -104,4 +104,8 @@ public class Repository {
     }
 
 
+    public void deleteLine(int id) {
+        TrackLine track = lines.stream().filter(l->l.getId() == id).findFirst().get();
+        lines.remove(track);
+    }
 }
