@@ -154,6 +154,18 @@ class Track{
         this._points.set(point.id,point);
     }
 
+    deletePoint(pointId){
+        this._points.delete(pointId);
+    }
+
+    set layer(layer){
+        this._layer = layer;
+    }
+
+    get layer(){
+        return this._layer;
+    }
+
     toJSON(){
         let obj = {};
         obj.id = this.id;

@@ -331,12 +331,6 @@ public class Controller {
                 Button showBtn = new Button("");
                 FontAwesomeIconView icon1 = new FontAwesomeIconView(FontAwesomeIcon.CLOSE);
                 showBtn.setGraphic(icon1);
-                showBtn.setOnAction(event -> {
-                    jsBridge.deletePoint(item.getId(), repository.getLines()
-                            .filtered(trackLine -> trackLine.getPoints().stream()
-                                    .anyMatch(waypoint -> waypoint.getId() == item.getId()))
-                            .get(0).getId());
-                });
                 hBox.getChildren().add(showBtn);
                 if (empty) {
                     setText("");
@@ -345,17 +339,24 @@ public class Controller {
                     String name = item.getName();
                     if (item.getClass().getName().equals("models.Waypoint")) {
                         setText(((Waypoint) item).getPosition() + " point");
+                        showBtn.setOnAction(event -> {
+                            jsBridge.deletePoint(item.getId(), repository.getLines()
+                                    .filtered(trackLine -> trackLine.getPoints().stream()
+                                            .anyMatch(waypoint -> waypoint.getId() == item.getId()))
+                                    .get(0).getId());
+                        });
                     } else if (item.getClass().getName().equals("models.TrackLine")) {
                         setText(name);
                         ((TrackLine) item).nameProperty().addListener((observable, oldValue, newValue) -> {
-                            //setText(newValue);
-                            //System.out.println("change");
                             treeViewProperty().getValue().refresh();
                         });
                         ToggleButton delBtn = new ToggleButton("");
                         FontAwesomeIconView icon2 = new FontAwesomeIconView(FontAwesomeIcon.EYE);
                         delBtn.setGraphic(icon2);
                         hBox.getChildren().add(delBtn);
+                        showBtn.setOnAction(event -> {
+                            jsBridge.deleteLine(item.getId());
+                        });
                     }
 
                     /*if (name.equals("root")){

@@ -182,14 +182,18 @@
         }
 
         function deletePoint(pointId, lineId) {
-            JAVA.log("start");
+            //TODO: может перенести удаление точки в объект line?
             let line = lines.get(lineId);
-            JAVA.log(line.id);
             let point = line.points.get(pointId);
-            JAVA.log(point.id);
-            //map.removeLayer(point.vertex);
             point.vertex.delete();
-            JAVA.log("end");
+            line.deletePoint(pointId);
+        }
+
+        function deleteLine(lineId) {
+            //TODO: может перенести удаление линии в контейнер lines и сделать lines объектом, хранящим map
+            let line = lines.get(lineId);
+            line.layer.remove();
+            lines.delete(lineId);
         }
 
         function removeToolBars() {

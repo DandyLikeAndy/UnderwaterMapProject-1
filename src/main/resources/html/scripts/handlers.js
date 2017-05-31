@@ -114,6 +114,7 @@ var handlers = {};
             let latlngs = e.layer.getLatLngs();
 
             lines.set(lineId, tempLine);
+            tempLine.layer = e.layer;
 
             handlers.updateDistance(tempLine);
             JAVA.addLine(JSON.stringify(tempLine));

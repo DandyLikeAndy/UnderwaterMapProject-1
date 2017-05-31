@@ -57,4 +57,7 @@ public class JsBridge {
     }
 
 
+    public void deleteLine(int id) {
+        window.call("deleteLine", id);
+    }
 }
