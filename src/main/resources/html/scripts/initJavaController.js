@@ -1,46 +1,43 @@
-
-/*
-let javaController = {
-    log: function () {
-
-    },
-    addLineFromWeb: function (line) {
-
-    },
-    addPoint: function (point) {
-
-    },
-    deletePoint: function (p) {
-
-    },
-    clickPoint: function (p) {
-
-    },
-    getTilesImgFromWeb: function (i) {
-
-    },
-    setStatus: function (s) {
-
-    },
-    setMouseCoordsFromWeb: function (c) {
-
-    },
-    setDistanceFromWeb: function (f) {
-
-    },
-    setZoom: function (z) {
-
-    },
-    updatePoint: function (p) {
-
-    },
-    updateTrack: function (t) {
-
-    }
-    deleteLine: function(l){
-    }
-};
-*/
+// let javaController = {
+//     log: function () {
+//
+//     },
+//     addLineFromWeb: function (line) {
+//
+//     },
+//     addPoint: function (point) {
+//
+//     },
+//     deletePoint: function (p) {
+//
+//     },
+//     clickPoint: function (p) {
+//
+//     },
+//     getTilesImgFromWeb: function (i) {
+//
+//     },
+//     setStatus: function (s) {
+//
+//     },
+//     setMouseCoordsFromWeb: function (c) {
+//
+//     },
+//     setDistanceFromWeb: function (f) {
+//
+//     },
+//     setZoom: function (z) {
+//
+//     },
+//     updatePoint: function (p) {
+//
+//     },
+//     updateTrack: function (t) {
+//
+//     },
+//     deleteLine: function(l){
+//     }
+// };
 
 function initJava() {
     var obj = {};

@@ -188,6 +188,9 @@ var handlers = {};
             }
             i++;
         }
+        var latlng = L.latLng(50.5, 30.5);
+        //latlng.distanceTo()
+
     }
 
 
