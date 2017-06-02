@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,7 +19,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" prefHeight="900.0" prefWidth="1200.0" stylesheets="@javaFXCSS.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="40.0" />
+      <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="10.0" />
       <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" styleClass="right-panel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <children>
             <Label text="Layers">
@@ -38,9 +35,9 @@
             </Label>
             <ScrollPane prefHeight="551.0" prefWidth="250.0" VBox.vgrow="ALWAYS">
               <content>
-                <AnchorPane fx:id="properties" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="235.0">
+                <AnchorPane fx:id="properties" disable="true" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="235.0">
                      <children>
-                        <AnchorPane fx:id="pointProperties" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="pointProperties" prefHeight="500.0" prefWidth="250.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
@@ -73,68 +70,70 @@
                                     <Label fx:id="radiusLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                  </children>
                               </GridPane>
-                              <TabPane prefHeight="300.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="220.0">
-                                <tabs>
-                                  <Tab text="Tasks">
-                                    <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
-                                             <children>
-                                                <ScrollPane fx:id="tasksPane" hbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <content>
-                                                      <ListView fx:id="tasksListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
-                                                   </content>
-                                                </ScrollPane>
-                                                <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
-                                                  <buttons>
-                                                    <Button mnemonicParsing="false" onAction="#addTask" text="Add" />
-                                                      <Button mnemonicParsing="false" onAction="#deleteTask" text="Delete" />
-                                                  </buttons>
-                                                </ButtonBar>
-                                             </children>
-                                          </AnchorPane>
-                                    </content>
-                                  </Tab>
-                                  <Tab text="Behaviors">
-                                    <content>
-                                      <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <ScrollPane AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <content>
-                                                      <ListView fx:id="behaviorListView" maxHeight="1.7976931348623157E308" prefHeight="220.0" prefWidth="230.0" />
-                                                   </content>
-                                                </ScrollPane>
-                                                <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
-                                                  <buttons>
-                                                    <Button mnemonicParsing="false" onAction="#addBehavior" text="Add" />
-                                                  </buttons>
-                                                </ButtonBar>
-                                             </children>
-                                          </AnchorPane>
-                                    </content>
-                                  </Tab>
-                                </tabs>
-                              </TabPane>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="260.0">
+                                 <children>
+                                    <ScrollPane fx:id="tasksPane" hbarPolicy="NEVER" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <content>
+                                          <ListView fx:id="tasksListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="195.0" prefWidth="230.0" />
+                                       </content>
+                                    </ScrollPane>
+                                    <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
+                                      <buttons>
+                                        <Button mnemonicParsing="false" onAction="#addTask" text="Add" />
+                                          <Button mnemonicParsing="false" onAction="#deleteTask" text="Delete" />
+                                      </buttons>
+                                    </ButtonBar>
+                                 </children>
+                              </AnchorPane>
+                              <Label text="Tasks" AnchorPane.topAnchor="220.0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </AnchorPane>
-                        <GridPane fx:id="trackInfo">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="10.0" prefWidth="49.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="151.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <AnchorPane fx:id="trackInfo" prefHeight="500.0" prefWidth="250.0">
                            <children>
-                              <Label text="Name" />
-                              <Label text="Length" GridPane.rowIndex="1" />
-                              <TextField fx:id="trackNameField" prefHeight="25.0" prefWidth="139.0" GridPane.columnIndex="1" />
-                              <Label fx:id="trackLengthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label text="Points" GridPane.rowIndex="2" />
-                              <Label fx:id="pointsCountLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <GridPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.0" minWidth="10.0" prefWidth="49.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="151.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Name" />
+                                    <Label text="Length" GridPane.rowIndex="1" />
+                                    <TextField fx:id="trackNameField" prefHeight="25.0" prefWidth="139.0" GridPane.columnIndex="1" />
+                                    <Label fx:id="trackLengthLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Points" GridPane.rowIndex="2" />
+                                    <Label fx:id="pointsCountLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 </children>
+                              </GridPane>
+                          <AnchorPane fx:id="behaviorsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0">
+                                 <children>
+                                    <ScrollPane AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <content>
+                                          <ListView fx:id="behaviorListView" maxHeight="1.7976931348623157E308" prefHeight="300.0" prefWidth="240.0" />
+                                       </content>
+                                    </ScrollPane>
+                                    <ButtonBar prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0">
+                                      <buttons>
+                                        <Button mnemonicParsing="false" onAction="#addBehavior" text="Add" />
+                                      </buttons>
+                                    </ButtonBar>
+                                 </children>
+                              </AnchorPane>
+                              <Label text="Behaviors" AnchorPane.topAnchor="100.0">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
                            </children>
-                        </GridPane>
+                        </AnchorPane>
                      </children>
                   </AnchorPane>
               </content>
@@ -145,6 +144,11 @@
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
+                  <Button mnemonicParsing="false" onAction="#showSettings">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="COG" />
+                     </graphic>
+                  </Button>
                   <Button mnemonicParsing="false" onAction="#startTrack">
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE_FORK" size="24" />
@@ -216,22 +220,5 @@
             </HBox>
          </children>
       </AnchorPane>
-      <HBox layoutX="36.0" layoutY="-20.0" prefHeight="40.0" prefWidth="200.0" spacing="50.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label text="File">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Label text="Map">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </HBox>
    </children>
 </AnchorPane>

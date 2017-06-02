@@ -34,6 +34,7 @@ public class BehaviorView extends ListCell<Behavior> {
             setGraphic(null);
         } else {
             hBox = new HBox();
+            hBox.setPrefWidth(USE_COMPUTED_SIZE);
             Button deleteButton  = new Button("del");
             behavior = item;
             ObservableList<Behavior.BEHAVIOR_TYPE> behavior_types = FXCollections.observableArrayList(Behavior.BEHAVIOR_TYPE.values());

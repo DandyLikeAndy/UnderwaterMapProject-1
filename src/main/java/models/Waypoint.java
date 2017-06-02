@@ -24,7 +24,6 @@ public class Waypoint implements TrackItem{
     private double depth;
     private double capture_radius;
     private ObservableList<PointTask> tasks = FXCollections.observableArrayList();
-    private ObservableList<Behavior> behaviors = FXCollections.observableArrayList();
     private String name;
     private PointTypes type;
     private IntegerProperty position = new SimpleIntegerProperty();
@@ -144,22 +143,6 @@ public class Waypoint implements TrackItem{
 
     public void setTasks(ObservableList<PointTask> tasks) {
         this.tasks = tasks;
-    }
-
-    public ObservableList<Behavior> getBehaviors() {
-        return behaviors;
-    }
-
-    public void setBehaviors(List<Behavior> behaviors) {
-        this.behaviors.addAll(behaviors);
-    }
-
-    public void addBehavior(Behavior behavior){
-        behaviors.add(behavior);
-    }
-
-    public void deleteBehavior(Behavior behavior){
-        behaviors.remove(behavior);
     }
 
     public int getPosition() {

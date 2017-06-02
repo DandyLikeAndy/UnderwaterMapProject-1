@@ -19,6 +19,9 @@ import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -92,7 +95,7 @@ public class Controller {
     @FXML
     AnchorPane properties;
     @FXML
-    GridPane trackInfo;
+    AnchorPane trackInfo;
     @FXML
     Label trackLengthLabel;
     @FXML
@@ -167,11 +170,18 @@ public class Controller {
 
     @FXML
     public void addBehavior() {
-        repository.currentPointProperty().get(0).addBehavior(new Behavior());
+        repository.currentLineProperty().getValue().addBehavior(new Behavior());
     }
 
     @FXML
     public void saveTrack() {
+        if (repository.currentLineProperty().getValue()==null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Track not selected!");
+            alert.setContentText("Select track for save");
+            alert.showAndWait();
+            return;
+        }
         String track = gson.toJson(repository.currentLineProperty().get(), TrackLine.class);
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File dir = directoryChooser.showDialog(properties.getScene().getWindow());
@@ -179,7 +189,11 @@ public class Controller {
         fileName.replace(" ", "_");
         Path dirPath = dir.toPath().resolve(fileName + ".json");
         if (Files.exists(dirPath)) {
-            System.out.println("File exist");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("File "+dirPath+" already exists!");
+            alert.setContentText("Specify new track name or folder");
+            alert.showAndWait();
+            return;
         } else {
             try {
                 Path target = Files.createFile(dirPath);
@@ -189,6 +203,19 @@ public class Controller {
             }
         }
         System.out.println(dirPath);
+    }
+
+    @FXML
+    public void showSettings(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/settings.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -268,7 +295,9 @@ public class Controller {
         });
 
         statusLabel.textProperty().bindBidirectional(status);
+
         repository.currentLineProperty().addListener((observable, oldValue, newValue) -> {
+            properties.setDisable(false);
             trackNameField.setText((newValue).getName());
             trackLengthLabel.setText(String.valueOf((newValue).getLength()));
             pointsCountLabel.setText(String.valueOf(newValue.getPoints().size()));
@@ -307,8 +336,10 @@ public class Controller {
             Waypoint waypoint = c.getList().get(0);
             ObservableList<PointTask> tasks = waypoint.getTasks();
             tasksListView.setItems(tasks);
+        });
 
-            behaviorListView.setItems(waypoint.getBehaviors());
+        repository.currentLineProperty().addListener((observable, oldValue, newValue) -> {
+            behaviorListView.setItems(newValue.getBehaviors());
         });
 
         tasksListView.setCellFactory((ListView<PointTask> l) -> new TaskView());
@@ -463,10 +494,6 @@ public class Controller {
 
     public void addPoint(String point, String trackId) {
         Waypoint waypoint = gson.fromJson(point, Waypoint.class);
-        //////
-        waypoint.addTask(new PointTask("jkll"));
-        waypoint.addTask(new PointTask("asss"));
-        /////////
 
         repository.getLines().stream().filter(l -> l.getId() == Integer.parseInt(trackId))
                 .findFirst().ifPresent(t -> t.addPoint(waypoint));

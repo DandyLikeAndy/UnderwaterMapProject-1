@@ -38,15 +38,11 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         result.addProperty("distance", point.getDistance());
         result.addProperty("depth", point.getDepth());
         result.addProperty("capture_radius", point.getCapture_radius());
-        result.addProperty("position", point.getPosition());
+        result.addProperty("index", point.getPosition());
 
         JsonArray tasks = new JsonArray();
         result.add("tasks", tasks);
         point.getTasks().forEach(t->tasks.add(jsonSerializationContext.serialize(t, PointTask.class)));
-
-        JsonArray behaviors = new JsonArray();
-        result.add("behaviors", behaviors);
-        point.getBehaviors().forEach(b->behaviors.add(jsonSerializationContext.serialize(b, Behavior.class)));
 
         return result;
     }

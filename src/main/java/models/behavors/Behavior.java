@@ -64,6 +64,7 @@ public class Behavior {
 
     public void setType(BEHAVIOR_TYPE type) {
         this.type = type;
+        this.name = type.getName();
         options.clear();
         type.getOptionsList().forEach(o->options.put(o, "empty"));
     }

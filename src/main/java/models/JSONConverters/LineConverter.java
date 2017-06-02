@@ -3,6 +3,7 @@ package models.JSONConverters;
 import com.google.gson.*;
 import models.TrackLine;
 import models.Waypoint;
+import models.behavors.Behavior;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class LineConverter implements JsonSerializer<TrackLine>, JsonDeserialize
         trackLine.getPoints().forEach(p->{
             points.add(jsonSerializationContext.serialize(p, Waypoint.class));
         });
+        JsonArray behaviors = new JsonArray();
+        result.add("behaviors", behaviors);
+        trackLine.getBehaviors().forEach(b->behaviors.add(jsonSerializationContext.serialize(b, Behavior.class)));
         return result;
     }
 }

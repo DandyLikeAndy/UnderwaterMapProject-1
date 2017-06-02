@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import models.behavors.Behavior;
 
 import java.util.List;
 import java.util.function.DoublePredicate;
@@ -23,6 +24,7 @@ public class TrackLine implements TrackItem{
     private ObservableList<Waypoint> points = FXCollections.observableArrayList();
     private SortedList<Waypoint> waypointSortedList = new SortedList<>(points, (o1, o2) -> ((Integer)o1.getPosition()).compareTo(o2.getPosition()));
     private ObjectProperty<String> name = new SimpleObjectProperty<>();
+    private ObservableList<Behavior> behaviors = FXCollections.observableArrayList();
     private LineTypes type;
 
 
@@ -96,6 +98,22 @@ public class TrackLine implements TrackItem{
 
     public DoubleProperty lengthProperty(){
         return length;
+    }
+
+    public ObservableList<Behavior> getBehaviors() {
+        return behaviors;
+    }
+
+    public void setBehaviors(List<Behavior> behaviors) {
+        this.behaviors.addAll(behaviors);
+    }
+
+    public void addBehavior(Behavior behavior){
+        behaviors.add(behavior);
+    }
+
+    public void deleteBehavior(Behavior behavior){
+        behaviors.remove(behavior);
     }
 
     @Override
