@@ -41,6 +41,7 @@ import models.behavors.Behavior;
 import models.repository.Repository;
 import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
+import utills.SettingsProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -121,6 +122,8 @@ public class Controller {
 
     SimpleIntegerProperty zoomProperty = new SimpleIntegerProperty();
     SimpleObjectProperty<String> status = new SimpleObjectProperty<>();
+
+    SettingsProperties settingsProperties = SettingsProperties.getInstance();
 
     @FXML
     public void zoomMinus() {
@@ -267,8 +270,13 @@ public class Controller {
                         ((org.w3c.dom.events.EventTarget) el).addEventListener("click", listener, false);*/
 
                             }
+
+                            setMapUrl();
                         }
                 );
+        settingsProperties.currentMapSourceProperty().addListener((observable, oldValue, newValue) -> {
+            setMapUrl();
+        });
 
 
     }
@@ -319,6 +327,7 @@ public class Controller {
         });
 
         repository.currentPointProperty().addListener((ListChangeListener<Waypoint>) c -> {
+            properties.setDisable(false);
             c.next();
             if (!c.wasRemoved()) {
                 fillPointDescription(c.getList().get(0));
@@ -485,6 +494,14 @@ public class Controller {
         radiusLabel.setText(String.valueOf(point.getCapture_radius()));
         pointDistanceLabel.setText(String.valueOf(point.getDistance()));
         azumuthLabel.setText(String.valueOf(point.getAzimuth()));
+    }
+
+    private void setMapUrl(){
+        String url;
+        if (settingsProperties.getTileSource().equals("web")){
+            url = settingsProperties.getCurrentMapSource().getUrl();
+        } else url = "file:///"+settingsProperties.getTileCash()+"/opentopomap.org/{z}/{x}/{y}.png";
+        jsBridge.setMapUrl(url);
     }
 
 

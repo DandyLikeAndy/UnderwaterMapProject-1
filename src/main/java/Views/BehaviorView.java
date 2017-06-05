@@ -63,6 +63,8 @@ public class BehaviorView extends ListCell<Behavior> {
                 this.getListView().getItems().remove(behavior);
             });
         }
+
+
     }
 
     private void fillOptions(){

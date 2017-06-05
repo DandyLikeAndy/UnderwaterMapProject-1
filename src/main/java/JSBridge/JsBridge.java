@@ -60,4 +60,8 @@ public class JsBridge {
     public void deleteLine(int id) {
         window.call("deleteLine", id);
     }
+
+    public void setMapUrl(String url){
+        window.call("setMapUrl", url);
+    }
 }

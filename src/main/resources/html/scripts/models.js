@@ -179,8 +179,5 @@ class Track{
     }
 
 }
-let trac = new Track();
-trac.addPoint(new Point(12,12,1, 9));
-trac.addPoint(new Point(12, 23,3,8));
-console.log(JSON.stringify(trac));
+
 

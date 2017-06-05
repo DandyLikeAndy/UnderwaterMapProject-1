@@ -100,6 +100,10 @@ function addToolBar(map) {
         },
         updateIcon: function (num) {
             this.options.number = num;
+            this.setNum(num);
+
+        },
+        setNum: function (num) {
             this.options.elem.innerHTML = num;
         }
     });
@@ -121,6 +125,9 @@ function addToolBar(map) {
 
             this.options.elem = numdiv;
             return divElem;
+        },
+        setNum:function (num) {
+            this.options.elem.innerHTML = num;
         }
     });
 
@@ -129,19 +136,22 @@ function addToolBar(map) {
             'imgPath':'img/finish-flag-big.png'
         },
         createIcon: function (elem) {
-            var divElem = L.divIcon().createIcon(elem);
-            var numdiv = document.createElement('div');
+            let divElem = L.divIcon().createIcon(elem);
+            let numdiv = document.createElement('div');
+            let inner = document.createElement('div');
             numdiv.setAttribute("class", "finish-number");
-            numdiv.innerHTML = this.options['number'] || '';
-            var img = document.createElement('img');
+            inner.innerHTML = this.options['number'] || '';
+            let img = document.createElement('img');
             img.setAttribute("src", this.options.imgPath);
             img.setAttribute("class", 'start-icon');
+            numdiv.appendChild(inner);
             divElem.appendChild(img);
             divElem.appendChild(numdiv);
 
             this.options.elem = numdiv;
             return divElem;
         }
+
     });
 
     let toolBars = {};

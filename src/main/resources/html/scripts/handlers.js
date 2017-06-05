@@ -35,7 +35,7 @@ var handlers = {};
     };
 
     handlers.creteNewVertex = function (e) {
-
+        lastPoint  = e.vertex.latlng;
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)){
             let layerId = e.layer._leaflet_id;
             let track = lines.get(layerId);
@@ -172,8 +172,9 @@ var handlers = {};
         for(let point of track.points.values()) {
             let position = point.vertex.latlngs.indexOf(point.vertex.latlng);
             if (point.pos != position) {
+                console.log(position);
                 point.pos = position;
-                point.vertex.options.icon.updateIcon(point.pos);
+                point.vertex.options.icon.updateIcon(position);
                 handlers.updateDistance(track);
             }
         }

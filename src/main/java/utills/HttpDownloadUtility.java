@@ -21,14 +21,6 @@ public class HttpDownloadUtility {
     private static final String dir = "tiles";
     private static List<Callback> callbacks = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException {
-        List<String> list = new ArrayList<>();
-        list.add("https://a.tile.opentopomap.org/10/517/377.png");
-        list.add("https://a.tile.opentopomap.org/10/514/377.png");
-
-        loadTiles(list);
-    }
-
     /**
      * Downloads a file from a URL
      *
@@ -98,7 +90,7 @@ public class HttpDownloadUtility {
     }
 
     public static void loadTiles(List<String> urls) throws IOException {
-        Path path = Paths.get(dir);
+        Path path = Paths.get(SettingsProperties.getInstance().getCurrentMapSource().getUrl());
         if (!Files.exists(path)) {
             Files.createDirectory(path);
         }
@@ -107,7 +99,6 @@ public class HttpDownloadUtility {
             url = prepareUrl(url);
             System.out.println("url " + url);
             String[] arr = url.split("/");
-            System.out.println(Arrays.toString(arr));
             String vendorFolder = arr[2];
             String[] vendorFolderArr = vendorFolder.split("\\.");
             vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];

@@ -22,7 +22,7 @@
         var startPoint = [59.583921, 31.192010];
         var currentZoom = 13;
         var JAVA = {};
-        var currentRadius = 10;
+        var currentRadius = 15;
 
         var tools;
 
@@ -33,6 +33,7 @@
         var points = [];
         var lines = new Map();
         var selectedLine;
+        let mapLayer;
         function onMapLoad() {
 
             map = L.map('mapid', {"editable": true, "zoomControl": false}).setView(startPoint, 13);
@@ -42,9 +43,13 @@
 
             //http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png
             //file:///C:/Users/User/IdeaProjects/testOpenLayer/tiles/opentopomap.org/{z}/{x}/{y}.png
-            L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+           /* L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
                 attribution: ''
-            }).addTo(map);
+            }).addTo(map);*/
+            mapLayer = L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: ''
+            });
+            mapLayer.addTo(map);
 
             /*var polyline = L.polyline([[43.1, 1.2], [43.2, 1.3],[43.3, 1.2]]).addTo(map);
             polyline.enableEdit();*/
@@ -201,7 +206,11 @@
             for (let t in tools){
                 map.removeControl(tools[t]);
             }
+        }
 
+        function setMapUrl(url) {
+            mapLayer.setUrl(url);
+            JAVA.log(url);
         }
 
 
