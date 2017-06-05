@@ -1,10 +1,17 @@
 [
   {
     "name":"OSM",
-    "url" : "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+    "url" : "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+    "subdomains":""
   },
   {
     "name":"OpenTopo",
-    "url" :"http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+    "url" :"http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    "subdomains":""
+  },
+  {
+    "name":"google",
+    "url":"http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+    "subdomains":"mt0,mt1,mt2,mt3"
   }
 ]

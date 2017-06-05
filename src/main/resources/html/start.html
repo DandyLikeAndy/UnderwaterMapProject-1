@@ -208,9 +208,26 @@
             }
         }
 
-        function setMapUrl(url) {
-            mapLayer.setUrl(url);
-            JAVA.log(url);
+        function setMapUrl(url, subdomains) {
+
+            mapLayer.remove();
+            if (subdomains != ""){
+                JAVA.log("url "+url+" "+subdomains.split(","));
+                mapLayer = L.tileLayer(url, {
+                    attribution: '',
+                    subdomains:subdomains.split(",")
+                });
+            } else {
+                mapLayer = L.tileLayer(url, {
+                    attribution: ''
+                });
+            }
+
+            //mapLayer.setUrl(url);
+            //mapLayer.setOptions = {"subdomains":subdomains};
+
+            mapLayer.addTo(map);
+            //JAVA.log(url);
         }
 
 

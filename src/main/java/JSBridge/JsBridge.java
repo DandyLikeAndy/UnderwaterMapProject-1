@@ -61,7 +61,7 @@ public class JsBridge {
         window.call("deleteLine", id);
     }
 
-    public void setMapUrl(String url){
-        window.call("setMapUrl", url);
+    public void setMapUrl(String url, String subdomains){
+        window.call("setMapUrl", url, subdomains);
     }
 }

@@ -87,27 +87,28 @@ public class HttpDownloadUtility {
             callbacks.forEach(c->c.call("No file to download. Server replied HTTP code: " + responseCode));
         }
         httpConn.disconnect();
+        System.out.println("done");
     }
 
     public static void loadTiles(List<String> urls) throws IOException {
-        Path path = Paths.get(SettingsProperties.getInstance().getCurrentMapSource().getUrl());
-        if (!Files.exists(path)) {
-            Files.createDirectory(path);
+        Path vendorFolderPath = Paths.get(SettingsProperties.getInstance().getTileCash()+"/"+SettingsProperties.getInstance().getCurrentMapSource().getName());
+        if (!Files.exists(vendorFolderPath)) {
+            Files.createDirectory(vendorFolderPath);
         }
 
         urls.forEach(url -> {
             url = prepareUrl(url);
             System.out.println("url " + url);
             String[] arr = url.split("/");
-            String vendorFolder = arr[2];
-            String[] vendorFolderArr = vendorFolder.split("\\.");
-            vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];
+            //String vendorFolder = arr[2];
+            //String[] vendorFolderArr = vendorFolder.split("\\.");
+            //vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];
             String z = arr[3];
             String x = arr[4];
             String y = arr[5];
-            System.out.println(z + " " + x + " " + y);
+            //System.out.println(z + " " + x + " " + y);
 
-            Path vendorFolderPath = path.resolve(vendorFolder);
+            //Path vendorFolderPath = path.resolve(SettingsProperties.getInstance().getCurrentMapSource().getName());
             if (!Files.exists(vendorFolderPath)) try {
                 Files.createDirectory(vendorFolderPath);
             } catch (IOException e) {

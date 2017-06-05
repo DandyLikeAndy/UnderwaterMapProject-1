@@ -57,7 +57,9 @@ public class SettingsProperties {
             e.printStackTrace();
         }
         currentMapSource.addListener((observable, oldValue, newValue) -> {
-            properties.setProperty("tile.url", newValue.getName());
+            if (newValue != null){
+                properties.setProperty("tile.url", newValue.getName());
+            }
         });
     }
 
@@ -73,7 +75,7 @@ public class SettingsProperties {
         return tileSource.get();
     }
 
-    public void setTileSource(String tileSource) throws IOException {
+    public void setTileSource(String tileSource){
         this.tileSource.setValue(tileSource);
         properties.setProperty("tile.source", tileSource);
 

@@ -84,6 +84,14 @@ public class SettingsController {
         mapSourceToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             SettingsProperties.getInstance().setCurrentMapSource((MapSource) newValue.getUserData());
         });
+        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(webRadio)){
+                SettingsProperties.getInstance().setCurrentMapSource((MapSource) mapSourceToggleGroup.getSelectedToggle().getUserData());
+                SettingsProperties.getInstance().setTileSource("web");
+            } else {
+                SettingsProperties.getInstance().setTileSource("cash");
+            }
+        });
     }
 
     private void setRadio(String value) {
@@ -91,6 +99,7 @@ public class SettingsController {
             toggleGroup.selectToggle(webRadio);
         } else {
             toggleGroup.selectToggle(cashRadio);
+
         }
     }
 

@@ -277,6 +277,9 @@ public class Controller {
         settingsProperties.currentMapSourceProperty().addListener((observable, oldValue, newValue) -> {
             setMapUrl();
         });
+        settingsProperties.tileSourceProperty().addListener((observable, oldValue, newValue) -> {
+            setMapUrl();
+        });
 
 
     }
@@ -498,10 +501,15 @@ public class Controller {
 
     private void setMapUrl(){
         String url;
+        String subdomains;
         if (settingsProperties.getTileSource().equals("web")){
             url = settingsProperties.getCurrentMapSource().getUrl();
-        } else url = "file:///"+settingsProperties.getTileCash()+"/opentopomap.org/{z}/{x}/{y}.png";
-        jsBridge.setMapUrl(url);
+            subdomains = settingsProperties.getCurrentMapSource().getSubdomains();
+        } else {
+            url = "file:///"+settingsProperties.getTileCash()+"/"+settingsProperties.getCurrentMapSource().getName()+"/{z}/{x}/{y}.png";
+            subdomains = "";
+        }
+        jsBridge.setMapUrl(url, subdomains);
     }
 
 
