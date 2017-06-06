@@ -1,6 +1,5 @@
 package models.repository;
 
-import com.sun.org.apache.regexp.internal.RE;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
