@@ -74,7 +74,7 @@ public class Behavior {
         WAYPOINT("waypoint", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out"),
         GPS_FIX("gps_fix"),
         EMERGENCY("emergency"),
-        SURFACE("surface");
+        SURFACE("surface", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out");
         
         String name;
         ArrayList<String> optionsList;

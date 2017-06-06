@@ -65,6 +65,7 @@
                 </configuration>
             </plugin>
         </plugins>
+
     </build>
     <dependencies>
         <dependency>
@@ -93,6 +94,7 @@
             <artifactId>controlsfx</artifactId>
             <version>8.40.10</version>
         </dependency>
+
 
 
     </dependencies>

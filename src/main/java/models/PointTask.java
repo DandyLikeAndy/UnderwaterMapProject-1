@@ -6,11 +6,11 @@ package models;
 public class PointTask {
     String name;
     String target;
-    String objectve;
+    String objective;
 
     public PointTask() {
         name = "empty";
-        objectve = "empty";
+        objective = "empty";
         target = "empty";
     }
 
@@ -35,11 +35,11 @@ public class PointTask {
         this.target = target;
     }
 
-    public String getObjectve() {
-        return objectve;
+    public String getObjective() {
+        return objective;
     }
 
-    public void setObjectve(String objectve) {
-        this.objectve = objectve;
+    public void setObjective(String objective) {
+        this.objective = objective;
     }
 }

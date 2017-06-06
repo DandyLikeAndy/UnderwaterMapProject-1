@@ -12,12 +12,14 @@ import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class SettingsProperties {
     private ObjectProperty<String> tileSource = new SimpleObjectProperty<>();
@@ -34,19 +36,15 @@ public class SettingsProperties {
 
     private SettingsProperties(){
         gson = new Gson();
-        try {
-            Path path = Paths.get("src/main/resources/properties/mapSources.json");
-            String mapSourcesString = Files.lines(path).reduce((s, s2) -> s+s2).get();
-            mapSources.addAll((Collection<? extends MapSource>) gson.fromJson(mapSourcesString, mapSourceListType));
+        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("properties/mapSources.json"));
+        String result = new BufferedReader(reader)
+                .lines().collect(Collectors.joining("\n"));
+        mapSources.addAll((Collection<? extends MapSource>) gson.fromJson(result, mapSourceListType));
+        System.out.println("DONE!");
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         try {
             properties = new Properties();
-            FileInputStream fis = new FileInputStream(new File("src/main/resources/properties/settings.properties").getAbsolutePath());
+            InputStream fis =  getClass().getClassLoader().getResourceAsStream("properties/settings.properties");
             properties.load(fis);
             fis.close();
             tileCash.setValue(properties.getProperty("tile.cash"));
@@ -100,6 +98,7 @@ public class SettingsProperties {
     }
 
     public void saveSettings() throws IOException {
+
         FileOutputStream fos = new FileOutputStream(new File("src/main/resources/properties/settings.properties").getAbsolutePath());
         properties.store(fos, null);
         fos.close();

@@ -64,4 +64,8 @@ public class JsBridge {
     public void setMapUrl(String url, String subdomains){
         window.call("setMapUrl", url, subdomains);
     }
+
+    public void setPosition(){
+        window.call("setPosition");
+    }
 }

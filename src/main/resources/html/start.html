@@ -36,6 +36,7 @@
         let mapLayer;
         function onMapLoad() {
 
+
             map = L.map('mapid', {"editable": true, "zoomControl": false}).setView(startPoint, 13);
 
 
@@ -228,6 +229,15 @@
 
             mapLayer.addTo(map);
             //JAVA.log(url);
+        }
+
+        function setPosition() {
+            $.getJSON('https://ipinfo.io', function(data){
+                JAVA.log(data.loc);
+                let point = data.loc.split(",");
+                map.setView(point);
+                L.marker(point).addTo(map);
+            });
         }
 
 

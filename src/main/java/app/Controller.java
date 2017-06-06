@@ -10,28 +10,21 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import models.*;
 import models.JSONConverters.BehaviorConverter;
@@ -47,13 +40,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
 
 public class Controller {
 
@@ -238,6 +226,7 @@ public class Controller {
         webEngine.load(getClass().getResource("/html/start.html").toExternalForm());
 
 
+
         final Controller controller = this;
 
         webEngine.getLoadWorker()
@@ -268,7 +257,7 @@ public class Controller {
                         org.w3c.dom.Document doc = webEngine.getDocument();
                         org.w3c.dom.Element el = doc.getElementById("mapid");
                         ((org.w3c.dom.events.EventTarget) el).addEventListener("click", listener, false);*/
-
+                                //jsBridge.setPosition();
                             }
 
                             setMapUrl();

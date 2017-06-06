@@ -25,7 +25,7 @@ public class TaskView extends ListCell<PointTask> {
             gridPane = new GridPane();
             name = new TextField(item.getName());
             target = new TextField(item.getTarget());
-            objective = new TextField(item.getObjectve());
+            objective = new TextField(item.getObjective());
 
             gridPane.add(new Label("Name"), 0,0);
             gridPane.add(new Label("Target"), 0,1);
@@ -40,7 +40,7 @@ public class TaskView extends ListCell<PointTask> {
                 item.setName(newValue);
             });
             objective.textProperty().addListener((observable, oldValue, newValue) -> {
-                item.setObjectve(newValue);
+                item.setObjective(newValue);
             });
             target.textProperty().addListener((observable, oldValue, newValue) -> {
                 item.setTarget(newValue);
