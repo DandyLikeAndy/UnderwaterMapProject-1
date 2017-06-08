@@ -40,7 +40,7 @@ var handlers = {};
             let layerId = e.layer._leaflet_id;
             let track = lines.get(layerId);
             let isNewTrack = false;
-            //console.log("track "+layerId);
+            console.log(e);
             //console.log(track);
             if (track == undefined){
                 isNewTrack = true;
@@ -109,6 +109,7 @@ var handlers = {};
     handlers.stopCreatingLine = function (e) {
         if (e.layer instanceof L.Polyline && !(e.layer instanceof L.Polygon)) {
             e.layer.setStyle({"weight":10});
+            console.log("create");
             let lineId = e.layer._leaflet_id;
             //lines.set(lineId, e.layer);
             let latlngs = e.layer.getLatLngs();

@@ -102,6 +102,48 @@
 
             JAVA = initJava();
 
+            let newLine = L.polyline([[59.599879377617654, 31.15756988525391],[59.583283730621794,31.203918457031254]]).addTo(map);
+            newLine.enableEdit(map);
+            console.log(newLine);
+
+            let newTrack = new Track();
+            newTrack.id = newLine._leaflet_id;
+            for (let i=0; i<newLine._latlngs.length; i++){
+                let latlng = newLine._latlngs[i];
+
+                let point = new Point();
+                let circle = new L.circle(latlng, {radius:currentRadius}).addTo(map);
+                console.log(circle);
+                //latlng._vertex.circle = circle;
+                //latlng._vertex.point = point;
+                let index = newLine._latlngs.indexOf(latlng);
+
+                if (index != newLine._latlngs.length-1){
+                    handlers.updatePositions(newTrack);
+                    JAVA.updateTrack(newTrack);
+                }
+                if (index == 0){
+                    latlng._vertex.setIcon(new L.StartIcon({'number': index}));
+                } else{
+                    latlng._vertex.setIcon(new L.MyIcon({'number': index}));
+                }
+
+                point.vertex = latlng._vertex;
+                point.circle = circle;
+                point.id = latlng._vertex._leaflet_id;
+                point.lat = latlng.lat;
+                point.lng = latlng.lng;
+                point.pos = index;
+                point.circleRadius = currentRadius;
+                point.line = newTrack;
+
+
+                latlng._vertex.point = point;
+                newTrack.addPoint(point);
+                //if (!isNewTrack) JAVA.addPoint(point, track.id);
+            }
+
+
 
         });
 
