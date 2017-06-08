@@ -66,15 +66,15 @@ public class Behavior {
         this.type = type;
         this.name = type.getName();
         options.clear();
-        type.getOptionsList().forEach(o->options.put(o, "empty"));
+        type.getOptionsList().forEach(o->options.put(o, "0"));
     }
 
     public static enum BEHAVIOR_TYPE{
         COMMUNICATION("communications"), DIVE("dive", "servo_1", "servo_2", "servo_3", "servo_4","servo_5", "time_out"),
         WAYPOINT("waypoint", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out"),
-        GPS_FIX("gps_fix"),
+        GPS_FIX("gps_fix", "time_out"),
         EMERGENCY("emergency"),
-        SURFACE("surface", "segment_depth_top","rudder_range","segment_depth_bottom", "time_out");
+        SURFACE("surface", "servo_1", "servo_2", "servo_3", "servo_4","servo_5", "time_out");
         
         String name;
         ArrayList<String> optionsList;

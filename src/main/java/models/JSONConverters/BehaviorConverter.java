@@ -21,7 +21,7 @@ public class BehaviorConverter implements JsonDeserializer<Behavior>, JsonSerial
         result.addProperty("name", behavior.getName());
 
         behavior.getOptions().forEach((s, o) -> {
-            result.addProperty(s, o.toString());
+            result.addProperty(s, Integer.parseInt((String) o));
         });
         return result;
     }
