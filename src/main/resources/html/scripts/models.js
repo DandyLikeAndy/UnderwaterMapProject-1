@@ -105,9 +105,9 @@ class Point {
         let obj = {};
         obj.id = this.id;
         obj.lat = this.lat;
-        obj.lng = this.lng;
-        obj.pos = this.pos;
-        obj.radius = this.circleRadius;
+        obj.lon = this.lng;
+        obj.index = this.pos;
+        obj.capture_radius = this.circleRadius;
         obj.azimuth = this.azimuth;
         obj.distance = this.distance;
         return obj;
@@ -171,9 +171,9 @@ class Track{
         obj.id = this.id;
         obj.length = this.length;
         obj.name = this.name;
-        obj.points = [];
+        obj.waypoints = [];
         for(let p of this.points.values()) {
-           obj.points.push(p);
+           obj.waypoints.push(p);
         }
         return obj;
     }

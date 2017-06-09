@@ -17,18 +17,31 @@ public class LineConverter implements JsonSerializer<TrackLine>, JsonDeserialize
         JsonObject object = jsonElement.getAsJsonObject();
         ArrayList<Waypoint> pointsArr = new ArrayList<>();
         int id = object.get("id").getAsInt();
-        JsonArray points = object.getAsJsonArray("points");
+        String name = object.get("name").getAsString();
+        JsonArray points = object.getAsJsonArray("waypoints");
+        JsonArray behaviors = object.getAsJsonArray("behaviors");
+
         points.forEach(p->{
             pointsArr.add(jsonDeserializationContext.deserialize(p, Waypoint.class));
         });
-        return new TrackLine(id, pointsArr);
+        TrackLine trackLine = new TrackLine(id, pointsArr);
+
+        if (behaviors!=null){
+            behaviors.forEach(b->{
+                Behavior behavior = jsonDeserializationContext.deserialize(b, Behavior.class);
+                trackLine.addBehavior(behavior);
+            });
+        }
+
+        trackLine.setName(name);
+        return trackLine;
     }
 
     @Override
     public JsonElement serialize(TrackLine trackLine, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject result = new JsonObject();
         result.addProperty("name", trackLine.getName());
-
+        result.addProperty("id", trackLine.getId());
         JsonArray points = new JsonArray();
         result.add("waypoints", points);
         trackLine.getPoints().forEach(p->{

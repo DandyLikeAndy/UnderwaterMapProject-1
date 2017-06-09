@@ -5,6 +5,7 @@ import Views.BehaviorView;
 import Views.TaskView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
@@ -24,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import models.*;
@@ -36,11 +38,12 @@ import netscape.javascript.JSObject;
 import utills.HttpDownloadUtility;
 import utills.SettingsProperties;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
 
 
 public class Controller {
@@ -206,6 +209,30 @@ public class Controller {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void loadActiveTrack(){
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(properties.getScene().getWindow());
+        if (file != null){
+            try {
+                Files.lines(file.toPath()).reduce((s, s2) -> s+s2).ifPresent(s->{
+                    TrackLine trackLine = gson.fromJson(s, TrackLine.class);
+                    String coords = gson.toJson(trackLine.getPointsCoords());
+                    TrackLine addedTrack = gson.fromJson(jsBridge.addActiveLine(coords), TrackLine.class);
+                    trackLine.setId(addedTrack.getId());
+                    for (int i = 0; i < addedTrack.getPoints().size(); i++) {
+                        trackLine.getPoints().get(i).setId(addedTrack.getPoints().get(i).getId());
+                    }
+                    repository.addLine(trackLine);
+                });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -514,7 +541,7 @@ public class Controller {
     }
 
     public void addLineFromWeb(String line) {
-        //System.out.println(line);
+        System.out.println(line);
         TrackLine trackLine = gson.fromJson(line, TrackLine.class);
         repository.addLine(trackLine);
     }

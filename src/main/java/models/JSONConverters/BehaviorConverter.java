@@ -12,7 +12,16 @@ import java.util.function.BiConsumer;
 public class BehaviorConverter implements JsonDeserializer<Behavior>, JsonSerializer<Behavior> {
     @Override
     public Behavior deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        return null;
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        String name = jsonObject.get("name").getAsString();
+        Behavior behavior = new Behavior(name);
+        Behavior.BEHAVIOR_TYPE behaviorType = Behavior.BEHAVIOR_TYPE.valueOf(name.toUpperCase());
+        behavior.setType(behaviorType);
+        behavior.getOptions().keySet().forEach(k->{
+            behavior.setOption(k, jsonObject.get(k).getAsString());
+        });
+
+        return behavior;
     }
 
     @Override

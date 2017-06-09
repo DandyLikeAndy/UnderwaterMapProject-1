@@ -1,7 +1,10 @@
 package JSBridge;
 
+import com.google.gson.reflect.TypeToken;
 import models.repository.Repository;
 import netscape.javascript.JSObject;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by Anton on 22.05.2017.
@@ -67,5 +70,10 @@ public class JsBridge {
 
     public void setPosition(){
         window.call("setPosition");
+    }
+
+    public String addActiveLine(String coords){
+        //System.out.println(coords);
+        return window.call("addActiveLine", coords).toString();
     }
 }

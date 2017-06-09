@@ -116,6 +116,13 @@ public class TrackLine implements TrackItem{
         behaviors.remove(behavior);
     }
 
+    public Double[][] getPointsCoords(){
+        int lenngth = points.size();
+        Double[][] arr = new Double[lenngth][2];
+        points.forEach(p-> arr[p.getPosition()] = new Double[]{p.getLat(), p.getLng()});
+        return arr;
+    }
+
     @Override
     public String toString() {
         return id +" "+points;

@@ -14,12 +14,20 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
     @Override
     public Waypoint deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
+        JsonArray tasks = object.getAsJsonArray("tasks");
         double lat = object.get("lat").getAsDouble();
-        double lng = object.get("lng").getAsDouble();
+        double lng = object.get("lon").getAsDouble();
         int id = object.get("id").getAsInt();
-        int position = object.get("pos").getAsInt();
-        int radius = object.get("radius").getAsInt();
+        int position = object.get("index").getAsInt();
+        int radius = object.get("capture_radius").getAsInt();
         Waypoint waypoint = new Waypoint(lat, lng);
+
+        if (tasks !=null){
+            tasks.forEach(t->{
+                waypoint.addTask(jsonDeserializationContext.deserialize(t, PointTask.class));
+            });
+        }
+
         waypoint.setId(id);
         waypoint.setPosition(position);
         waypoint.setCapture_radius(radius);
@@ -39,6 +47,7 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         result.addProperty("depth", point.getDepth());
         result.addProperty("capture_radius", point.getCapture_radius());
         result.addProperty("index", point.getPosition());
+        result.addProperty("id", point.getId());
 
         JsonArray tasks = new JsonArray();
         result.add("tasks", tasks);

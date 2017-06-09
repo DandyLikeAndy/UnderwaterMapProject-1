@@ -22,11 +22,20 @@
       <WebView fx:id="webView" layoutX="38.0" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800.0" minWidth="800.0" prefHeight="840.0" prefWidth="852.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="310.0" AnchorPane.topAnchor="10.0" />
       <VBox layoutX="1080.0" layoutY="14.0" prefHeight="200.0" prefWidth="250.0" styleClass="right-panel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <children>
-            <Label text="Layers">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
+            <AnchorPane>
+               <children>
+                  <Label text="Layers">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="228.0" layoutY="9.0" mnemonicParsing="false" onAction="#loadActiveTrack" AnchorPane.rightAnchor="0.0">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" />
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
             <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" styleClass="layers-tree" />
             <Label fx:id="optionsHeader" text="Track properties">
                <font>

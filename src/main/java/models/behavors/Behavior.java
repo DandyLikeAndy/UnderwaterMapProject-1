@@ -17,6 +17,7 @@ public class Behavior {
     }
 
     public Behavior(String name) {
+        options = new HashMap<>();
         this.name = name;
     }
 

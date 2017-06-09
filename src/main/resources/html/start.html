@@ -94,6 +94,8 @@
 
         }
 
+
+
         $(function () {
 
             onMapLoad();
@@ -101,49 +103,6 @@
             tools = addToolBar(map);
 
             JAVA = initJava();
-
-            let newLine = L.polyline([[59.599879377617654, 31.15756988525391],[59.583283730621794,31.203918457031254]]).addTo(map);
-            newLine.enableEdit(map);
-            console.log(newLine);
-
-            let newTrack = new Track();
-            newTrack.id = newLine._leaflet_id;
-            for (let i=0; i<newLine._latlngs.length; i++){
-                let latlng = newLine._latlngs[i];
-
-                let point = new Point();
-                let circle = new L.circle(latlng, {radius:currentRadius}).addTo(map);
-                console.log(circle);
-                //latlng._vertex.circle = circle;
-                //latlng._vertex.point = point;
-                let index = newLine._latlngs.indexOf(latlng);
-
-                if (index != newLine._latlngs.length-1){
-                    handlers.updatePositions(newTrack);
-                    JAVA.updateTrack(newTrack);
-                }
-                if (index == 0){
-                    latlng._vertex.setIcon(new L.StartIcon({'number': index}));
-                } else{
-                    latlng._vertex.setIcon(new L.MyIcon({'number': index}));
-                }
-
-                point.vertex = latlng._vertex;
-                point.circle = circle;
-                point.id = latlng._vertex._leaflet_id;
-                point.lat = latlng.lat;
-                point.lng = latlng.lng;
-                point.pos = index;
-                point.circleRadius = currentRadius;
-                point.line = newTrack;
-
-
-                latlng._vertex.point = point;
-                newTrack.addPoint(point);
-                //if (!isNewTrack) JAVA.addPoint(point, track.id);
-            }
-
-
 
         });
 
@@ -280,6 +239,64 @@
                 map.setView(point);
                 L.marker(point).addTo(map);
             });
+        }
+
+        function addActiveLine(coords) {
+            let newLine = L.polyline(JSON.parse(coords)).addTo(map);
+            newLine.enableEdit(map);
+            //console.log(newLine);
+
+            let newTrack = new Track();
+            newTrack.id = newLine._leaflet_id;
+            let latlngs = newLine._latlngs;
+            for (let i=0; i<latlngs.length; i++){
+                //console.log("i "+i);
+                let latlng = latlngs[i];
+
+                let point = new Point();
+                let circle = new L.circle(latlng, {radius:currentRadius}).addTo(map);
+                console.log(latlng);
+                latlng.__vertex.circle = circle;
+                latlng.__vertex.point = point;
+                let index = latlngs.indexOf(latlng);
+
+                if (index != latlngs.length-1){
+                    handlers.updatePositions(newTrack);
+                    JAVA.updateTrack(newTrack);
+                }
+                if (index == 0){
+                    latlng.__vertex.setIcon(new L.StartIcon({'number': index}));
+                } else{
+                    latlng.__vertex.setIcon(new L.MyIcon({'number': index}));
+                }
+
+                point.vertex = latlng.__vertex;
+                point.circle = circle;
+                point.id = latlng.__vertex._leaflet_id;
+                point.lat = latlng.lat;
+                point.lng = latlng.lng;
+                point.pos = index;
+                point.circleRadius = currentRadius;
+                point.line = newTrack;
+
+
+                latlng.__vertex.point = point;
+                newTrack.addPoint(point);
+                newLine.setStyle({"weight":10});
+                console.log("create");
+                //lines.set(lineId, e.layer);
+
+
+
+            }
+            lines.set(newTrack.id, newTrack);
+            newTrack.layer = newLine;
+
+            handlers.updateDistance(newTrack);
+            //JAVA.addLine(JSON.stringify(newTrack));
+            latlngs[ latlngs.length-1].__vertex.setIcon(new L.FinishIcon({'number':latlngs.length-1}));
+            return JSON.stringify(newTrack);
+
         }
 
 
