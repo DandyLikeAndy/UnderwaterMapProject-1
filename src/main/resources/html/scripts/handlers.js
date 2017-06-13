@@ -40,7 +40,7 @@ var handlers = {};
             let layerId = e.layer._leaflet_id;
             let track = lines.get(layerId);
             let isNewTrack = false;
-            console.log(e);
+            //console.log(e);
             //console.log(track);
             if (track == undefined){
                 isNewTrack = true;
@@ -197,12 +197,15 @@ var handlers = {};
 
     handlers.createNewLayer = function (e) {
         //JAVA.log(e)
-        //console.log(e)
+
         if (e.layer instanceof L.Marker){
+            if ((e.layer.circle == undefined)&&(e.type != "editable:vertex:new")) {
+                console.log("eee");
+                console.log(e.layer.circle)
+            }
             let layer = e.layer;
-            console.log(layer.getLatLng());
             let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer);
-            //JAVA.log(JSON.stringify(newMarker))
+            console.log(e);
             JAVA.addMarker(newMarker);
         }
 

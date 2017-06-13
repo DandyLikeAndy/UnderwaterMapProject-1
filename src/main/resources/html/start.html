@@ -303,7 +303,9 @@
         }
 
         function addMarker(lat, lon) {
-            L.marker([lat, lon]).addTo(map);
+            let marker = L.marker([lat, lon],{new:"true"});
+            marker._type = "custom";
+            marker.addTo(map);
         }
 
 
