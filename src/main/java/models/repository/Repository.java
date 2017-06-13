@@ -102,6 +102,10 @@ public class Repository {
         });
     }
 
+    public TrackLine getTrackById(int id){
+        return lines.filtered(l->l.getId()==id).get(0);
+    }
+
 
     public void deleteLine(int id) {
         TrackLine track = lines.stream().filter(l->l.getId() == id).findFirst().get();

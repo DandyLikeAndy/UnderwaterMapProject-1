@@ -4,21 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
+import models.TrackLine;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SettingsProperties {
@@ -27,7 +20,6 @@ public class SettingsProperties {
     private ObjectProperty<String> tileUrl = new SimpleObjectProperty<>();
     private ObjectProperty<MapSource> currentMapSource = new SimpleObjectProperty<>();
     private ObservableList<MapSource> mapSources = FXCollections.observableArrayList();
-    private Type mapSourceListType = new TypeToken<List<MapSource>>() {}.getType();
     private Properties properties;
 
     private Gson gson;
@@ -39,6 +31,8 @@ public class SettingsProperties {
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("properties/mapSources.json"));
         String result = new BufferedReader(reader)
                 .lines().collect(Collectors.joining("\n"));
+        Type mapSourceListType = new TypeToken<List<MapSource>>() {
+        }.getType();
         mapSources.addAll((Collection<? extends MapSource>) gson.fromJson(result, mapSourceListType));
         System.out.println("DONE!");
 
@@ -128,4 +122,9 @@ public class SettingsProperties {
     public void setCurrentMapSource(MapSource currentMapSource) {
         this.currentMapSource.set(currentMapSource);
     }
+
+    public void close() throws IOException {
+        saveSettings();
+    }
+
 }

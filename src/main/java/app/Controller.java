@@ -239,6 +239,7 @@ public class Controller {
 
     public void initialize() {
 
+        //FIXME: хранить в одном месте общий экземпляр
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting()
                 .registerTypeAdapter(Waypoint.class, new PointConverter())
