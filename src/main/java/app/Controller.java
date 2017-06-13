@@ -5,7 +5,6 @@ import Views.BehaviorView;
 import Views.TaskView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
@@ -15,18 +14,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
 import models.*;
 import models.JSONConverters.BehaviorConverter;
@@ -39,11 +44,10 @@ import utills.HttpDownloadUtility;
 import utills.SettingsProperties;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.function.BinaryOperator;
+import java.util.Optional;
 
 
 public class Controller {
@@ -96,6 +100,8 @@ public class Controller {
     Label pointsCountLabel;
     @FXML
     Label optionsHeader;
+    @FXML
+            Button addMarkerBtn;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -147,8 +153,8 @@ public class Controller {
         jsBridge.startRegion();
     }
 
-    @FXML
-    public void addMarker() {
+    public void addMarkerByClick(ActionEvent e) {
+
         jsBridge.addMarker();
     }
 
@@ -253,8 +259,6 @@ public class Controller {
         webEngine.setJavaScriptEnabled(true);
         webEngine.load(getClass().getResource("/html/start.html").toExternalForm());
 
-
-
         final Controller controller = this;
 
         webEngine.getLoadWorker()
@@ -298,7 +302,75 @@ public class Controller {
             setMapUrl();
         });
 
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem addMarkerByCoordsMenu = new MenuItem("Add Marker By Coords");
+        MenuItem addMarkerByClickMenu = new MenuItem("Add Marker By Click");
 
+        addMarkerByClickMenu.setOnAction(this::addMarkerByClick);
+        addMarkerByCoordsMenu.setOnAction(this::addMarkerByCoords);
+
+        contextMenu.getItems().addAll(addMarkerByClickMenu, addMarkerByCoordsMenu);
+        addMarkerBtn.setContextMenu(contextMenu);
+
+
+    }
+
+    private void addMarkerByCoords(ActionEvent actionEvent) {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Add Marker By Coords");
+        dialog.setHeaderText("Add New Marker By Coordinates");
+
+// Set the icon (must be included in the project).
+        dialog.setGraphic(null);
+
+// Set the button types.
+        ButtonType loginButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+// Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField lat = new TextField();
+        lat.setPromptText("Lat");
+        TextField lon = new TextField();
+        lon.setPromptText("Lon");
+
+        grid.add(new Label("Latitude:"), 0, 0);
+        grid.add(lat, 1, 0);
+        grid.add(new Label("Longitude:"), 0, 1);
+        grid.add(lon, 1, 1);
+
+// Enable/Disable login button depending on whether a username was entered.
+        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+        loginButton.setDisable(true);
+
+// Do some validation (using the Java 8 lambda syntax).
+        lat.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+// Request focus on the username field by default.
+        Platform.runLater(() -> lat.requestFocus());
+
+// Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(lat.getText(), lon.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(latLons -> {
+            jsBridge.addMarker(latLons.getKey(), latLons.getValue());
+            System.out.println("lat " + latLons.getKey() + ", lon " + latLons.getValue());
+        });
     }
 
     private void setHandlers() {
@@ -596,6 +668,10 @@ public class Controller {
 
         HttpDownloadUtility.addCallbacks(msg -> Platform.runLater(() -> setStatus(msg)));
         HttpDownloadUtility.loadTiles(Arrays.asList(tilesImgs));
+    }
+
+    public void addMarker(String marker){
+        System.out.println("new marker "+marker);
     }
 
 

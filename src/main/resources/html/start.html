@@ -72,8 +72,11 @@
 
             map.on("editable:vertex:drag", handlers.dragVertex);
 
-            map.on("editable:vertex:dragend ", handlers.dragEndVertex)
+            map.on("editable:vertex:dragend ", handlers.dragEndVertex);
 
+            //map.on("editable:created", handlers.createNewLayer);
+
+            map.on("layeradd", handlers.createNewLayer)
 
             ////////////add delete shape
             /*
@@ -298,6 +301,12 @@
             return JSON.stringify(newTrack);
 
         }
+
+        function addMarker(lat, lon) {
+            L.marker([lat, lon]).addTo(map);
+        }
+
+
 
 
 

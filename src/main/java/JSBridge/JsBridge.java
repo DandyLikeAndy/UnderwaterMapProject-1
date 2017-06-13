@@ -76,4 +76,8 @@ public class JsBridge {
         //System.out.println(coords);
         return window.call("addActiveLine", coords).toString();
     }
+
+    public void addMarker(String lat, String lon){
+        window.call("addMarker", Double.valueOf(lat), Double.valueOf(lon));
+    }
 }

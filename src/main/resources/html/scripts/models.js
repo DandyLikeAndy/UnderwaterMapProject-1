@@ -180,4 +180,55 @@ class Track{
 
 }
 
+class PointMarker{
+
+    constructor(lat, lng, id, marker){
+
+        this._lat = lat;
+        this._lng = lng;
+        this._id = id;
+        this._marker = marker;
+    }
+    get lat() {
+        return this._lat;
+    }
+
+    set lat(value) {
+        this._lat = value;
+    }
+
+    get lng() {
+        return this._lng;
+    }
+
+    set lng(value) {
+        this._lng = value;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    set id(value) {
+        this._id = value;
+    }
+
+    get marker() {
+        return this._marker;
+    }
+
+    set marker(value) {
+        this._marker = value;
+    }
+
+    toJSON(){
+        let obj = {};
+        obj.id = this.id;
+        obj.lat = this._lat;
+        obj.lon = this._lng;
+        return obj;
+    }
+
+}
+
 

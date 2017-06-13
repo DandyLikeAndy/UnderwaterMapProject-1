@@ -163,7 +163,7 @@
                         <FontAwesomeIconView glyphName="CODE_FORK" size="24" />
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#addMarker">
+                  <Button fx:id="addMarkerBtn" mnemonicParsing="false">
                      <graphic>
                         <FontAwesomeIconView glyphName="MAP_MARKER" size="24" />
                      </graphic>

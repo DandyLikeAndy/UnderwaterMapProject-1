@@ -36,6 +36,9 @@
 //
 //     },
 //     deleteLine: function(l){
+//     },
+//     addMarker : function (m) {
+//
 //     }
 // };
 
@@ -92,6 +95,10 @@ function initJava() {
 
     obj.deleteLine = function(id){
         javaController.deleteLine(id);
+    };
+
+    obj.addMarker = function (m) {
+        javaController.addMarker(JSON.stringify(m))
     };
 
 

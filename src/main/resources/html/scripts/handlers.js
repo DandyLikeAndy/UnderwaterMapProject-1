@@ -193,6 +193,19 @@ var handlers = {};
         var latlng = L.latLng(50.5, 30.5);
         //latlng.distanceTo()
 
+    };
+
+    handlers.createNewLayer = function (e) {
+        //JAVA.log(e)
+        //console.log(e)
+        if (e.layer instanceof L.Marker){
+            let layer = e.layer;
+            console.log(layer.getLatLng());
+            let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer);
+            //JAVA.log(JSON.stringify(newMarker))
+            JAVA.addMarker(newMarker);
+        }
+
     }
 
 
