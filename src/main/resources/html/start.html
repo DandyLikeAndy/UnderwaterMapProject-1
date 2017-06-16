@@ -302,10 +302,18 @@
 
         }
 
-        function addMarker(lat, lon) {
-            let marker = L.marker([lat, lon],{new:"true"});
-            marker._type = "custom";
+        function addMarker(lat, lon, name) {
+            let marker = L.marker([lat, lon]);
+            marker.isCustom = true;
+            marker.name = name;
             marker.addTo(map);
+
+        }
+
+        function startMarker() {
+            let marker = map.editTools.startMarker();
+            marker.name = "Click marker";
+            marker.isCustom = true;
         }
 
 

@@ -54,12 +54,17 @@ function addToolBar(map) {
 
         options: {
             position: 'topleft',
-            callback: map.editTools.startMarker,
+            callback: function (latlng, options) {
+                let marker = map.editTools.startMarker(latlng, options);
+                marker.isCustom = true;
+                return marker;
+            },
             kind: 'marker',
             html: '🖈'
         }
 
     });
+
 
     L.NewRectangleControl = L.EditControl.extend({
 

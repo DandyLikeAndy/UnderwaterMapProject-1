@@ -5,6 +5,8 @@
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
@@ -34,6 +36,12 @@
                         <FontAwesomeIconView glyphName="PLUS" />
                      </graphic>
                   </Button>
+                  <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false" text="Add Track">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#loadActiveTrack" text="Add Active Track" />
+                      <MenuItem mnemonicParsing="false" onAction="#loadDoneTrack" text="Add Done Track" />
+                    </items>
+                  </MenuButton>
                </children>
             </AnchorPane>
             <TreeView fx:id="tracksTreeView" prefHeight="200.0" prefWidth="200.0" styleClass="layers-tree" />

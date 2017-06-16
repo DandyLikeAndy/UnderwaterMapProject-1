@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.util.Callback;
+import models.Marker;
 import models.PointTask;
 import models.TrackLine;
 import models.Waypoint;
@@ -37,6 +38,7 @@ public class Repository {
     private ObjectProperty<TrackLine> currentLine = new SimpleObjectProperty<>();
     private ObservableList<Waypoint> currentPoint = FXCollections.observableArrayList(param -> new Observable[]{param.lngProperty(),param.latProperty(),param.positionProperty(),param.distanceProperty(),param.azimuthProperty()});
     private ObservableList<PointTask> currentTasks = FXCollections.observableArrayList();
+    private ObservableList<Marker> markers = FXCollections.observableArrayList();
 
     public static void setInstance(Repository instance) {
         Repository.instance = instance;
@@ -87,6 +89,26 @@ public class Repository {
         TrackLine track = lines.stream().filter(l->l.getId() == lineId).findFirst().get();
         Waypoint waypoint = track.getPoints().stream().filter(p->p.getId() == pointId).findFirst().get();
         track.removePoint(waypoint);
+    }
+
+    public ObservableList<Marker> getMarkers() {
+        return markers;
+    }
+
+    public void setMarkers(ObservableList<Marker> markers) {
+        this.markers = markers;
+    }
+
+    public void addMarker(Marker marker){
+        markers.add(marker);
+    }
+
+    public Marker getMarkerById(int id){
+        return markers.filtered(m->m.getId() == id).get(0);
+    }
+
+    public void deleteMarker(Marker marker){
+        markers.remove(marker);
     }
 
     public void updateTrack(TrackLine target, TrackLine source){

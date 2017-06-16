@@ -148,6 +148,13 @@ var handlers = {};
             .openOn(map);
     };
 
+    handlers.showMarkerPopup = function (latlng, name) {
+        var popup = L.popup()
+            .setLatLng(latlng)
+            .setContent('<p>lat: '+latlng.lat+'<br />lng: '+latlng.lng+'<br />name: '+name+'</p>')
+            .openOn(map);
+    };
+
     handlers.mouseMove = function (e) {
         JAVA.setDistance(e.latlng.distanceTo(lastPoint));
        JAVA.setMouseCoords(e.latlng.lat + ", " + e.latlng.lng);
@@ -199,14 +206,16 @@ var handlers = {};
         //JAVA.log(e)
 
         if (e.layer instanceof L.Marker){
-            if ((e.layer.circle == undefined)&&(e.type != "editable:vertex:new")) {
-                console.log("eee");
-                console.log(e.layer.circle)
+            if (e.layer.isCustom) {
+                JAVA.log("custom marker added");
             }
             let layer = e.layer;
-            let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer);
-            console.log(e);
+            let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer, layer.name);
             JAVA.addMarker(newMarker);
+            layer.on("mouseover", function (e) {
+                handlers.showMarkerPopup(e.latlng, layer.name);
+            });
+
         }
 
     }

@@ -155,7 +155,7 @@ public class Controller {
 
     public void addMarkerByClick(ActionEvent e) {
 
-        jsBridge.addMarker();
+        jsBridge.startMarker();
     }
 
     @FXML
@@ -242,6 +242,11 @@ public class Controller {
         }
     }
 
+    @FXML
+    public void loadDoneTrack(){
+
+    }
+
 
     public void initialize() {
 
@@ -280,6 +285,9 @@ public class Controller {
 
                                 initTasksBehaviorsPane();
 
+                                setAddMarkerContextMenu();
+
+
                                 setZoom((int) window.call("getZoom"));
                        /* // all next classes are from org.w3c.dom domain
                         org.w3c.dom.events.EventListener listener = (ev) -> {
@@ -302,6 +310,11 @@ public class Controller {
             setMapUrl();
         });
 
+
+
+    }
+
+    private void setAddMarkerContextMenu() {
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem addMarkerByCoordsMenu = new MenuItem("Add Marker By Coords");
         MenuItem addMarkerByClickMenu = new MenuItem("Add Marker By Click");
@@ -311,12 +324,10 @@ public class Controller {
 
         contextMenu.getItems().addAll(addMarkerByClickMenu, addMarkerByCoordsMenu);
         addMarkerBtn.setContextMenu(contextMenu);
-
-
     }
 
     private void addMarkerByCoords(ActionEvent actionEvent) {
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle("Add Marker By Coords");
         dialog.setHeaderText("Add New Marker By Coordinates");
 
@@ -337,11 +348,16 @@ public class Controller {
         lat.setPromptText("Lat");
         TextField lon = new TextField();
         lon.setPromptText("Lon");
+        TextField name = new TextField();
+        name.setPromptText("Name");
+        name.setText("Custom marker");
 
         grid.add(new Label("Latitude:"), 0, 0);
         grid.add(lat, 1, 0);
         grid.add(new Label("Longitude:"), 0, 1);
         grid.add(lon, 1, 1);
+        grid.add(new Label("Name:"), 0, 2);
+        grid.add(name, 1, 2);
 
 // Enable/Disable login button depending on whether a username was entered.
         Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
@@ -360,16 +376,16 @@ public class Controller {
 // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                return new Pair<>(lat.getText(), lon.getText());
+                String[] s = {lat.getText(),lon.getText(),name.getText()};
+                return s;
             }
             return null;
         });
 
-        Optional<Pair<String, String>> result = dialog.showAndWait();
+        Optional<String[]> result = dialog.showAndWait();
 
         result.ifPresent(latLons -> {
-            jsBridge.addMarker(latLons.getKey(), latLons.getValue());
-            System.out.println("lat " + latLons.getKey() + ", lon " + latLons.getValue());
+            jsBridge.addMarker(latLons[0], latLons[1], latLons[2]);
         });
     }
 
@@ -489,6 +505,8 @@ public class Controller {
                         showBtn.setOnAction(event -> {
                             jsBridge.deleteLine(item.getId());
                         });
+                    } else if (item.getClass().getName().equals("models.Marker")){
+                        setText(name);
                     }
 
                     /*if (name.equals("root")){
@@ -562,6 +580,21 @@ public class Controller {
                 System.out.println();
             }*/
 
+        });
+
+        ///add markers tree item
+
+        Marker markers = new Marker();
+        markers.setName("Markers");
+        TreeItem<TrackItem> markersItem = new TreeItem<>(markers);
+        root.getChildren().add(markersItem);
+
+        repository.getMarkers().addListener((ListChangeListener<Marker>) c -> {
+            c.next();
+            if (c.getList().size()>0){
+                Marker addedMarker = c.getAddedSubList().get(0);
+                markersItem.getChildren().add(new TreeItem<>(addedMarker));
+            }
         });
 
 
@@ -672,6 +705,7 @@ public class Controller {
 
     public void addMarker(String marker){
         System.out.println("new marker "+marker);
+        repository.addMarker(gson.fromJson(marker, Marker.class));
     }
 
 

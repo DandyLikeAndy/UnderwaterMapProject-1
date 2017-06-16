@@ -181,13 +181,21 @@ class Track{
 }
 
 class PointMarker{
+    get name() {
+        return this._name;
+    }
 
-    constructor(lat, lng, id, marker){
+    set name(value) {
+        this._name = value;
+    }
+
+    constructor(lat, lng, id, marker, name){
 
         this._lat = lat;
         this._lng = lng;
         this._id = id;
         this._marker = marker;
+        this._name = name;
     }
     get lat() {
         return this._lat;
@@ -221,11 +229,19 @@ class PointMarker{
         this._marker = value;
     }
 
+    set name(value){
+        this._name = value;
+    }
+
+    get name(){
+        return this._name;
+    }
     toJSON(){
         let obj = {};
         obj.id = this.id;
         obj.lat = this._lat;
         obj.lon = this._lng;
+        obj.name = this._name;
         return obj;
     }
 
