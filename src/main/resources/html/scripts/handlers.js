@@ -208,13 +208,14 @@ var handlers = {};
         if (e.layer instanceof L.Marker){
             if (e.layer.isCustom) {
                 JAVA.log("custom marker added");
+                let layer = e.layer;
+                let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer, layer.name);
+                JAVA.addMarker(newMarker);
+                layer.on("mouseover", function (e) {
+                    handlers.showMarkerPopup(e.latlng, layer.name);
+                });
             }
-            let layer = e.layer;
-            let newMarker = new PointMarker(layer.getLatLng().lat, layer.getLatLng().lng,layer._leaflet_id, layer, layer.name);
-            JAVA.addMarker(newMarker);
-            layer.on("mouseover", function (e) {
-                handlers.showMarkerPopup(e.latlng, layer.name);
-            });
+
 
         }
 

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -31,16 +32,14 @@
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Button layoutX="228.0" layoutY="9.0" mnemonicParsing="false" onAction="#loadActiveTrack" AnchorPane.rightAnchor="0.0">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="PLUS" />
-                     </graphic>
-                  </Button>
-                  <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false" text="Add Track">
+                  <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#loadActiveTrack" text="Add Active Track" />
                       <MenuItem mnemonicParsing="false" onAction="#loadDoneTrack" text="Add Done Track" />
                     </items>
+                     <tooltip>
+                        <Tooltip text="Add new Layer" />
+                     </tooltip>
                   </MenuButton>
                </children>
             </AnchorPane>
@@ -161,25 +160,37 @@
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#showSettings">
+                  <Button ellipsisString="" mnemonicParsing="false" onAction="#showSettings">
                      <graphic>
                         <FontAwesomeIconView glyphName="COG" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Settings" />
+                     </tooltip>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#startTrack">
                      <graphic>
                         <FontAwesomeIconView glyphName="CODE_FORK" size="24" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Create new Track" />
+                     </tooltip>
                   </Button>
                   <Button fx:id="addMarkerBtn" mnemonicParsing="false">
                      <graphic>
                         <FontAwesomeIconView glyphName="MAP_MARKER" size="24" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Add Marker" />
+                     </tooltip>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#startRegion">
                      <graphic>
                         <FontAwesomeIconView glyphName="OBJECT_UNGROUP" size="20" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Start Region" />
+                     </tooltip>
                   </Button>
                </children>
             </VBox>
@@ -189,21 +200,33 @@
                      <graphic>
                         <FontAwesomeIconView glyphName="CLOUD_DOWNLOAD" size="24" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Download Map" />
+                     </tooltip>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#zoomPlus">
                      <graphic>
                         <FontAwesomeIconView glyphName="PLUS" size="24" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Zoom Plus" />
+                     </tooltip>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#zoomMinus">
                      <graphic>
                         <FontAwesomeIconView glyphName="MINUS" size="24" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Zoom minus" />
+                     </tooltip>
                   </Button>
                   <Button mnemonicParsing="false" onAction="#saveTrack">
                      <graphic>
                         <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_DOWN" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Save Track" />
+                     </tooltip>
                   </Button>
                </children>
             </VBox>

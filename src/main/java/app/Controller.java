@@ -101,7 +101,9 @@ public class Controller {
     @FXML
     Label optionsHeader;
     @FXML
-            Button addMarkerBtn;
+    Button addMarkerBtn;
+    @FXML
+            MenuButton addTrackBtn;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -311,6 +313,8 @@ public class Controller {
         });
 
 
+        addTrackBtn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLUS));
+        //addTrackBtn.setTooltip(new Tooltip("Settings"));
 
     }
 
@@ -587,13 +591,18 @@ public class Controller {
         Marker markers = new Marker();
         markers.setName("Markers");
         TreeItem<TrackItem> markersItem = new TreeItem<>(markers);
-        root.getChildren().add(markersItem);
+        //
 
         repository.getMarkers().addListener((ListChangeListener<Marker>) c -> {
             c.next();
             if (c.getList().size()>0){
+                if (!root.getChildren().contains(markersItem)){
+                    root.getChildren().add(markersItem);
+                }
                 Marker addedMarker = c.getAddedSubList().get(0);
                 markersItem.getChildren().add(new TreeItem<>(addedMarker));
+            } else if (c.getList().isEmpty()){
+                root.getChildren().remove(markersItem);
             }
         });
 
@@ -703,7 +712,7 @@ public class Controller {
         HttpDownloadUtility.loadTiles(Arrays.asList(tilesImgs));
     }
 
-    public void addMarker(String marker){
+    public void addCustomMarker(String marker){
         System.out.println("new marker "+marker);
         repository.addMarker(gson.fromJson(marker, Marker.class));
     }

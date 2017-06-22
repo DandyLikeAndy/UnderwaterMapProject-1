@@ -303,6 +303,7 @@
         }
 
         function addMarker(lat, lon, name) {
+            JAVA.log("Call method ADD marker from JAVA")
             let marker = L.marker([lat, lon]);
             marker.isCustom = true;
             marker.name = name;
@@ -311,6 +312,7 @@
         }
 
         function startMarker() {
+            JAVA.log("Call method Start marker from JAVA")
             let marker = map.editTools.startMarker();
             marker.name = "Click marker";
             marker.isCustom = true;

@@ -38,7 +38,7 @@ let javaController = {
     },
     deleteLine: function(l){
     },
-    addMarker : function (m) {
+    addCustomMarker : function (m) {
 
     }
 };
@@ -100,7 +100,8 @@ function initJava() {
     };
 
     obj.addMarker = function (m) {
-        javaController.addMarker(JSON.stringify(m));
+        JAVA.log("Add new marker");
+        javaController.addCustomMarker(JSON.stringify(m));
     };
 
 
