@@ -13,7 +13,8 @@
 .idea/vcs.xml
 .idea/workspace.xml
 src/test/
-target/
+/target/*
+!/target/gliderApp.jar
 testOpenLayer.iml
 .idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_0_0_M4.xml
 .idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_0_0_M4.xml

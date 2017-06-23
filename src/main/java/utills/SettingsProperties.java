@@ -37,6 +37,7 @@ public class SettingsProperties {
         System.out.println("DONE!");
 
         try {
+            //System.getProperty("java.io.tmpdir")
             properties = new Properties();
             InputStream fis =  getClass().getClassLoader().getResourceAsStream("properties/settings.properties");
             properties.load(fis);
