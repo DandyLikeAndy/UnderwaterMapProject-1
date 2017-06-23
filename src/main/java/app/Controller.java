@@ -10,6 +10,8 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -104,6 +106,8 @@ public class Controller {
     Button addMarkerBtn;
     @FXML
             MenuButton addTrackBtn;
+    @FXML
+            CheckBox fixGpsCheck;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -446,6 +450,12 @@ public class Controller {
             }
         });
 
+        fixGpsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (repository.currentPointProperty().get(0).isGpsFix() != newValue){
+                repository.currentPointProperty().get(0).setGpsFix(newValue);
+            }
+        });
+
         trackNameField.textProperty().addListener((observable, oldValue, newValue) -> repository.currentLineProperty().getValue().setName(newValue));
 
 
@@ -628,6 +638,8 @@ public class Controller {
         radiusLabel.setText(String.valueOf(point.getCapture_radius()));
         pointDistanceLabel.setText(String.valueOf(point.getDistance()));
         azumuthLabel.setText(String.valueOf(point.getAzimuth()));
+        fixGpsCheck.setSelected(point.isGpsFix());
+
     }
 
     private void setMapUrl(){

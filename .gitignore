@@ -15,3 +15,8 @@
 src/test/
 target/
 testOpenLayer.iml
+.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_0_0_M4.xml
+.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_0_0_M4.xml
+.idea/libraries/Maven__org_opentest4j_opentest4j_1_0_0_M2.xml
+.idea/libraries/Maven__org_xerial_sqlite_jdbc_3_18_0.xml
+dependency-reduced-pom.xml

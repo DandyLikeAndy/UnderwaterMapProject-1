@@ -21,12 +21,17 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         int position = object.get("index").getAsInt();
         int radius = object.get("capture_radius").getAsInt();
         Waypoint waypoint = new Waypoint(lat, lng);
+        if (object.get("fix_gps")!=null){
+            boolean fixGps = object.get("fix_gps").getAsBoolean();
+            waypoint.setGpsFix(fixGps);
+        }
 
         if (tasks !=null){
             tasks.forEach(t->{
                 waypoint.addTask(jsonDeserializationContext.deserialize(t, PointTask.class));
             });
         }
+
 
         waypoint.setId(id);
         waypoint.setPosition(position);
@@ -48,6 +53,7 @@ public class PointConverter implements JsonSerializer<Waypoint>, JsonDeserialize
         result.addProperty("capture_radius", point.getCapture_radius());
         result.addProperty("index", point.getPosition());
         result.addProperty("id", point.getId());
+        result.addProperty("fix_gps", point.isGpsFix());
 
         JsonArray tasks = new JsonArray();
         result.add("tasks", tasks);

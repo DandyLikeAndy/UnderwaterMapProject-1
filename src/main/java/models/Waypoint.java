@@ -1,9 +1,6 @@
 package models;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.behavors.Behavior;
@@ -27,6 +24,7 @@ public class Waypoint implements TrackItem{
     private String name;
     private PointTypes type;
     private IntegerProperty position = new SimpleIntegerProperty();
+    private BooleanProperty gpsFix = new SimpleBooleanProperty(true);
 
     public Waypoint() {
         this.name = "Track Point";
@@ -171,6 +169,18 @@ public class Waypoint implements TrackItem{
 
     public DoubleProperty azimuthProperty(){
         return azimuth;
+    }
+
+    public BooleanProperty gpsFixProperty(){
+        return gpsFix;
+    }
+
+    public boolean isGpsFix() {
+        return gpsFix.get();
+    }
+
+    public void setGpsFix(boolean gpsFix) {
+        this.gpsFix.set(gpsFix);
     }
 
     @Override
