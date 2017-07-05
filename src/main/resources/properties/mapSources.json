@@ -2,16 +2,19 @@
   {
     "name":"OSM",
     "url" : "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-    "subdomains":""
+    "subdomains":"",
+    "downloadUrl":"http://{s}.tile.osm.org/{z}/{x}/{y}.png"
   },
   {
     "name":"OpenTopo",
     "url" :"http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-    "subdomains":""
+    "subdomains":"",
+    "downloadUrl":"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
   },
   {
     "name":"google",
     "url":"http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-    "subdomains":"mt0,mt1,mt2,mt3"
+    "subdomains":"mt0,mt1,mt2,mt3",
+    "downloadUrl":"http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
   }
 ]

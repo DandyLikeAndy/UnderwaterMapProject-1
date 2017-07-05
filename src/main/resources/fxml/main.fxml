@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
@@ -33,7 +34,7 @@
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false">
+                  <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false" styleClass="add-track-btn" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#loadActiveTrack" text="Add Active Track" />
                       <MenuItem mnemonicParsing="false" onAction="#loadDoneTrack" text="Add Done Track" />
@@ -41,6 +42,9 @@
                      <tooltip>
                         <Tooltip text="Add new Layer" />
                      </tooltip>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" />
+                     </graphic>
                   </MenuButton>
                </children>
             </AnchorPane>
@@ -180,7 +184,7 @@
                         <Tooltip text="Create new Track" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="addMarkerBtn" mnemonicParsing="false">
+                  <Button fx:id="addMarkerBtn" mnemonicParsing="false" onAction="#addMarkerByClick">
                      <graphic>
                         <FontAwesomeIconView glyphName="MAP_MARKER" size="24" />
                      </graphic>
@@ -244,10 +248,11 @@
                   <Label fx:id="zoomLabel" text="16" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="0.0">
+            <HBox prefHeight="20.0" prefWidth="330.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label text="Status:" />
-                  <Label fx:id="statusLabel" text="Label" />
+                  <Label fx:id="statusLabel" prefWidth="100.0" text="Label" />
+                  <ProgressBar fx:id="downloadProgressBar" prefHeight="18.0" prefWidth="177.0" progress="0.0" visible="false" />
                </children>
             </HBox>
             <HBox prefHeight="30.0" prefWidth="422.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="0.0">

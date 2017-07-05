@@ -7,14 +7,24 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.TrackLine;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SettingsProperties {
+
+    static final Logger logger = LogManager.getLogger(SettingsProperties.class);
+    private final String tempFolderName = "gliderApp";
+
     private ObjectProperty<String> tileSource = new SimpleObjectProperty<>();
     private ObjectProperty<String> tileCash = new SimpleObjectProperty<>();
     private ObjectProperty<String> tileUrl = new SimpleObjectProperty<>();
@@ -26,22 +36,21 @@ public class SettingsProperties {
 
     private static SettingsProperties instance;
 
-    private SettingsProperties(){
+    private SettingsProperties() throws IOException {
+        logger.debug("temp user path: "+ System.getProperty("java.io.tmpdir"));
+
         gson = new Gson();
         InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("properties/mapSources.json"));
         String result = new BufferedReader(reader)
                 .lines().collect(Collectors.joining("\n"));
+        reader.close();
         Type mapSourceListType = new TypeToken<List<MapSource>>() {
         }.getType();
         mapSources.addAll((Collection<? extends MapSource>) gson.fromJson(result, mapSourceListType));
-        System.out.println("DONE!");
+        properties = new Properties();
 
         try {
-            //System.getProperty("java.io.tmpdir")
-            properties = new Properties();
-            InputStream fis =  getClass().getClassLoader().getResourceAsStream("properties/settings.properties");
-            properties.load(fis);
-            fis.close();
+            loadProperties();
             tileCash.setValue(properties.getProperty("tile.cash"));
             tileSource.setValue(properties.getProperty("tile.source"));
             tileUrl.setValue(properties.getProperty("tile.url"));
@@ -57,10 +66,13 @@ public class SettingsProperties {
     }
 
     public static synchronized SettingsProperties getInstance(){
-        if (instance == null) instance = new SettingsProperties();
+        if (instance == null) try {
+            instance = new SettingsProperties();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return instance;
     }
-
 
 
 
@@ -94,7 +106,7 @@ public class SettingsProperties {
 
     public void saveSettings() throws IOException {
 
-        FileOutputStream fos = new FileOutputStream(new File("src/main/resources/properties/settings.properties").getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(getTempPath().toFile());
         properties.store(fos, null);
         fos.close();
     }
@@ -126,6 +138,67 @@ public class SettingsProperties {
 
     public void close() throws IOException {
         saveSettings();
+    }
+
+    private boolean checkTempDir(){
+        if (Files.exists(getTempPath())){
+            return true;
+        } else {
+            logger.debug("settings file is not exist");
+            return false;
+        }
+
+    }
+    private boolean checkVersion() throws IOException {
+        InputStream sourceFis =  getClass().getClassLoader().getResourceAsStream("properties/settings.properties");
+        InputStream targetFis = Files.newInputStream(getTempPath());
+        Properties sourceProp = new Properties();
+        Properties targetProp = new Properties();
+        sourceProp.load(sourceFis);
+        targetProp.load(targetFis);
+        if (sourceProp.getProperty("settings.version").equals(targetProp.getProperty("settings.version"))) {
+            logger.info("settings version is equals");
+            sourceFis.close();
+            targetFis.close();
+            return true;
+        }
+        logger.info("settings version is not equals");
+        sourceFis.close();
+        targetFis.close();
+        return false;
+    }
+
+    private Path getTempPath(){
+        String tempDir = System.getProperty("java.io.tmpdir");
+        return Paths.get(tempDir).resolve(tempFolderName).resolve("settings.properties");
+    }
+
+    private Path createTempSettingsFile() throws IOException {
+        Path dir = Paths.get(System.getProperty("java.io.tmpdir")).resolve(tempFolderName);
+        if (!Files.exists(dir)) {
+            Files.createDirectory(dir);
+        }
+        if (Files.exists(getTempPath())) return getTempPath();
+        return Files.createFile(getTempPath());
+    }
+
+    private void loadProperties() throws IOException {
+
+        if (!checkTempDir() || !checkVersion()) {
+           copyProperties();
+        }
+        InputStream fis = Files.newInputStream(getTempPath());
+        properties.load(fis);
+        fis.close();
+
+    }
+
+    private void copyProperties() throws IOException {
+        System.out.println("");
+        InputStream fis =  getClass().getClassLoader().getResourceAsStream("properties/settings.properties");
+        createTempSettingsFile();
+        Files.copy(fis, getTempPath(), StandardCopyOption.REPLACE_EXISTING);
+        fis.close();
     }
 
 }

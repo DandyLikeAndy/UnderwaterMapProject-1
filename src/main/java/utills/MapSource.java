@@ -4,10 +4,12 @@ public class MapSource {
     String name;
     String url;
     String subdomains;
+    String downloadUrl;
 
-    public MapSource(String name, String url, String subdomains) {
+    public MapSource(String name, String url, String subdomains, String downloadUrl) {
         this.name = name;
         this.url = url;
+        this.downloadUrl = downloadUrl;
     }
 
     public String getName() {
@@ -32,5 +34,9 @@ public class MapSource {
 
     public void setSubdomains(String subdomains) {
         this.subdomains = subdomains;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
     }
 }

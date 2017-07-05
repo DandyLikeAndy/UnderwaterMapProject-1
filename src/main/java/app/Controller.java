@@ -8,6 +8,8 @@ import com.google.gson.GsonBuilder;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -105,9 +107,11 @@ public class Controller {
     @FXML
     Button addMarkerBtn;
     @FXML
-            MenuButton addTrackBtn;
+    MenuButton addTrackBtn;
     @FXML
-            CheckBox fixGpsCheck;
+    CheckBox fixGpsCheck;
+    @FXML
+    ProgressBar downloadProgressBar;
 
 
     ObservableList<Waypoint> points = FXCollections.observableArrayList();
@@ -159,6 +163,8 @@ public class Controller {
         jsBridge.startRegion();
     }
 
+
+    @FXML
     public void addMarkerByClick(ActionEvent e) {
 
         jsBridge.startMarker();
@@ -181,7 +187,7 @@ public class Controller {
 
     @FXML
     public void saveTrack() {
-        if (repository.currentLineProperty().getValue()==null){
+        if (repository.currentLineProperty().getValue() == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setHeaderText("Track not selected!");
             alert.setContentText("Select track for save");
@@ -196,7 +202,7 @@ public class Controller {
         Path dirPath = dir.toPath().resolve(fileName + ".json");
         if (Files.exists(dirPath)) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("File "+dirPath+" already exists!");
+            alert.setHeaderText("File " + dirPath + " already exists!");
             alert.setContentText("Specify new track name or folder");
             alert.showAndWait();
             return;
@@ -212,7 +218,7 @@ public class Controller {
     }
 
     @FXML
-    public void showSettings(){
+    public void showSettings() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/settings.fxml"));
             Stage stage = new Stage();
@@ -225,12 +231,12 @@ public class Controller {
     }
 
     @FXML
-    public void loadActiveTrack(){
+    public void loadActiveTrack() {
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(properties.getScene().getWindow());
-        if (file != null){
+        if (file != null) {
             try {
-                Files.lines(file.toPath()).reduce((s, s2) -> s+s2).ifPresent(s->{
+                Files.lines(file.toPath()).reduce((s, s2) -> s + s2).ifPresent(s -> {
                     TrackLine trackLine = gson.fromJson(s, TrackLine.class);
                     String coords = gson.toJson(trackLine.getPointsCoords());
                     TrackLine addedTrack = gson.fromJson(jsBridge.addActiveLine(coords), TrackLine.class);
@@ -249,7 +255,7 @@ public class Controller {
     }
 
     @FXML
-    public void loadDoneTrack(){
+    public void loadDoneTrack() {
 
     }
 
@@ -317,7 +323,6 @@ public class Controller {
         });
 
 
-        addTrackBtn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLUS));
         //addTrackBtn.setTooltip(new Tooltip("Settings"));
 
     }
@@ -384,7 +389,7 @@ public class Controller {
 // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                String[] s = {lat.getText(),lon.getText(),name.getText()};
+                String[] s = {lat.getText(), lon.getText(), name.getText()};
                 return s;
             }
             return null;
@@ -451,7 +456,7 @@ public class Controller {
         });
 
         fixGpsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (repository.currentPointProperty().get(0).isGpsFix() != newValue){
+            if (repository.currentPointProperty().get(0).isGpsFix() != newValue) {
                 repository.currentPointProperty().get(0).setGpsFix(newValue);
             }
         });
@@ -519,7 +524,7 @@ public class Controller {
                         showBtn.setOnAction(event -> {
                             jsBridge.deleteLine(item.getId());
                         });
-                    } else if (item.getClass().getName().equals("models.Marker")){
+                    } else if (item.getClass().getName().equals("models.Marker")) {
                         setText(name);
                     }
 
@@ -583,9 +588,9 @@ public class Controller {
                         item.getChildren().sort(this::comparator);
                     }
                 });
-            } else if(c.wasRemoved()){
+            } else if (c.wasRemoved()) {
                 TrackLine line = (TrackLine) c.getRemoved().get(0);
-                TreeItem<TrackItem> item = tracksTreeView.getRoot().getChildren().stream().filter(i-> i.getValue().equals(line)).findFirst().get();
+                TreeItem<TrackItem> item = tracksTreeView.getRoot().getChildren().stream().filter(i -> i.getValue().equals(line)).findFirst().get();
                 tracksTreeView.getRoot().getChildren().remove(item);
             }
 
@@ -605,13 +610,13 @@ public class Controller {
 
         repository.getMarkers().addListener((ListChangeListener<Marker>) c -> {
             c.next();
-            if (c.getList().size()>0){
-                if (!root.getChildren().contains(markersItem)){
+            if (c.getList().size() > 0) {
+                if (!root.getChildren().contains(markersItem)) {
                     root.getChildren().add(markersItem);
                 }
                 Marker addedMarker = c.getAddedSubList().get(0);
                 markersItem.getChildren().add(new TreeItem<>(addedMarker));
-            } else if (c.getList().isEmpty()){
+            } else if (c.getList().isEmpty()) {
                 root.getChildren().remove(markersItem);
             }
         });
@@ -642,14 +647,14 @@ public class Controller {
 
     }
 
-    private void setMapUrl(){
+    private void setMapUrl() {
         String url;
         String subdomains;
-        if (settingsProperties.getTileSource().equals("web")){
+        if (settingsProperties.getTileSource().equals("web")) {
             url = settingsProperties.getCurrentMapSource().getUrl();
             subdomains = settingsProperties.getCurrentMapSource().getSubdomains();
         } else {
-            url = "file:///"+settingsProperties.getTileCash()+"/"+settingsProperties.getCurrentMapSource().getName()+"/{z}/{x}/{y}.png";
+            url = "file:///" + settingsProperties.getTileCash() + "/" + settingsProperties.getCurrentMapSource().getName() + "/{z}/{x}/{y}.png";
             subdomains = "";
         }
         jsBridge.setMapUrl(url, subdomains);
@@ -677,7 +682,7 @@ public class Controller {
         repository.deletePoint(id, lineId);
     }
 
-    public void deleteLine(int id){
+    public void deleteLine(int id) {
         repository.deleteLine(id);
     }
 
@@ -719,13 +724,32 @@ public class Controller {
                 tilesImgs) {
             System.out.println("img = " + i);
         }
+        int tilesLength = tilesImgs.length;
+        double progressStep = 1.0/tilesLength;
+        final double[] progress = {0};
+        System.out.println("Progress step: "+progressStep);
+        System.out.println("Progress length: "+tilesLength);
+        downloadProgressBar.setVisible(true);
+        downloadProgressBar.setProgress(0);
 
-        HttpDownloadUtility.addCallbacks(msg -> Platform.runLater(() -> setStatus(msg)));
+        HttpDownloadUtility.addCallbacks(msg -> {
+            Platform.runLater(() -> {
+                setStatus(msg);
+                progress[0] += progressStep;
+                downloadProgressBar.setProgress(progress[0]);
+            });
+        });
+        HttpDownloadUtility.setOnFinishedDownload(msg->{
+            Platform.runLater(()->{
+                downloadProgressBar.setVisible(false);
+                setStatus(msg);
+            });
+        });
         HttpDownloadUtility.loadTiles(Arrays.asList(tilesImgs));
     }
 
-    public void addCustomMarker(String marker){
-        System.out.println("new marker "+marker);
+    public void addCustomMarker(String marker) {
+        System.out.println("new marker " + marker);
         repository.addMarker(gson.fromJson(marker, Marker.class));
     }
 

@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by User on 15.05.2017.
@@ -20,6 +22,8 @@ public class HttpDownloadUtility {
     private static final int BUFFER_SIZE = 4096;
     private static final String dir = "tiles";
     private static List<Callback> callbacks = new ArrayList<>();
+    private static List<Callback> onFinishedDownload = new ArrayList<>();
+
 
     /**
      * Downloads a file from a URL
@@ -62,7 +66,7 @@ public class HttpDownloadUtility {
 
             String[] msg = {"Downloading file:= " + fileName} ;
 
-            callbacks.forEach(c->c.call(msg[0]));
+            //callbacks.forEach(c->c.call(msg[0]));
 
             // opens input stream from the HTTP connection
             InputStream inputStream = httpConn.getInputStream();
@@ -80,8 +84,8 @@ public class HttpDownloadUtility {
             outputStream.close();
             inputStream.close();
 
-            System.out.println("File downloaded");
-            callbacks.forEach(c->c.call("File downloaded"));
+            callbacks.forEach(c->c.call("Downloading..."));
+
         } else {
             System.out.println("No file to download. Server replied HTTP code: " + responseCode);
             callbacks.forEach(c->c.call("No file to download. Server replied HTTP code: " + responseCode));
@@ -91,63 +95,91 @@ public class HttpDownloadUtility {
     }
 
     public static void loadTiles(List<String> urls) throws IOException {
-        Path vendorFolderPath = Paths.get(SettingsProperties.getInstance().getTileCash()+"/"+SettingsProperties.getInstance().getCurrentMapSource().getName());
-        if (!Files.exists(vendorFolderPath)) {
-            Files.createDirectory(vendorFolderPath);
-        }
 
-        urls.forEach(url -> {
-            url = prepareUrl(url);
-            System.out.println("url " + url);
-            String[] arr = url.split("/");
-            //String vendorFolder = arr[2];
-            //String[] vendorFolderArr = vendorFolder.split("\\.");
-            //vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];
-            String z = arr[3];
-            String x = arr[4];
-            String y = arr[5];
-            //System.out.println(z + " " + x + " " + y);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Path vendorFolderPath = Paths.get(SettingsProperties.getInstance().getTileCash()+"/"+SettingsProperties.getInstance().getCurrentMapSource().getName());
+                if (!Files.exists(vendorFolderPath)) {
+                    try {
+                        Files.createDirectory(vendorFolderPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            //Path vendorFolderPath = path.resolve(SettingsProperties.getInstance().getCurrentMapSource().getName());
-            if (!Files.exists(vendorFolderPath)) try {
-                Files.createDirectory(vendorFolderPath);
-            } catch (IOException e) {
-                e.printStackTrace();
+                urls.forEach(url -> {
+                    System.out.println("url 1 " + url);
+                    String[] arr = url.split("/");
+                    //String vendorFolder = arr[2];
+                    //String[] vendorFolderArr = vendorFolder.split("\\.");
+                    //vendorFolder = vendorFolderArr[vendorFolderArr.length-2]+"."+vendorFolderArr[vendorFolderArr.length-1];
+                    String s = arr[2].split("\\.")[0];
+                    String z = arr[3];
+                    String x = arr[4];
+                    String y = arr[5].split("\\.")[0];
+                    url = prepareUrl(s, x, y, z);
+                    System.out.println("url 2 " + url);
+                    //System.out.println(z + " " + x + " " + y);
+
+                    //Path vendorFolderPath = path.resolve(SettingsProperties.getInstance().getCurrentMapSource().getName());
+                    if (!Files.exists(vendorFolderPath)) try {
+                        Files.createDirectory(vendorFolderPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    Path zPath = vendorFolderPath.resolve(z);
+                    if (!Files.exists(zPath)) try {
+                        Files.createDirectory(zPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    Path xPath = zPath.resolve(x);
+                    if (!Files.exists(xPath)) try {
+                        Files.createDirectory(xPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Path yPath = xPath.resolve(y);
+
+                    try {
+                        if (!isFileExist(y, xPath.toAbsolutePath()))
+                            downloadFile(url, xPath.toAbsolutePath().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                });
+
+                onFinishedDownload.forEach(c->c.call("all files is downloaded"));
             }
-
-            Path zPath = vendorFolderPath.resolve(z);
-            if (!Files.exists(zPath)) try {
-                Files.createDirectory(zPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Path xPath = zPath.resolve(x);
-            if (!Files.exists(xPath)) try {
-                Files.createDirectory(xPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Path yPath = xPath.resolve(y);
-
-            try {
-                if (!isFileExist(y, xPath.toAbsolutePath()))
-                    downloadFile(url, xPath.toAbsolutePath().toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        }).start();
     }
 
     public static void addCallbacks(Callback callback){
         callbacks.add(callback);
     }
 
+    public static void setOnFinishedDownload(Callback callback){
+        onFinishedDownload.add(callback);
+    }
 
 
-    private static String prepareUrl(String url) {
-        return url.replace("http://", "https://");
+    private static String prepareUrl(String s, String x, String y, String z) {
+        String url = SettingsProperties.getInstance().getCurrentMapSource().getDownloadUrl();
+        String res;
+        res = url.replaceFirst("\\{s", s);
+        res = res.replaceFirst("\\{x", x);
+        res = res.replaceFirst("\\{y", y);
+        res = res.replaceFirst("\\{z", z);
+        res = res.replaceAll("}", "");
+
+        System.out.println("result url: "+res);
+        return res;
     }
 
     private static boolean isFileExist(String fileName, Path path) {
@@ -155,6 +187,18 @@ public class HttpDownloadUtility {
     }
 
     public interface Callback{
-        public void call(String msg);
+        void call(String msg);
     }
+
+    public static void main(String[] args) {
+        String url = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
+        url = url.replaceFirst("\\{s", "a");
+        url = url.replaceFirst("\\{x", "a");
+        url = url.replaceFirst("\\{y", "a");
+        url = url.replaceFirst("\\{z", "a");
+        url = url.replaceAll("}", "");
+        System.out.println(url);
+    }
+
+
 }
