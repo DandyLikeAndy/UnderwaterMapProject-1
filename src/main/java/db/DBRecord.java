@@ -22,7 +22,7 @@ public class DBRecord {
      * Коллекция столбцов с записями.
      */
 
-    private Map<DBRecordType, ArrayList<String>> columns;
+    private Map<DBRecordType, String[]> columns;
     /**
      * Время занесения в БД (мс).
      */
@@ -32,7 +32,7 @@ public class DBRecord {
      */
     private String date;
 
-    public DBRecord(int id, Map<DBRecordType, ArrayList<String>> columns, long time, String date) {
+    public DBRecord(int id, Map<DBRecordType, String[]> columns, long time, String date) {
         this.id = id;
         this.columns = columns;
         this.time = time;
@@ -74,7 +74,7 @@ public class DBRecord {
      * @param type
      * @return
      */
-    public ArrayList<String> getValues(DBRecordType type) {
+    public String[] getValues(DBRecordType type) {
         return columns.get(type);
     }
 

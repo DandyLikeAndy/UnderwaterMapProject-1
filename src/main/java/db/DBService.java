@@ -20,11 +20,13 @@ public class DBService {
 
     public DBService(String path) {
         this.path = path;
+        this.sessions = new ArrayList<>();
     }
 
     public boolean init() {
         database = new DBConnection(path);
         if (database.connect()) {
+            sessions.clear();
             sessions = database.getSessions();
             return true;
         } else {
@@ -53,6 +55,11 @@ public class DBService {
       
         database.deleteSession(index);
     }
+    public void uploadRecords(DBSession session){
+        
+        database.uploadRecords(session);
+    }
+    
 
     public int getRecordsNumber() {
         int records = 0;

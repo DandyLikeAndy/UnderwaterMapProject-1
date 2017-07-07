@@ -29,7 +29,7 @@
      -fx-background-color: transparent;
  }
 .tree-cell{
-    -fx-pref-height: 20px;
+    -fx-pref-height: 22px;
 }
 .right-panel .anchor-pane {
     -fx-border-width: 0px;

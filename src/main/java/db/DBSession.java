@@ -5,6 +5,10 @@
  */
 package db;
 
+import utills.Time;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +18,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utills.Time;
 
 /**
  *
@@ -28,14 +31,19 @@ public class DBSession {
     private long time;
     private String date;
     private ArrayList<DBRecord> records;
+    private Connection connection;
+    private int records_size;
 
-    public DBSession(int id, String name, String type, long time, String date) {
+    public DBSession(int id, String name, String type, long time, String date, int records_size) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.time = time;
         this.date = date;
+        this.connection = connection;
+        this.records_size = records_size;
         records = new ArrayList<>();
+
     }
 
     public void addRecord(DBRecord record) {
@@ -74,7 +82,7 @@ public class DBSession {
 
     public int getRecordsSize() {
 
-        return getRecords().size();
+        return records_size;
 
     }
 
