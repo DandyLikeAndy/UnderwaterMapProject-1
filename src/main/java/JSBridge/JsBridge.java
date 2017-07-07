@@ -84,4 +84,9 @@ public class JsBridge {
     public void startMarker() {
         window.call("startMarker");
     }
+
+    public void addTrackFromGeoJson(String geoJson){
+        System.out.println("add geoJsonTrack");
+        window.call("addGeoJson", geoJson);
+    }
 }

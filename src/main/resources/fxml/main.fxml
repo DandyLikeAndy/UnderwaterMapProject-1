@@ -37,7 +37,7 @@
                   <MenuButton fx:id="addTrackBtn" layoutX="116.0" layoutY="9.0" mnemonicParsing="false" styleClass="add-track-btn" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#loadActiveTrack" text="Add Active Track" />
-                      <MenuItem mnemonicParsing="false" onAction="#loadDoneTrack" text="Add Done Track" />
+                      <MenuItem mnemonicParsing="false" onAction="#loadTrackFromGeoJson" text="Add Track from GEO Json" />
                     </items>
                      <tooltip>
                         <Tooltip text="Add new Layer" />

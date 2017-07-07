@@ -255,8 +255,20 @@ public class Controller {
     }
 
     @FXML
-    public void loadDoneTrack() {
-
+    public void loadTrackFromGeoJson() {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(properties.getScene().getWindow());
+        System.out.println("read file "+file);
+        if (file!=null){
+            StringBuilder stringBuilder = new StringBuilder();
+            try {
+                System.out.println("create string");
+                Files.lines(file.toPath()).forEach(stringBuilder::append);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            jsBridge.addTrackFromGeoJson(stringBuilder.toString());
+        }
     }
 
 
@@ -664,6 +676,7 @@ public class Controller {
     public void log(String value) {
         System.out.println("From web: " + value);
     }
+
 
     public void addPoint(String point, String trackId) {
         Waypoint waypoint = gson.fromJson(point, Waypoint.class);

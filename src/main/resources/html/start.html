@@ -318,6 +318,15 @@
             marker.isCustom = true;
         }
 
+        function addGeoJson(geoJson) {
+            JAVA.log("add geoJson");
+            let geoJsonObj = JSON.parse(geoJson);
+
+            JAVA.log(geoJsonObj.type);
+
+            L.geoJson(geoJsonObj).addTo(map);
+        }
+
 
 
 
