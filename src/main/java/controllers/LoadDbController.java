@@ -9,24 +9,31 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.controlsfx.control.GridCell;
+import org.controlsfx.control.GridView;
+import utills.CSVUtills;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class LoadDbController {
     @FXML
@@ -71,9 +78,13 @@ public class LoadDbController {
     @FXML
     private Label nameLabel;
 
+    @FXML
+    private GridView<DBRecordType> gridView;
+
 
     private ObjectProperty<Path> dbPathProperty = new SimpleObjectProperty<>();
     private DBService dbService;
+    private ArrayList<DBTypesElement> dBValues;
 
     @FXML
     private void loadDb(){
@@ -106,6 +117,54 @@ public class LoadDbController {
         //double[][] result = new double[records.size()][2];
 
 
+    }
+
+    @FXML
+    private void convertToCsv() throws IOException {
+        DBSession session = sessionTree.getSelectionModel().getSelectedItems().get(0).getValue();
+        dbService.uploadRecords(session);
+        ArrayList<DBRecord> records = session.getRecords();
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File dir = directoryChooser.showDialog(redWaveCheck.getScene().getWindow());
+        File pathToFile = dir.toPath().resolve("logs.csv").toFile();
+        Files.createFile(pathToFile.toPath());
+        FileWriter fileWriter = new FileWriter(pathToFile);
+
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Time");
+        dBValues.forEach(v->{
+            for (int i = 0; i < v.checkBoxes.size(); i++) {
+                if (v.checkBoxes.get(i).isSelected()) names.add(v.getName()+" "+v.checkBoxes.get(i).getText());
+            }
+        });
+        CSVUtills.writeLine(fileWriter, names);
+        records.forEach(r->{
+
+            ArrayList<String> values = new ArrayList<>();
+            values.add(String.valueOf(r.getTime()));
+            dBValues.forEach(v->{
+                String[] arr = r.getValues(v.type);
+                for (int i = 0; i < v.checkBoxes.size(); i++) {
+                    if (v.checkBoxes.get(i).isSelected()) {
+                        values.add(arr[i]);
+                    }
+                }
+            });
+
+            try {
+                CSVUtills.writeLine(fileWriter, values);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            /*String[] arr = r.getValues(DBRecordType.BATTERIES);
+            try {
+                CSVUtills.writeLine(fileWriter, Arrays.asList(String.valueOf(r.getTime()), arr[0], arr[1], arr[2]));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+        });
+        fileWriter.close();
     }
 
     private void saveTrack(ArrayList<DBRecord> records, DBRecordType type, String name, String color, Path dir){
@@ -142,8 +201,10 @@ public class LoadDbController {
 
 
     public void initialize(){
-        initTreeView();
+        dBValues = new ArrayList<>();
 
+        initTreeView();
+        initGridView();
        /* dbPathLabel.textProperty().bindBidirectional(dbPathProperty, new StringConverter<Path>() {
             @Override
             public String toString(Path object) {
@@ -201,6 +262,28 @@ public class LoadDbController {
         });
     }
 
+    private void initGridView(){
+        gridView.setItems(FXCollections.observableArrayList(Arrays.asList(DBRecordType.values())));
+
+        gridView.setCellFactory((Callback<GridView<DBRecordType>, GridCell<DBRecordType>>) param -> {
+            return new GridCell<DBRecordType>(){
+                @Override
+                public void updateItem(DBRecordType item, boolean empty){
+                    if (empty || item==null){
+                        setGraphic(null);
+                        setText(null);
+                    } else {
+                        DBTypesElement elem = new DBTypesElement(item);
+                        dBValues.add(elem);
+                        setGraphic(elem);
+                        setPrefWidth(70);
+                    }
+                }
+            };
+        });
+
+    }
+
     private String toRGBCode( Color color )
     {
         return String.format( "#%02X%02X%02X",
@@ -221,5 +304,63 @@ public class LoadDbController {
         DateFormat formatter = new SimpleDateFormat("mm:ss:SSS");
         return formatter.format(date);
     }
+
+    private class DBTypesElement extends VBox {
+        String name;
+        ArrayList<String> elementNames;
+        Label nameLabel;
+        ArrayList<CheckBox> checkBoxes;
+        DBRecordType type;
+
+        DBTypesElement(DBRecordType type){
+            super();
+            this.type = type;
+            this.elementNames = new ArrayList();
+            this.checkBoxes = new ArrayList<>();
+
+            this.name = type.getName();
+            nameLabel = new Label(name);
+            this.getChildren().add(nameLabel);
+            for (int i = 0; i < type.getParameters().length; i++) {
+                CheckBox checkBox = new CheckBox(type.getParameters()[i]);
+                elementNames.add(type.getParameters()[i]);
+                checkBoxes.add(checkBox);
+                this.getChildren().add(checkBox);
+            }
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public ArrayList<String> getElementNames() {
+            return elementNames;
+        }
+
+        public void setElementNames(ArrayList<String> elementNames) {
+            this.elementNames = elementNames;
+        }
+
+        public Label getNameLabel() {
+            return nameLabel;
+        }
+
+        public void setNameLabel(Label nameLabel) {
+            this.nameLabel = nameLabel;
+        }
+
+        public ArrayList<CheckBox> getCheckBoxes() {
+            return checkBoxes;
+        }
+
+        public void setCheckBoxes(ArrayList<CheckBox> checkBoxes) {
+            this.checkBoxes = checkBoxes;
+        }
+    }
+
 
 }
