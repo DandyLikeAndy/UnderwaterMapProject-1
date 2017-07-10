@@ -15,10 +15,13 @@
     <orderEntry type="library" name="jquery.js" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.10.2" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.0.0-M4" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.0.0-M5" level="project" />
     <orderEntry type="library" name="Maven: org.opentest4j:opentest4j:1.0.0-M2" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:1.0.0-M4" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:1.0.0-M5" level="project" />
     <orderEntry type="library" name="Maven: de.jensd:fontawesomefx:8.9" level="project" />
     <orderEntry type="library" name="Maven: org.controlsfx:controlsfx:8.40.10" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.18.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.4.1" level="project" />
   </component>
 </module>

@@ -324,7 +324,15 @@
 
             JAVA.log(geoJsonObj.type);
 
-            L.geoJson(geoJsonObj).addTo(map);
+            let myStyle = {
+                "color": "#ff7800",
+                "weight": 5
+            };
+
+            L.geoJson(geoJsonObj, {style:function (feature) {
+                if (feature.type = "LineString") return JSON.parse(feature.properties.style);
+                else return null;
+            }}).addTo(map);
         }
 
 

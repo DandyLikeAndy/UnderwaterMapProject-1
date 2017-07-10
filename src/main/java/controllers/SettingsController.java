@@ -1,4 +1,4 @@
-package app;
+package controllers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

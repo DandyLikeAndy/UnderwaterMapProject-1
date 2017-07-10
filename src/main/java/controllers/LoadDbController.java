@@ -1,4 +1,4 @@
-package app;
+package controllers;
 
 import db.DBRecord;
 import db.DBRecordType;
@@ -10,10 +10,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -24,12 +23,38 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LoadDbController {
     @FXML
     private TreeView<DBSession> sessionTree;
+
     @FXML
-    private TreeView<String> recordTree;
+    private CheckBox redWaveCheck;
+
+    @FXML
+    private CheckBox innerGpsCheck;
+
+    @FXML
+    private CheckBox inertialCheck;
+
+    @FXML
+    private TextField redWaveName;
+
+    @FXML
+    private TextField innerGpsName;
+
+    @FXML
+    private TextField inertialName;
+
+    @FXML
+    private ColorPicker redWaveColor;
+
+    @FXML
+    private ColorPicker innerGpsColor;
+
+    @FXML
+    private ColorPicker inertialColor;
 
 
     private ObjectProperty<Path> dbPathProperty = new SimpleObjectProperty<>();
@@ -52,18 +77,46 @@ public class LoadDbController {
         dbService.uploadRecords(session);
         ArrayList<DBRecord> records = session.getRecords();
 
-        double[][] result = new double[records.size()][2];
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File dir = directoryChooser.showDialog(redWaveCheck.getScene().getWindow());
 
-        for (int i = 0; i < records.size(); i++) {
-            String[] values = records.get(i).getValues(DBRecordType.TRACK);
-            double lat = Double.parseDouble(values[3]);
-            double lng = Double.parseDouble(values[4]);
-            double[] arr = {lat, lng};
-            result[i] = arr;
+        if (dir!=null){
+            if (redWaveCheck.isSelected()) saveTrack(records, DBRecordType.GPS_REDWAVE, redWaveName.getText(), toRGBCode(redWaveColor.getValue()), dir.toPath());
+            if (inertialCheck.isSelected()) saveTrack(records, DBRecordType.TRACK, inertialName.getText(), toRGBCode(inertialColor.getValue()), dir.toPath());
+            if (innerGpsCheck.isSelected()) saveTrack(records, DBRecordType.GPS_BOARD, innerGpsName.getText(), toRGBCode(innerGpsColor.getValue()), dir.toPath());
+
         }
 
-        String json = GeoJsonParser.toGeoJsonLineString(result);
-        Path file = Paths.get("C:/Users/User/Desktop/result.json");
+
+        //double[][] result = new double[records.size()][2];
+
+
+    }
+
+    private void saveTrack(ArrayList<DBRecord> records, DBRecordType type, String name, String color, Path dir){
+        ArrayList<double[]> result = new ArrayList<>();
+        HashMap<String, Integer> fildsNum = new HashMap<>();
+
+        if (type.equals(DBRecordType.GPS_BOARD) || type.equals(DBRecordType.GPS_REDWAVE)){
+            fildsNum.put("lat", 0);
+            fildsNum.put("lng", 1);
+        } else {
+            fildsNum.put("lat", 3);
+            fildsNum.put("lng", 4);
+        }
+
+        records.forEach(r->{
+            String[] values = r.getValues(type);
+            double lat = Double.parseDouble(values[fildsNum.get("lat")]);
+            double lng = Double.parseDouble(values[fildsNum.get("lng")]);
+            if (lat != 0.0 || lng !=0.0) {
+                double[] arr = {lng, lat};
+                result.add(arr);
+            }
+        });
+
+        String json = GeoJsonParser.toGeoJsonLineString(result, name, color);
+        Path file = dir.resolve(Paths.get(name+".json"));
 
         try {
             Files.write(file, json.getBytes());
@@ -126,4 +179,13 @@ public class LoadDbController {
             }
         });
     }
+
+    private String toRGBCode( Color color )
+    {
+        return String.format( "#%02X%02X%02X",
+                (int)( color.getRed() * 255 ),
+                (int)( color.getGreen() * 255 ),
+                (int)( color.getBlue() * 255 ) );
+    }
+
 }

@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.LoadDbController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoadDbController">
    <children>
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#loadDb" text="Load sessions" />
-      <SplitPane dividerPositions="0.5668896321070234" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <SplitPane dividerPositions="0.3377926421404682" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="300.0">
                <children>
@@ -17,20 +24,54 @@
                     <content>
                       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                            <children>
-                              <TreeView fx:id="sessionTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <TreeView fx:id="sessionTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="190.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </content>
                   </ScrollPane>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane fx:id="sessionInfo" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ScrollPane layoutX="73.0" layoutY="-14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                        <TreeView fx:id="recordTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
-                     </content>
-                  </ScrollPane>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <GridPane prefHeight="106.0" prefWidth="254.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="107.0" minWidth="3.0" prefWidth="3.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="141.0" minWidth="10.0" prefWidth="68.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="161.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <CheckBox fx:id="redWaveCheck" mnemonicParsing="false" GridPane.rowIndex="1" />
+                                    <CheckBox fx:id="innerGpsCheck" mnemonicParsing="false" GridPane.rowIndex="2" />
+                                    <CheckBox fx:id="inertialCheck" mnemonicParsing="false" GridPane.rowIndex="3" />
+                                    <Label text="Name" GridPane.columnIndex="2" />
+                                    <Label text="Color" GridPane.columnIndex="3" />
+                                    <TextField fx:id="redWaveName" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <TextField fx:id="innerGpsName" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <TextField fx:id="inertialName" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                    <ColorPicker fx:id="redWaveColor" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <ColorPicker fx:id="innerGpsColor" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <ColorPicker fx:id="inertialColor" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <Label text="Red Wave" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Inner GPS" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="Inertial" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
                </children>
             </AnchorPane>
         </items>

@@ -8,6 +8,7 @@ import geoJson.JSONConverters.GeometryConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class GeoJsonParser {
     public static String toGeoJsonLineString(double[][] latlngs){
@@ -22,6 +23,35 @@ public class GeoJsonParser {
         lineString.setCoordinates(latlngs);
         features.setGeometry(lineString);
         collection.addFeatures(features);
+        return convertCollection(collection);
+    }
+
+    public static String toGeoJsonLineString(ArrayList<double[]> latlngs, String name, String color){
+        ArrayList<double[]> start = (ArrayList<double[]>) latlngs.subList(0,1);
+        ArrayList<double[]> end = (ArrayList<double[]>) latlngs.subList(latlngs.size()-1, latlngs.size());
+        GeoJsonFeatures startFeatures = new GeoJsonFeatures();
+        GeoJsonFeatures endFeatures = new GeoJsonFeatures();
+        GeoJsonGeometry startGeometry = new GeoJsonPoint();
+        GeoJsonGeometry endGeometry = new GeoJsonPoint();
+        startGeometry.setCoordinates(start);
+        endGeometry.setCoordinates(end);
+        startFeatures.setGeometry(startGeometry);
+        endFeatures.setGeometry(endGeometry);
+
+        GeoJsonFeaturesCollection collection = new GeoJsonFeaturesCollection();
+        GeoJsonFeatures features = new GeoJsonFeatures();
+
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("style", "{\"color\":\""+color+"\"}");
+        properties.put("name", name);
+        features.setProperties(properties);
+
+        GeoJsonLineString lineString = new GeoJsonLineString();
+        lineString.setCoordinates(latlngs);
+        features.setGeometry(lineString);
+        collection.addFeatures(features);
+        collection.addFeatures(startFeatures);
+        collection.addFeatures(endFeatures);
         return convertCollection(collection);
     }
 
