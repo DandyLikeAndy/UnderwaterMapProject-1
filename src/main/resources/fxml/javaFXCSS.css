@@ -59,6 +59,10 @@
 .add-track-btn .arrow{
     -fx-background-color:transparent;
 }
+.menu-bar {
+    -fx-background-color: transparent;
+    -fx-font-size: 18px;
+}
 
 
 

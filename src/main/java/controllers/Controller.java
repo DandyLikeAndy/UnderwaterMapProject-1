@@ -44,6 +44,7 @@ import utills.SettingsProperties;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -263,6 +264,15 @@ public class Controller {
             }
             jsBridge.addTrackFromGeoJson(stringBuilder.toString());
         }
+    }
+
+    @FXML
+    public void openDbConverter() throws IOException {
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/loadDb.fxml"));
+        stage.setTitle("Db Converter");
+        stage.setScene(new Scene(root, 800, 600));
+        stage.show();
     }
 
 

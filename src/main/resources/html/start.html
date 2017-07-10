@@ -321,18 +321,28 @@
         function addGeoJson(geoJson) {
             JAVA.log("add geoJson");
             let geoJsonObj = JSON.parse(geoJson);
+            JAVA.log("parse JSON");
+            function onEach(feature, layer) {
+                JAVA.log("type: "+feature.type);
+            }
 
-            JAVA.log(geoJsonObj.type);
+
 
             let myStyle = {
                 "color": "#ff7800",
                 "weight": 5
             };
 
-            L.geoJson(geoJsonObj, {style:function (feature) {
-                if (feature.type = "LineString") return JSON.parse(feature.properties.style);
-                else return null;
-            }}).addTo(map);
+            L.geoJson(geoJsonObj, {
+                style:function (feature) {
+                    JAVA.log("in style "+feature.geometry.type);
+                    if (feature.geometry.type == "LineString") {
+                        JAVA.log("return style ");
+                        return JSON.parse(feature.properties.style);
+                    }
+                },
+                onEachFeature:onEach
+            }).addTo(map);
         }
 
 

@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class LoadDbController {
@@ -55,6 +58,18 @@ public class LoadDbController {
 
     @FXML
     private ColorPicker inertialColor;
+
+    @FXML
+    private Label dateLabel;
+
+    @FXML
+    private Label timeLabel;
+
+    @FXML
+    private Label recordsLabel;
+
+    @FXML
+    private Label nameLabel;
 
 
     private ObjectProperty<Path> dbPathProperty = new SimpleObjectProperty<>();
@@ -145,6 +160,8 @@ public class LoadDbController {
     private void initTreeView() {
         TreeItem<DBSession> sessionRoot = new TreeItem<>(new DBSession(0, "session", "", 0, "", 0));
         sessionTree.setRoot(sessionRoot);
+        sessionTree.setShowRoot(false);
+        sessionRoot.setExpanded(true);
 
         sessionTree.setCellFactory(new Callback<TreeView<DBSession>, TreeCell<DBSession>>() {
             @Override
@@ -178,6 +195,10 @@ public class LoadDbController {
                 });
             }
         });
+
+        sessionTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            fillSessionInfo(newValue.getValue());
+        });
     }
 
     private String toRGBCode( Color color )
@@ -186,6 +207,19 @@ public class LoadDbController {
                 (int)( color.getRed() * 255 ),
                 (int)( color.getGreen() * 255 ),
                 (int)( color.getBlue() * 255 ) );
+    }
+
+    private void fillSessionInfo(DBSession session){
+        nameLabel.setText(session.getName());
+        dateLabel.setText(session.getDate().toString());
+        timeLabel.setText(formatTime(session.getTime()));
+        recordsLabel.setText(String.valueOf(session.getRecordsSize()));
+    }
+
+    private String formatTime(long time){
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("mm:ss:SSS");
+        return formatter.format(date);
     }
 
 }

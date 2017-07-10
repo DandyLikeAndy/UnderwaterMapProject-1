@@ -12,16 +12,16 @@ public class GeoJsonPoint implements GeoJsonGeometry {
 
     @Override
     public String getType() {
-        return null;
+        return type;
     }
 
     @Override
     public ArrayList<double[]> getCoordinates() {
-        return null;
+        return coordinates;
     }
 
     @Override
     public void setCoordinates(ArrayList<double[]> coordinates) {
-
+        this.coordinates = coordinates;
     }
 }

@@ -27,8 +27,10 @@ public class GeoJsonParser {
     }
 
     public static String toGeoJsonLineString(ArrayList<double[]> latlngs, String name, String color){
-        ArrayList<double[]> start = (ArrayList<double[]>) latlngs.subList(0,1);
-        ArrayList<double[]> end = (ArrayList<double[]>) latlngs.subList(latlngs.size()-1, latlngs.size());
+        ArrayList<double[]> start = new ArrayList<>();
+        ArrayList<double[]> end = new ArrayList<>();
+        start.add(latlngs.get(0));
+        end.add(latlngs.get(latlngs.size()-1));
         GeoJsonFeatures startFeatures = new GeoJsonFeatures();
         GeoJsonFeatures endFeatures = new GeoJsonFeatures();
         GeoJsonGeometry startGeometry = new GeoJsonPoint();
@@ -50,8 +52,8 @@ public class GeoJsonParser {
         lineString.setCoordinates(latlngs);
         features.setGeometry(lineString);
         collection.addFeatures(features);
-        collection.addFeatures(startFeatures);
-        collection.addFeatures(endFeatures);
+        //collection.addFeatures(startFeatures);
+        //collection.addFeatures(endFeatures);
         return convertCollection(collection);
     }
 
