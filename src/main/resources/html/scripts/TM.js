@@ -29,9 +29,8 @@
     TM.iconInitProp = {}; //store custom Icon properties
     TM.utils = {}; //store various useful functions
     TM.toolbar = {}; //store controls (it defines in TM.__initMethods.toolbarsInit)
-    TM.init = function () {
-    }; //initialize TM
-
+    TM.init = function () {}; //initialize TM
+    TM._initMethods = {}; //Methods for initialization, it uses in TM.init
 
     //DEFINE MAIN PROPERTIES
 
@@ -1092,6 +1091,8 @@
         return this;
     };
 
+
+    //Methods for initialization, it uses in TM.init
     TM._initMethods = {
 
         mapInit: function () {
