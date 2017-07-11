@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,11 +22,17 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
 import utills.CSVUtills;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -80,6 +87,9 @@ public class LoadDbController {
 
     @FXML
     private GridView<DBRecordType> gridView;
+
+    @FXML
+    private AnchorPane converterPane;
 
 
     private ObjectProperty<Path> dbPathProperty = new SimpleObjectProperty<>();
@@ -139,18 +149,11 @@ public class LoadDbController {
             }
         });
         CSVUtills.writeLine(fileWriter, names);
+        final int[] i = {0};
         records.forEach(r->{
 
-            ArrayList<String> values = new ArrayList<>();
-            values.add(String.valueOf(r.getTime()));
-            dBValues.forEach(v->{
-                String[] arr = r.getValues(v.type);
-                for (int i = 0; i < v.checkBoxes.size(); i++) {
-                    if (v.checkBoxes.get(i).isSelected()) {
-                        values.add(arr[i]);
-                    }
-                }
-            });
+            ArrayList<String> values = getValues(i[0], records);
+            i[0]++;
 
             try {
                 CSVUtills.writeLine(fileWriter, values);
@@ -165,6 +168,70 @@ public class LoadDbController {
             }*/
         });
         fileWriter.close();
+    }
+
+    @FXML
+    public void convertToXls() throws IOException {
+        System.out.println("open converter");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File dir = directoryChooser.showDialog(redWaveCheck.getScene().getWindow());
+        File pathToFile = dir.toPath().resolve("logs.xls").toFile();
+        Files.createFile(pathToFile.toPath());
+
+
+        DBSession session = sessionTree.getSelectionModel().getSelectedItems().get(0).getValue();
+        dbService.uploadRecords(session);
+        ArrayList<DBRecord> records = session.getRecords();
+
+        //Create exel workbook and sheet
+        HSSFWorkbook hwb = new HSSFWorkbook();
+        HSSFSheet sheet = hwb.createSheet(session.getName()+" "+session.getDate());
+
+        //Creat list of column name
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Time");
+        dBValues.forEach(v->{
+            for (int i = 0; i < v.checkBoxes.size(); i++) {
+                if (v.checkBoxes.get(i).isSelected()) names.add(v.getName()+" "+v.checkBoxes.get(i).getText());
+            }
+        });
+
+        //Add column names to 0 row
+        HSSFRow headerRow = sheet.createRow(0);
+        for (int i = 0; i < names.size(); i++) {
+            HSSFCell cell = headerRow.createCell(i);
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(names.get(i));
+        }
+
+        //Fill other rows by data
+        for (int i = 0; i < records.size(); i++) {
+            ArrayList<String> values = getValues(i, records);
+            HSSFRow row = sheet.createRow(i+1);
+            for (int k = 0; k < values.size(); k++) {
+                HSSFCell cell = row.createCell(k);
+                cell.setCellType(CellType.STRING);
+                cell.setCellValue(values.get(k));
+            }
+        }
+        hwb.write(pathToFile);
+    }
+
+    private ArrayList<String> getValues(int i, ArrayList<DBRecord> records){
+        ArrayList<String> values = new ArrayList<>();
+        values.add(String.valueOf(records.get(i).getTime()));
+
+        final DBRecord record = records.get(i);
+
+        dBValues.forEach(v->{
+            String[] arr = record.getValues(v.type);
+            for (int j = 0; j < v.checkBoxes.size(); j++) {
+                if (v.checkBoxes.get(j).isSelected()) {
+                    values.add(arr[j]);
+                }
+            }
+        });
+        return values;
     }
 
     private void saveTrack(ArrayList<DBRecord> records, DBRecordType type, String name, String color, Path dir){
@@ -258,6 +325,7 @@ public class LoadDbController {
         });
 
         sessionTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (converterPane.isDisable()) converterPane.setDisable(false);
             fillSessionInfo(newValue.getValue());
         });
     }
