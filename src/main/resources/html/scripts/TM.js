@@ -151,9 +151,13 @@
                 return this._radius;
             }
 
-            set latlng(val) {
+            set latlng(val) {//я переименовал latlngs в latlng, т.к. здесь одна точка
                 this._lat = val.lat;
                 this._lng = val.lng;
+            }
+
+            get latlng() {
+                return L.latLng(this.lat, this.lng);
             }
 
             set distance(value) {
@@ -191,7 +195,26 @@
                 obj.distance = this.distance;
                 return obj;
             }
-        }, //TODO Проверить состав необходимых св-в
+
+            setIcon() {
+                let index = this.vertex.getIndex(),
+                    lastIndex = this.vertex.getLastIndex(),
+                    vertex = this.vertex;
+
+                if (index === 0) {
+                    vertex.setIcon(new L.DivIcon.CustomIcon.StartIcon({number: index}));
+                } else if (index === lastIndex && !this.line.isDrawing) {
+                    vertex.setIcon(new L.DivIcon.CustomIcon.FinishIcon({number: index}));
+                } else {
+                    if (vertex.options.icon.updateIcon) {
+                        vertex.options.icon.updateIcon(index);
+                    } else {
+                        vertex.setIcon(new L.DivIcon.CustomIcon.NumberIcon({number: index}));
+                    }
+                }
+            }
+        },
+         //TODO Проверить состав необходимых св-в
         Track: class {
             constructor({id, name = "Unnamed track", length = 0, points = new Map()}) {
                 this._id = id;
@@ -241,16 +264,26 @@
             }
 
             deletePoint(pointId) {
-                this._points.delete(pointId);
+                let point = this.points.get(pointId),
+                    vertex = point.vertex;
+
+                if (vertex.circle) {
+                    vertex.circle.remove();
+                }
+
+                //if it is not 'editable:vertex:deleted'
+                if ( ~vertex.getIndex() ) {
+                    vertex.delete();
+                }
+
+                this.points.delete(pointId);
+                this.updatePositions();
             }
 
             updatePositions() {
                 for (let point of this.points.values()) {
-                    let position = point.vertex.getIndex();
-                    if (point.pos !== position) {
-                        point.pos = position;
-                        point.vertex.options.icon.updateIcon(point.pos);//TODO
-                    }
+                    point.pos = point.vertex.getIndex();
+                    point.setIcon();
                 }
                 this.updateDistance();
             }
@@ -260,9 +293,12 @@
                     let next = point.vertex.getNext();
                     if (next) { //if it's not end point
                         point.distance = point.vertex.latlng.distanceTo(next.latlng);
+                    } else {
+                        point.distance = 0;
                     }
                 }
             }
+
 
             toJSON() {
                 let obj = {};
@@ -276,16 +312,8 @@
                 return obj;
             }
 
-        }, //TODO !
+        }, //TODO Проверить состав необходимых св-в!
         PointMarker: class {
-            get name() {
-                return this._name;
-            }
-
-            set name(value) {
-                this._name = value;
-            }
-
             constructor(lat, lng, id, marker, name) {
 
                 this._lat = lat;
@@ -293,6 +321,14 @@
                 this._id = id;
                 this._marker = marker;
                 this._name = name;
+            }
+
+            get name() {
+                return this._name;
+            }
+
+            set name(value) {
+                this._name = value;
             }
 
             get lat() {
@@ -376,16 +412,17 @@
                             line: track
                         });
 
-                    if (!track) {
+                    if (!track) {//create track
                         track = new TM.Track({id: layerId});
                         track.isDrawing = true; //temp property (delete in 'editable:drawing:end')
                         TM.tracks.set(layerId, track);
-                        point.line = track;
+                        track.layer = e.layer;
                         e.layer.setStyle({color: '#c33a34'});
                         JAVA.log("new track");
                     }
 
                     track.addPoint(point);
+                    point.line = track;
 
                     //it use in other handlers
                     e.vertex.point = point;
@@ -393,7 +430,6 @@
                     if (index === e.vertex.getLastIndex()) {
                         e.layer.lastVertex = e.vertex;
                     }
-
 
                     if (!track.isDrawing) {
                         JAVA.addPoint(point, track.id);
@@ -404,11 +440,7 @@
                         JAVA.updateTrack(track);
                     }
 
-                    if (index === 0) { //first point
-                         e.vertex.setIcon(new L.DivIcon.CustomIcon.StartIcon({number: index})); //TODO
-                    } else {
-                        e.vertex.setIcon(new L.DivIcon.CustomIcon.NumberIcon({number: index})); //TODO
-                    }
+                    point.setIcon();
                 }
 
                 //TODO подумать об установке обработчика другим способом, для возможности быстрой отмены/назначения всех подобных обработчиков
@@ -437,8 +469,7 @@
                 e.layer.on('click', TM.intHandlers.lineClick);
 
                 //set finishIcon
-                let lastVertex = e.layer.lastVertex;
-                e.layer.lastVertex.setIcon(new L.DivIcon.CustomIcon.FinishIcon( {number: lastVertex.latlngs.length-1} ));
+                e.layer.lastVertex.point.setIcon();
             }
         },
 
@@ -451,16 +482,10 @@
                         pointId = L.stamp(e.vertex),
                         track = TM.tracks.get(layerId);
 
-                    TM.tracks.get(layerId).points.delete(pointId);
-                    track.updatePositions();
-
-                    if (e.vertex.circle) {
-                        e.vertex.circle.remove();
-                    }
-
-                    JAVA.log("delete " + e.vertex.point.id + " " + layerId);
-                    JAVA.deletePoint(e.vertex.point.id, layerId);
-                    JAVA.updateTrack(e.vertex.point.line);
+                    track.deletePoint(pointId);
+                    JAVA.log("delete " + pointId + " " + layerId);
+                    JAVA.deletePoint(pointId, layerId);
+                    JAVA.updateTrack(track);
                 }
 
                 TM.intHandlers.closePopup(e);
@@ -886,9 +911,7 @@
             }
 
             TM.map.tileLayer = L.tileLayer(url, opts);
-
             TM.map.tileLayer.addTo(TM.map);
-
         },
 
         /**
@@ -1078,7 +1101,27 @@
                 radius: radius,
                 type: type
             };
+        },
+
+        //delete track
+        deleteLine: function (lineId) {
+            let track = TM.tracks.get(lineId);
+
+            for ( let point of track.points.values() ) {
+                point.vertex.circle.remove();
+            }
+
+            track.layer.remove();
+            TM.tracks.delete(lineId);
+            JAVA.deleteLine(lineId);
+        },
+
+        //delete point from track
+        deletePoint: function(pointId, lineId) {
+            let track = TM.tracks.get(lineId);
+            track.deletePoint(pointId);
         }
+
     };
 
     /**
