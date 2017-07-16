@@ -1,3 +1,4 @@
+//TODO отрегулировать показ showLPopup при клике и удалении линии
 (function () {
 
     //определяем TrackManager (TM) в Window
@@ -35,7 +36,7 @@
     //DEFINE MAIN PROPERTIES
 
     TM.mapParams = {
-        mapId: 'map',
+        mapId: 'mapid',
         options: { //default map options
             center: TM.currentPoint,
             zoom: 16,
@@ -445,7 +446,6 @@
 
                 //TODO подумать об установке обработчика другим способом, для возможности быстрой отмены/назначения всех подобных обработчиков
                 TM.showPPopup( TM.getVInfo(e) );
-
                 e.vertex.on('mouseover', TM.intHandlers.showVPopup);
                 e.vertex.on('mouseout', TM.intHandlers.closePopup);
 
@@ -457,6 +457,7 @@
             handler: function (e) {
 
                 if ( !(e.layer instanceof L.Polyline) || e.layer instanceof L.Polygon ) return;
+                if ( !e.layer.lastVertex.latlngs.length  ) return;
 
                 let layerId = L.stamp(e.layer),
                     track = TM.tracks.get(layerId);
@@ -470,6 +471,23 @@
 
                 //set finishIcon
                 e.layer.lastVertex.point.setIcon();
+            }
+        },
+
+        cancelDrawing: {
+            eventType: 'editable:drawing:cancel',
+            handler: function (e) {
+                TM.map.closePopup();
+
+                if (!(e.layer instanceof L.Polyline) || e.layer instanceof L.Polygon) return;
+                if ( e.layer.lastVertex.latlngs.length > 1 ) return; //if polyline has 1 point
+
+                let index = L.stamp(e.layer),
+                    vertex = e.layer.lastVertex;
+
+                vertex.circle.remove();
+                TM.tracks.delete(index);
+
             }
         },
 
@@ -612,16 +630,26 @@
         },
 
         lineClick: function (e) {
-            let track = TM.tracks.get(L.stamp(e.target)),
+            let id = L.stamp(e.target),
+                track = TM.tracks.get(id),
                 info = {
                     latlng: e.latlng,
                     name: track.name
                 };
             TM.utils.showLPopup(info);
+            TM.utils.selectLine(id);
+
             JAVA.log("Click line");
         },
 
         hoverMarker: function (e) { //TODO пока не используется
+        },
+
+        keyDownDelTrack: function (e) {
+            if (e.keyCode === 46) {
+                TM.utils.deleteLine(TM._selectedTrack.id);
+                TM.map.closePopup();
+            }
         }
     };
 
@@ -1120,6 +1148,112 @@
         deletePoint: function(pointId, lineId) {
             let track = TM.tracks.get(lineId);
             track.deletePoint(pointId);
+        },
+
+        selectLine: function (id) {
+
+            if (TM._selectedTrack) {
+                let oldSelTrack = TM._selectedTrack;
+                TM.utils.unSelectLine();
+                if (oldSelTrack.id === id) return;
+            }
+
+            let track = TM.tracks.get(id);
+
+            TM._selectedTrack = track;
+            track.layer.setStyle({"color": "#ff0000"});
+
+            document.addEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
+        },
+
+        unSelectLine: function () {
+            let track = TM._selectedTrack;
+
+            track.layer.setStyle({color: "#c33a34"});
+            TM._selectedTrack = null;
+
+            document.removeEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
+    },
+
+        //TODO: Что этот метод делает??
+        getFromJava: function (msg) {
+            let parsed = JSON.parse(msg);
+            JAVA.log("ID: " + parsed.id + " NAME: " + parsed.name)
+        },
+
+        resizeMap: function (width, height) {
+            let mapEl =  document.getElementById(TM.mapParams.mapId);
+            mapEl.style.width = width;
+            mapEl.style.height = height;
+        },
+
+        getTilesImg: function () {
+            let imgs = '',
+                imgEls = document.getElementsByClassName('leaflet-tile-container')[0].getElementsByTagName('img');
+
+            for (let img of imgEls) {
+                imgs += img.src + ',';
+            }
+
+            JAVA.returnTilesImg(imgs);
+        },
+
+        startTrack: function () {
+            TM.map.editTools.startPolyline();
+            JAVA.setStatus("Start polyline");
+        },
+
+        startRegion: function () {
+            TM.map.editTools.startRectangle();
+            JAVA.setStatus("Start region");
+        },
+
+        addMarker: function () {
+            TM.map.editTools.startMarker();
+            JAVA.setStatus("Add marker");
+        },
+
+        zoomPlus: function () {
+            TM.map.setZoom(TM.map.getZoom() + 1);
+            JAVA.setStatus("Map zoomed up");
+        },
+
+        zoomMinus: function zoomMinus() {
+            TM.map.setZoom(TM.map.getZoom() - 1);
+            JAVA.setStatus("Map zoomed down");
+        },
+
+        getZoom: function () {
+            return TM.map.getZoom();
+        },
+
+        setPointsRadius: function (radius) {
+            for (let track of TM.tracks.values()) {
+                for (let point of track.points.values()) {
+                    point.vertex.circle.setRadius(radius);
+                }
+            }
+        },
+
+        setPointRadius: function (pointId, radius) {
+            for (let track of TM.tracks.values()) {
+                for (let point of track.points.values()) {
+                    if (point.id === pointId) {
+                        point.vertex.circle.setRadius(radius);
+                    }
+                }
+            }
+        },
+
+        initJavaController: function() {
+            JAVA = initJava();
+            TM.utils.removeToolBars();
+        },
+
+        removeToolBars: function () {
+            for (let t in TM.toolbar){
+                TM.map.removeControl(TM.toolbar[t]);
+            }
         }
 
     };
