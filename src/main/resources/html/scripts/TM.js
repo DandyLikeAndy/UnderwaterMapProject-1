@@ -1254,6 +1254,12 @@
             for (let t in TM.toolbar){
                 TM.map.removeControl(TM.toolbar[t]);
             }
+        },
+
+        showToolBars: function () {
+            for (let t in TM.toolbar){
+                TM.toolbar[t].addTo(TM.map);
+            }
         }
 
     };
