@@ -83,7 +83,7 @@
     TM.models = {
         Point: class {
             constructor({ lat, lng, id, pos = 8, azimuth = 123, distance = 0,
-                            vertex = null, line = null, circleRadius = TM.currentRadius }) {
+                            vertex = null, line = null, circleRadius = TM.currentRadius, circle = null }) {
                 this._lng = lng;
                 this._lat = lat;
                 this._id = id;
@@ -93,6 +93,7 @@
                 this._vertex = vertex;
                 this._radius = circleRadius;
                 this._line = line;
+                this._circle = circle;
             }
 
             set id(val) {
@@ -244,7 +245,7 @@
                 return this._length;
             }
 
-            set length(value) {
+            set length(value) {//TODO -- длина трека???
                 this._length = value;
             }
 
@@ -289,6 +290,12 @@
                 this.updateDistance();
             }
 
+            setIcons() {
+                for (let point of this.points.values()) {
+                    point.setIcon();
+                }
+            }
+
             updateDistance() {
                 for (let point of this.points.values()) {
                     let next = point.vertex.getNext();
@@ -299,7 +306,6 @@
                     }
                 }
             }
-
 
             toJSON() {
                 let obj = {};
@@ -401,23 +407,22 @@
 
                     let layerId = L.stamp(e.layer),
                         track = TM.tracks.get(layerId),
-                        circle = new L.circle(e.latlng, {radius: TM.currentRadius}).addTo(TM.map), //accuracy circle
+                        circle = L.circle(e.latlng, {radius: TM.currentRadius}).addTo(TM.map), //accuracy circle
                         index = e.vertex.getIndex(),
                         point = new TM.Point({
                             vertex: e.vertex,
-                            circleRadius: TM.circleRadius,
+                            circleRadius: TM.currentRadius,
                             id: L.stamp(e.vertex),
                             lat: e.latlng.lat,
                             lng: e.latlng.lng,
                             pos: index,
-                            line: track
+                            circle: circle
                         });
 
                     if (!track) {//create track
-                        track = new TM.Track({id: layerId});
+                        track = new TM.Track({id: layerId, layer: e.layer });
                         track.isDrawing = true; //temp property (delete in 'editable:drawing:end')
                         TM.tracks.set(layerId, track);
-                        track.layer = e.layer;
                         e.layer.setStyle({color: '#c33a34'});
                         JAVA.log("new track");
                     }
@@ -1250,16 +1255,65 @@
             TM.utils.removeToolBars();
         },
 
+        //hidden toolbars from TM.toolbar
         removeToolBars: function () {
             for (let t in TM.toolbar){
                 TM.map.removeControl(TM.toolbar[t]);
             }
         },
 
+        //Show toolbars from TM.toolbar
         showToolBars: function () {
             for (let t in TM.toolbar){
                 TM.toolbar[t].addTo(TM.map);
             }
+        },
+
+        /**
+         * adds track to TM.tracks and TM.map
+         * @param {JSON} coords  an array of arrays of LatLng points
+         */
+        addActiveLine(coords) {
+            let newLine = L.polyline(JSON.parse(coords)).addTo(TM.map),
+                id = L.stamp(newLine),
+                newTrack = new TM.models.Track({id: id, layer: newLine}),
+                latLngs; //define after newLine.enableEdit();
+
+            TM.tracks.set(id, newTrack);
+            newLine.enableEdit(TM.map);
+            newLine.setStyle({"weight": 8, color: '#c23731'});
+
+            latLngs = newLine.getLatLngs();
+
+            latLngs.forEach(function (latlng) {
+                let vertex = latlng.__vertex,
+                    id = L.stamp(vertex),
+                    circle = L.circle(latlng, {radius: TM.currentRadius}).addTo(TM.map),
+                    point = new TM.models.Point({
+                        id: id,
+                        vertex: vertex,
+                        circleRadius: TM.currentRadius,
+                        lat: latlng.lat,
+                        lng: latlng.lng,
+                        pos: vertex.getIndex(),
+                        circle: circle,
+                        line: newTrack
+                    });
+
+                vertex.point = point;
+                vertex.circle = circle;
+
+                vertex.on('mouseover', TM.intHandlers.showVPopup);
+                vertex.on('mouseout', TM.intHandlers.closePopup);
+
+                newTrack.addPoint(point);
+            });
+
+            newTrack.setIcons();
+            newTrack.updateDistance();
+
+            return JSON.stringify(newTrack);
+
         }
 
     };
