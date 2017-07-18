@@ -218,11 +218,12 @@
         },
          //TODO Проверить состав необходимых св-в
         Track: class {
-            constructor({id, name = "Unnamed track", length = 0, points = new Map()}) {
+            constructor({id, name = "Unnamed track", length = 0, points = new Map(), layer = null}) {
                 this._id = id;
                 this._name = name;
                 this._length = length;
                 this._points = points;
+                this._layer = layer;
             }
 
             get id() {
@@ -1282,6 +1283,8 @@
             TM.tracks.set(id, newTrack);
             newLine.enableEdit(TM.map);
             newLine.setStyle({"weight": 8, color: '#c23731'});
+
+            newLine.on('click', TM.intHandlers.lineClick);
 
             latLngs = newLine.getLatLngs();
 
