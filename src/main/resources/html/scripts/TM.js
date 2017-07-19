@@ -17,7 +17,7 @@
 
     //main properties of TM //Перечисляем все св-ва, "Оглавление"
     TM.tracks = new Map; //store all tracks: instances of Track
-    TM.pointMarkers = [];//store pointMarkers: instances of PointMarker//пока не используется
+    TM.pointMarkers = new Map;//store pointMarkers: instances of PointMarker//пока не используется
     TM.map = {}; //store instance of L.Map
     TM.currentPoint = [59.8424, 30.3991]; //start and current point
     TM.mapParams = {}; //params for L.Map and L.Map.TileLayers
@@ -40,7 +40,7 @@
         options: { //default map options
             center: TM.currentPoint,
             zoom: 16,
-            source: 'osm',
+            source: 'otm',
             'editable': true
         },
         sources: {
@@ -322,7 +322,7 @@
 
         }, //TODO Проверить состав необходимых св-в!
         PointMarker: class {
-            constructor(lat, lng, id, marker, name) {
+            constructor({lat, lng, id, marker, name}) {
 
                 this._lat = lat;
                 this._lng = lng;
@@ -522,12 +522,7 @@
             handler: function (e) {
                 e.vertex.off('mouseover', TM.intHandlers.showVPopup);
                 e.vertex.off('mouseout', TM.intHandlers.closePopup);
-
-                if (e.vertex.editor instanceof L.Editable.CircleEditor || e.vertex.editor instanceof L.Editable.RectangleEditor) {
-                    e.vertex.off('mouseover', TM.intHandlers.showVPopup);
-                    e.vertex.off('mouseout', TM.intHandlers.closePopup);
                 }
-            }
         },
 
         dragVertex: {
@@ -552,8 +547,39 @@
                     JAVA.updateTrack(track);
                 }
 
+                //fix bugs
+                if (e.vertex.circle) {
+                    e.vertex.circle.redraw();
+                }
+
                 e.vertex.on('mouseover', TM.intHandlers.showVPopup);
                 e.vertex.on('mouseout', TM.intHandlers.closePopup);
+            }
+        },
+
+        dragMarker: {
+            eventType: 'editable:drag',
+            handler: function (e) {
+                if (!(e.layer.editor instanceof L.Editable.MarkerEditor)) return;
+                TM.showMPopup(TM.getMInfo(e));
+            }
+        },
+
+        dragStartMarker: {
+            eventType: 'editable:dragstart',
+            handler: function (e) {
+                if (!(e.layer.editor instanceof L.Editable.MarkerEditor)) return;
+                e.layer.off('mouseover', TM.intHandlers.showMPopup);
+                e.layer.off('mouseout', TM.intHandlers.closePopup);
+            }
+        },
+
+        dragEndMarker: {
+            eventType: 'editable:dragend',
+            handler: function (e) {
+                if (!(e.layer.editor instanceof L.Editable.MarkerEditor)) return;
+                e.layer.on('mouseover', TM.intHandlers.showMPopup);
+                e.layer.on('mouseout', TM.intHandlers.closePopup);
             }
         },
 
@@ -614,9 +640,31 @@
             eventType: 'layeradd',
             handler: function (e) {
                 let layer = e.layer;
+
                 if ( (layer.editor instanceof L.Editable.CircleEditor || layer.editor instanceof L.Editable.RectangleEditor)
                     && layer instanceof L.Marker ) {
                     layer.on('mouseover', TM.intHandlers.showVPopup);
+                    layer.on('mouseout', TM.intHandlers.closePopup);
+                }
+
+                if ( layer.editor instanceof L.Editable.MarkerEditor ) {
+                    let latLng = layer.getLatLng(),
+                        id = L.stamp(layer),
+                        newMarker = new TM.models.PointMarker({
+                            lat: latLng.lat,
+                            lng: latLng.lng,
+                            id: id,
+                            marker: layer,
+                            name: 'Unnamed marker'
+                    });
+
+                    TM.pointMarkers.set(id, newMarker);
+
+                    JAVA.log("custom marker added");
+                    JAVA.addMarker(newMarker);
+
+                    //TM.showMPopup(TM.getMInfo(e));
+                    layer.on('mouseover', TM.intHandlers.showMPopup);
                     layer.on('mouseout', TM.intHandlers.closePopup);
                 }
             }
@@ -631,6 +679,10 @@
             TM.showPPopup( TM.getVInfo(e) );
         },
 
+        showMPopup: function(e) {
+            TM.showMPopup( TM.getMInfo(e) );
+        },
+
         closePopup: function (e) {
             TM.map.closePopup();
         },
@@ -642,9 +694,10 @@
                     latlng: e.latlng,
                     name: track.name
                 };
-            TM.utils.showLPopup(info);
-            TM.utils.selectLine(id);
 
+            TM.utils.showLPopup(info);
+
+            TM.utils.selectLine(id);
             JAVA.log("Click line");
         },
 
@@ -1033,7 +1086,7 @@
 
         //show Point Popup TODO: Сделать свой Popup, для лучшего контроля
         showPPopup: function (info) {
-            let popup = TM._popup,
+            let popup = TM._pPopup,
                 content = '';
 
             switch (info.type) {
@@ -1058,7 +1111,7 @@
             }
 
             if (!popup) {
-                popup = TM._popup = L.popup({
+                popup = TM._pPopup = L.popup({
                     offset: L.point(0, -3),
                     closeOnClick: false
                 });
@@ -1072,12 +1125,31 @@
 
         //show Line Popup (info about track),It pops up when click on the track line
         showLPopup: function (info) {
-            let popup = TM._popup,
+            let popup = TM._lPopup,
             content = '<p>lat: '+info.latlng.lat+'<br />lng: '+info.latlng.lng+'<br />name: '+info.name+'</p>';
 
             if (!popup) {
-                popup = TM._popup = L.popup({
-                    offset: L.point(0, -3),
+                popup = TM._lPopup = L.popup({
+                    offset: L.point(0, 3),
+                    closeOnClick: true
+                });
+            }
+
+            return popup
+                .setLatLng(info.latlng)
+                .setContent(content)
+                .openOn(TM.map);
+        },
+
+        showMPopup: function (info) {
+            let popup = TM._mPopup,
+                content = '<p>lat: ' + info.latlng.lat +
+                    '<br />lng: ' + info.latlng.lng +
+                    '<br />name: ' + info.name + '</p>';
+
+            if (!popup) {
+                popup = TM._mPopup = L.popup({
+                    offset: L.point(0, -25),
                     closeOnClick: false
                 });
             }
@@ -1134,6 +1206,18 @@
                 backDist: backDist,
                 radius: radius,
                 type: type
+            };
+        },
+
+        //get info about marker from Event
+        getMInfo: function (e) {
+            let name = e.target.name || (e.layer && e.layer.name),
+                latlng = e.latlng || (e.layer && e.layer.getLatLng());
+
+            return {
+                type: 'marker',
+                name: name,
+                latlng: latlng
             };
         },
 
@@ -1214,9 +1298,25 @@
             JAVA.setStatus("Start region");
         },
 
-        addMarker: function () {
-            TM.map.editTools.startMarker();
-            JAVA.setStatus("Add marker");
+        startMarker: function () {
+            JAVA.log("Call method Start marker from JAVA");
+            let marker = TM.map.editTools.startMarker();
+            marker.name = "Click marker";
+            marker.isCustom = true;
+        },
+
+        addMarker: function (lat, lng, name) {
+
+            let marker = L.marker([lat, lng]);
+
+            marker.isCustom = true;
+            marker.name = name;
+            marker.addTo(TM.map);
+
+            marker.on('mouseover', TM.intHandlers.showMPopup);
+            marker.on('mouseout', TM.intHandlers.closePopup);
+
+            JAVA.log("Call method ADD marker from JAVA");
         },
 
         zoomPlus: function () {
@@ -1399,5 +1499,9 @@
     TM.changeMapUrl = TM.utils.changeMapUrl;
     TM.setMapUrl = TM.utils.setMapUrl;
     TM.getVInfo = TM.utils.getVInfo;
+    TM.getMInfo = TM.utils.getMInfo;
     TM.showPPopup = TM.utils.showPPopup;
+    TM.showMPopup = TM.utils.showMPopup;
+    TM.showLPopup = TM.utils.showLPopup;
+
 })();
