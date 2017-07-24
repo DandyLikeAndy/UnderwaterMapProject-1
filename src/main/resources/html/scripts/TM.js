@@ -1,4 +1,3 @@
-//TODO отрегулировать показ showLPopup при клике и удалении линии
 (function () {
 
     //определяем TrackManager (TM) в Window
@@ -80,10 +79,10 @@
         }
     };
 
-    TM.models = {
-        Point: class {
-            constructor({ lat, lng, id, pos = 8, azimuth = 123, distance = 0,
-                            vertex = null, line = null, circleRadius = TM.currentRadius, circle = null }) {
+    TM.models = (function () {
+        class Point {
+            constructor({lat, lng, id, pos = 8, azimuth = 123, distance = 0,
+                            vertex = null, line = null, circleRadius = TM.currentRadius, circle = null}) {
                 this._lng = lng;
                 this._lat = lat;
                 this._id = id;
@@ -199,8 +198,8 @@
             }
 
             setIcon() {
-                let index = this.vertex.getIndex(),
-                    lastIndex = this.vertex.getLastIndex(),
+                let index = this.pos,
+                    lastIndex = this.line.points.size - 1,
                     vertex = this.vertex;
 
                 if (index === 0) {
@@ -215,10 +214,10 @@
                     }
                 }
             }
-        },
-         //TODO Проверить состав необходимых св-в
-        Track: class {
-            constructor({id, name = "Unnamed track", length = 0, points = new Map(), layer = null}) {
+        }
+
+        class Path {
+            constructor({id, name, length = 0, points = new Map(), layer = null}) {
                 this._id = id;
                 this._name = name;
                 this._length = length;
@@ -262,6 +261,19 @@
                 return this._layer;
             }
 
+            setIcons() {
+                for (let point of this.points.values()) {
+                    point.setIcon();
+                }
+            }
+        }
+        //TODO Проверить состав необходимых св-в
+        class Track extends Path {
+            constructor({name = "Unnamed track"}) {
+                super(arguments[0]);
+                this.name = name;
+            }
+
             addPoint(point) {
                 this._points.set(point.id, point);
             }
@@ -275,7 +287,7 @@
                 }
 
                 //if it is not 'editable:vertex:deleted'
-                if ( ~vertex.getIndex() ) {
+                if (~vertex.getIndex()) {
                     vertex.delete();
                 }
 
@@ -289,12 +301,6 @@
                     point.setIcon();
                 }
                 this.updateDistance();
-            }
-
-            setIcons() {
-                for (let point of this.points.values()) {
-                    point.setIcon();
-                }
             }
 
             updateDistance() {
@@ -320,8 +326,33 @@
                 return obj;
             }
 
-        }, //TODO Проверить состав необходимых св-в!
-        PointMarker: class {
+        } //TODO Проверить состав необходимых св-в!
+
+        class DoneTrack extends Path {
+            constructor({name = "done track", color}) {
+                super(arguments[0]);
+                this._name = name;
+                this._color = color;
+            }
+
+            get color() {
+                return this._color;
+            }
+
+            set color(value) {
+                this._color = value;
+            }
+
+            toJSON() {
+                let obj = {};
+                obj.id = this._id;
+                obj.color = this._color;
+                obj.name = this._name;
+                return obj;
+            }
+        }
+
+        class PointMarker {
             constructor({lat, lng, id, marker, name}) {
 
                 this._lat = lat;
@@ -371,14 +402,6 @@
                 this._marker = value;
             }
 
-            set name(value) {
-                this._name = value;
-            }
-
-            get name() {
-                return this._name;
-            }
-
             toJSON() {
                 let obj = {};
                 obj.id = this.id;
@@ -389,7 +412,14 @@
             }
 
         } //TODO Проверить состав необходимых св-в
-    };
+
+        return {
+            Point: Point,
+            Track: Track,
+            DoneTrack: DoneTrack,
+            PointMarker: PointMarker
+        };
+    })();
 
     //store mapHandlers, устанавливаются при инициализации MT
     /* например:
@@ -421,7 +451,7 @@
                         });
 
                     if (!track) {//create track
-                        track = new TM.Track({id: layerId, layer: e.layer });
+                        track = new TM.Track({id: layerId, layer: e.layer});
                         track.isDrawing = true; //temp property (delete in 'editable:drawing:end')
                         TM.tracks.set(layerId, track);
                         e.layer.setStyle({color: '#c33a34'});
@@ -451,10 +481,9 @@
                 }
 
                 //TODO подумать об установке обработчика другим способом, для возможности быстрой отмены/назначения всех подобных обработчиков
-                TM.showPPopup( TM.getVInfo(e) );
+                TM.showPPopup(TM.getVInfo(e));
                 e.vertex.on('mouseover', TM.intHandlers.showVPopup);
                 e.vertex.on('mouseout', TM.intHandlers.closePopup);
-
             }
         },
 
@@ -462,16 +491,16 @@
             eventType: 'editable:drawing:end',
             handler: function (e) {
 
-                if ( !(e.layer instanceof L.Polyline) || e.layer instanceof L.Polygon ) return;
-                if ( !e.layer.lastVertex.latlngs.length  ) return;
+                if (!(e.layer instanceof L.Polyline) || e.layer instanceof L.Polygon) return;
+                if (!e.layer.lastVertex.latlngs.length) return;
 
                 let layerId = L.stamp(e.layer),
                     track = TM.tracks.get(layerId);
 
-                e.layer.setStyle({"weight":8, color: '#c23731'});
+                e.layer.setStyle({"weight": 8, color: '#c23731'});
                 JAVA.addLine(JSON.stringify(track));
 
-                if(track) delete track.isDrawing;
+                if (track) delete track.isDrawing;
 
                 e.layer.on('click', TM.intHandlers.lineClick);
 
@@ -486,7 +515,7 @@
                 TM.map.closePopup();
 
                 if (!(e.layer instanceof L.Polyline) || e.layer instanceof L.Polygon) return;
-                if ( e.layer.lastVertex.latlngs.length > 1 ) return; //if polyline has 1 point
+                if (e.layer.lastVertex.latlngs.length > 1) return; //if polyline has 1 point
 
                 let index = L.stamp(e.layer),
                     vertex = e.layer.lastVertex;
@@ -513,7 +542,6 @@
                 }
 
                 TM.intHandlers.closePopup(e);
-
             }
         },
 
@@ -598,7 +626,7 @@
             }
         },
 
-        addNewLayer: { //TODO - как используется -????
+        addNewLayer: {
             eventType: 'editable:created',
             handler: function (e) {
                 JAVA.log("add layer");
@@ -615,23 +643,9 @@
         drawingMouseDown: {
             eventType: 'editable:drawing:mousedown',
             handler: function (e) {
-                if (e.layer.editor instanceof L.Editable.CircleEditor){
-                    let info = {
-                        latlng: e.latlng,
-                        radius: 0,
-                        type: 'circle'
-                    };
-                    TM.showPPopup(info);
-                }
-
-                if (e.layer.editor instanceof L.Editable.RectangleEditor) {
-                    let info = {
-                        latlng: e.latlng,
-                        backDist: 0,
-                        forwardDist: 0,
-                        type: 'rectangle'
-                    };
-                    TM.showPPopup(info);
+                let editor = e.layer.editor;
+                if (editor instanceof L.Editable.CircleEditor || editor instanceof L.Editable.RectangleEditor){
+                    TM.showPPopup(TM.getVInfo(e));
                 }
             }
         },
@@ -641,13 +655,13 @@
             handler: function (e) {
                 let layer = e.layer;
 
-                if ( (layer.editor instanceof L.Editable.CircleEditor || layer.editor instanceof L.Editable.RectangleEditor)
-                    && layer instanceof L.Marker ) {
+                if ((layer.editor instanceof L.Editable.CircleEditor || layer.editor instanceof L.Editable.RectangleEditor)
+                    && layer instanceof L.Marker) {
                     layer.on('mouseover', TM.intHandlers.showVPopup);
                     layer.on('mouseout', TM.intHandlers.closePopup);
                 }
 
-                if ( layer.editor instanceof L.Editable.MarkerEditor ) {
+                if (layer.editor instanceof L.Editable.MarkerEditor) {
                     let latLng = layer.getLatLng(),
                         id = L.stamp(layer),
                         newMarker = new TM.models.PointMarker({
@@ -656,7 +670,7 @@
                             id: id,
                             marker: layer,
                             name: 'Unnamed marker'
-                    });
+                        });
 
                     TM.pointMarkers.set(id, newMarker);
 
@@ -676,11 +690,11 @@
     TM.intHandlers = {
         //show vertex popup
         showVPopup: function (e) {
-            TM.showPPopup( TM.getVInfo(e) );
+            TM.showPPopup(TM.getVInfo(e));
         },
 
-        showMPopup: function(e) {
-            TM.showMPopup( TM.getMInfo(e) );
+        showMPopup: function (e) {
+            TM.showMPopup(TM.getMInfo(e));
         },
 
         closePopup: function (e) {
@@ -688,15 +702,9 @@
         },
 
         lineClick: function (e) {
-            let id = L.stamp(e.target),
-                track = TM.tracks.get(id),
-                info = {
-                    latlng: e.latlng,
-                    name: track.name
-                };
+            let id = L.stamp(e.target);
 
-            TM.utils.showLPopup(info);
-
+            TM.showLPopup(TM.getLInfo(e));
             TM.utils.selectLine(id);
             JAVA.log("Click line");
         },
@@ -732,7 +740,7 @@
                     link.innerHTML = this.options.html;
                     L.DomEvent.on(link, 'click', L.DomEvent.stop)
                         .on(link, 'click', function () {
-                           this.options.callback.call(map.editTools);
+                            this.options.callback.call(map.editTools);
                         }, this);
 
                     return container;
@@ -896,7 +904,7 @@
                     return divElem;
                 },
 
-                updateIcon: function(num) {
+                updateIcon: function (num) {
                     this.options.number = num;
                     this.setNum(num);
                 },
@@ -1028,7 +1036,7 @@
          * @param {function} extClass класс который расширяем, необязательный параметр(если не передан, должен определяется в props)
          * @param {function} callback - callback(class, name), в качестве аргументов передаются след пар-ры class - расширенный класс, name - имя расширенного класса
          */
-        extLClass: function extLClass (opts, extClass, callback) {
+        extLClass: function extLClass(opts, extClass, callback) {
 
             for (let i in opts) {
 
@@ -1041,11 +1049,12 @@
                     if (typeof callback === 'function') callback(cl, i);
                 }
 
-                if ('childOpts' in  opts[i]) {
+                if ('childOpts' in opts[i]) {
                     extLClass(opts[i].childOpts, extClass[i], callback);
                 }
             }
         },
+
         //delete map handlers,it defines in TM.mapHandlers
         offMHandler: function (handlerName) {
 
@@ -1064,6 +1073,7 @@
 
             TM.map.off(eventType, handler, context);
         },
+
         //Reinitialization map handlers(TM.mapHandlers)
         onMHandler: function (handlerName) {
 
@@ -1071,7 +1081,6 @@
                 context = evHandler.context || window,
                 handler = evHandler.handler,
                 eventType = evHandler.eventType;
-
 
 
             if (handler instanceof Array) {
@@ -1118,15 +1127,15 @@
             }
 
             return popup
-                .setLatLng(info.latlng)
                 .setContent(content)
+                .setLatLng(info.latlng)
                 .openOn(TM.map);
         },
 
         //show Line Popup (info about track),It pops up when click on the track line
         showLPopup: function (info) {
             let popup = TM._lPopup,
-            content = '<p>lat: '+info.latlng.lat+'<br />lng: '+info.latlng.lng+'<br />name: '+info.name+'</p>';
+                content = '<p>lat: ' + info.latlng.lat + '<br />lng: ' + info.latlng.lng + '<br />name: ' + info.name + '</p>';
 
             if (!popup) {
                 popup = TM._lPopup = L.popup({
@@ -1160,16 +1169,16 @@
                 .openOn(TM.map);
         },
 
-        //get info about vertex from Event
+        //get info about Editable vertex from Event object
         getVInfo: function (e) {
-            let vertex = e.vertex || e.target,
+            let vertex = e.vertex || e.target,// e.target используется при vertex.on('mouseover', TM.showVInfo)
                 forwardDist = 0,
                 backDist = 0,
                 radius = 0,
                 type = '',
                 latlng = e.latlng || vertex.latlng, //лучше использовать e.latlng т.к. vertex.latlng при drag дает значения до изменения
-                index = vertex.getIndex(),
-                lastIndex = vertex.getLastIndex(),
+                index = e.type === 'editable:drawing:mousedown' ? null : vertex.getIndex(),//проверяем т.к. это может быть событие не имеющее vertex в о-те Event
+                lastIndex = e.type === 'editable:drawing:mousedown' ? null : vertex.getLastIndex(),
                 getForwardDist = () => latlng.distanceTo(vertex.getNext().latlng).toFixed(2),
                 getBackDist = () => latlng.distanceTo(vertex.getPrevious().latlng).toFixed(2);
 
@@ -1196,8 +1205,9 @@
 
             } else if (vertex.editor instanceof L.Editable.RectangleEditor) {
                 type = 'rectangle';
-                forwardDist = getForwardDist();
-                backDist = getBackDist();
+                forwardDist = e.type === 'editable:drawing:mousedown' ? 0 : getForwardDist(); //проверяем т.к. это может быть событие не имеющее vertex в о-те Event
+                backDist = e.type === 'editable:drawing:mousedown' ? 0 : getBackDist();
+                console.log(forwardDist, e);
             }
 
             return {
@@ -1209,7 +1219,31 @@
             };
         },
 
-        //get info about marker from Event
+        //get info about done track vertex from Event object
+        getVDoneTrackInfo: function (e) {
+            let index = e.target.point.pos,
+                latlngs = e.target.latlngs,
+                lastIndex = latlngs.length - 1,
+                latlng = latlngs[index],
+                backDist = 0,
+                forwardDist = 0;
+
+            if (index !== 0) {
+                backDist = latlng.distanceTo(latlngs[index - 1]).toFixed(2);
+            }
+            if (index !== lastIndex) {
+                forwardDist = latlng.distanceTo(latlngs[index + 1]).toFixed(2);
+            }
+
+            return {
+                type: 'polyline',
+                backDist: backDist,
+                forwardDist: forwardDist,
+                latlng: latlng
+            }
+        },
+
+        //get info about marker from Event object
         getMInfo: function (e) {
             let name = e.target.name || (e.layer && e.layer.name),
                 latlng = e.latlng || (e.layer && e.layer.getLatLng());
@@ -1221,12 +1255,28 @@
             };
         },
 
+        //get info about line from Event object
+        getLInfo: function (e) {
+            let id = L.stamp(e.target),
+                track = TM.tracks.get(id);
+
+            return {
+                latlng: e.latlng,
+                name: track.name
+            };
+        },
+
         //delete track
         deleteLine: function (lineId) {
             let track = TM.tracks.get(lineId);
 
-            for ( let point of track.points.values() ) {
-                point.vertex.circle.remove();
+            for (let point of track.points.values()) {
+                if (point.vertex.circle) {
+                    point.vertex.circle.remove()
+                }
+                if (track instanceof TM.DoneTrack) {
+                    point.vertex.remove();
+                }
             }
 
             track.layer.remove();
@@ -1235,7 +1285,7 @@
         },
 
         //delete point from track
-        deletePoint: function(pointId, lineId) {
+        deletePoint: function (pointId, lineId) {
             let track = TM.tracks.get(lineId);
             track.deletePoint(pointId);
         },
@@ -1248,22 +1298,25 @@
                 if (oldSelTrack.id === id) return;
             }
 
-            let track = TM.tracks.get(id);
+            let track = TM.tracks.get(id),
+                oldColor = track.layer.options.color;
 
             TM._selectedTrack = track;
             track.layer.setStyle({"color": "#ff0000"});
+            track.layer.options.oldColor = oldColor;
 
             document.addEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
         },
 
         unSelectLine: function () {
-            let track = TM._selectedTrack;
+            let track = TM._selectedTrack,
+                oldColor = track.layer.options.oldColor;
 
-            track.layer.setStyle({color: "#c33a34"});
+            if (oldColor) track.layer.setStyle({color: oldColor});
             TM._selectedTrack = null;
 
             document.removeEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
-    },
+        },
 
         //TODO: Что этот метод делает??
         getFromJava: function (msg) {
@@ -1306,7 +1359,6 @@
         },
 
         addMarker: function (lat, lng, name) {
-
             let marker = L.marker([lat, lng]);
 
             marker.isCustom = true;
@@ -1351,21 +1403,21 @@
             }
         },
 
-        initJavaController: function() {
+        initJavaController: function () {
             JAVA = initJava();
             TM.utils.removeToolBars();
         },
 
         //hidden toolbars from TM.toolbar
         removeToolBars: function () {
-            for (let t in TM.toolbar){
+            for (let t in TM.toolbar) {
                 TM.map.removeControl(TM.toolbar[t]);
             }
         },
 
         //Show toolbars from TM.toolbar
         showToolBars: function () {
-            for (let t in TM.toolbar){
+            for (let t in TM.toolbar) {
                 TM.toolbar[t].addTo(TM.map);
             }
         },
@@ -1374,7 +1426,7 @@
          * adds track to TM.tracks and TM.map
          * @param {JSON} coords  an array of arrays of LatLng points
          */
-        addActiveLine(coords) {
+        addActiveLine: function(coords) {
             let newLine = L.polyline(JSON.parse(coords)).addTo(TM.map),
                 id = L.stamp(newLine),
                 newTrack = new TM.models.Track({id: id, layer: newLine}),
@@ -1417,15 +1469,82 @@
 
             return JSON.stringify(newTrack);
 
-        }
+        },
+        //add done track to TM.tracks and TM.map from geoJson
+        addGeoJson: function (geoJson) {
+            let geoJsonObj = JSON.parse(geoJson);
 
+            L.geoJson(geoJsonObj, {
+                style: function (feature) {
+                    if (feature.geometry.type === "LineString") {
+                        let style = feature.properties.style;
+                        style.dashArray = style.dashArray || '10,10';
+                        style.weight = style.weight || 5;
+                        style.color = style.color || '#a81a1a';
+                        style.opacity = style.opacity || .7;
+                        return feature.properties.style;
+                    }
+                },
+                onEachFeature: onEach
+            }).addTo(TM.map);
+
+            function onEach(feature, layer) {
+                if (feature.geometry.type !== "LineString") return;
+
+                let points = new Map(),
+                    id = L.stamp(layer),
+                    doneTrack = new TM.DoneTrack({
+                        id: id,
+                        name: feature.properties.name,
+                        color: feature.properties.style.color,
+                        layer: layer,
+                        points: points
+                    }),
+                    pointPosition = 0,
+                    latlngs = [];
+
+                layer.name = feature.properties.name;
+
+                feature.geometry.coordinates.forEach(function (lnglat) {
+                    let latlng = L.latLng([lnglat[1], lnglat[0]]),
+                        vertex = L.marker(latlng),
+                        point = new TM.Point({
+                            lat: latlng[0],
+                            lng: latlng[1],
+                            line: doneTrack,
+                            id: L.stamp(vertex),
+                            pos: pointPosition++,
+                            vertex: vertex
+                        });
+
+                    doneTrack._points.set(point.id, point);
+
+                    vertex.point = point;
+                    vertex.addTo(TM.map);
+
+                    latlngs.push(latlng);
+                    vertex.latlngs = latlngs;
+
+                    vertex.on('mouseover', function (e) { TM.showPPopup(TM.getVDoneTrackInfo(e)) });
+                    vertex.on('mouseout', TM.intHandlers.closePopup);
+                });
+
+                doneTrack.setIcons();
+                TM.tracks.set(doneTrack.id, doneTrack);
+
+                doneTrack.layer.on('click', TM.intHandlers.lineClick);
+
+                JAVA.log("Create layer, name: " + feature.properties.name);
+                JAVA.addGeoJson(JSON.stringify(doneTrack));
+            }
+        }
     };
 
     /**
      * Добаваляет пользовательский код который будет вызван после инициализации
      * @param f
      */
-    TM.addInitHook = function(f) {
+    TM.addInitHook = function (f) {
         this._initMethods.customInit = TM._initMethods.customInit || [];
         this._initMethods.customInit.push(f);
         return this;
@@ -1438,7 +1557,7 @@
         mapInit: function () {
 
             let map = TM.map = L.map(TM.mapParams.mapId, TM.mapParams.options),
-                source = TM.mapParams.options.source || 'osm';
+                source = TM.mapParams.options.source || 'osm',
                 getUrlTemplate = (name) => TM.mapParams.sources[name].urlTemplate,
                 getMapOpts = (name) => TM.mapParams.sources[name].options;
 
@@ -1451,7 +1570,7 @@
         toolbarsInit: function () {
             this.toolbar = {};
 
-            TM.utils.extLClass(this.tbInitProp, null, function(cl, i) {
+            TM.utils.extLClass(this.tbInitProp, null, function (cl, i) {
                 let name = i.charAt(0).toLowerCase() + i.slice(1);
                 let c = TM.toolbar[name] = new cl();
                 TM.map.addControl(c);
@@ -1464,7 +1583,7 @@
 
         mapHandlersInit: function () {
 
-            for(let eventHandler in TM.mapHandlers) {
+            for (let eventHandler in TM.mapHandlers) {
 
                 let evHandler = TM.mapHandlers[eventHandler],
                     type = evHandler.eventType,
@@ -1473,11 +1592,11 @@
 
                 if (!type) continue;
 
-                if (evHandler.target && (evHandler.target !== '' || 'TM.map' || 'map') ) continue;
+                if (evHandler.target && (evHandler.target !== '' || 'TM.map' || 'map')) continue;
 
                 if (handler instanceof Array) {
 
-                    handler.forEach( function (handler) {
+                    handler.forEach(function (handler) {
                         TM.map.on(type, handler, this);
                     }, context);
 
@@ -1494,14 +1613,19 @@
     //shortcuts for most used functions
     TM.Point = TM.models.Point;
     TM.Track = TM.models.Track;
+    TM.DoneTrack = TM.models.DoneTrack;
+    TM.PointMarker = TM.models.PointMarker;
     TM.onMHandler = TM.utils.onMHandler;
     TM.offMHandler = TM.utils.offMHandler;
     TM.changeMapUrl = TM.utils.changeMapUrl;
     TM.setMapUrl = TM.utils.setMapUrl;
     TM.getVInfo = TM.utils.getVInfo;
+    TM.getVDoneTrackInfo = TM.utils.getVDoneTrackInfo;
     TM.getMInfo = TM.utils.getMInfo;
+    TM.getLInfo = TM.utils.getLInfo;
     TM.showPPopup = TM.utils.showPPopup;
     TM.showMPopup = TM.utils.showMPopup;
     TM.showLPopup = TM.utils.showLPopup;
+
 
 })();

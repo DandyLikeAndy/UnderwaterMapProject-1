@@ -18,7 +18,7 @@ html, body {
     height: 30px;
     border-radius: 50%;
     text-align: center;
-    padding-top: 50%;
+    padding-top: 40%;
     box-sizing: border-box;
 }
 .finish-icon {
@@ -54,7 +54,7 @@ html, body {
     font-weight: bold;
 }
 
-.leaflet-touch .custom-layer-control a {
+.leaflet-bar.custom-layer-control a {
     width: 42px;
 }
 
