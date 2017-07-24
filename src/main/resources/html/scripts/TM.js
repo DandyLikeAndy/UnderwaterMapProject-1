@@ -644,8 +644,22 @@
             eventType: 'editable:drawing:mousedown',
             handler: function (e) {
                 let editor = e.layer.editor;
-                if (editor instanceof L.Editable.CircleEditor || editor instanceof L.Editable.RectangleEditor){
-                    TM.showPPopup(TM.getVInfo(e));
+                if (editor instanceof L.Editable.CircleEditor){
+                    let info = {//TM.getVInfo(e) неккоректно отображает info, в данном случае, поэтому создаем info "вручную"
+                        latlng: e.latlng,
+                        radius: 0,
+                        type: 'circle'
+                    };
+                    TM.showPPopup(info);
+                }
+                if (editor instanceof L.Editable.RectangleEditor){
+                    let info = {//TM.getVInfo(e) неккоректно отображает info, в данном случае, поэтому создаем info "вручную"
+                        latlng: e.latlng,
+                        forwardDist: 0,
+                        backDist: 0,
+                        type: 'rectangle'
+                    };
+                    TM.showPPopup(info);
                 }
             }
         },
@@ -706,6 +720,7 @@
 
             TM.showLPopup(TM.getLInfo(e));
             TM.utils.selectLine(id);
+
             JAVA.log("Click line");
         },
 
@@ -1177,8 +1192,8 @@
                 radius = 0,
                 type = '',
                 latlng = e.latlng || vertex.latlng, //лучше использовать e.latlng т.к. vertex.latlng при drag дает значения до изменения
-                index = e.type === 'editable:drawing:mousedown' ? null : vertex.getIndex(),//проверяем т.к. это может быть событие не имеющее vertex в о-те Event
-                lastIndex = e.type === 'editable:drawing:mousedown' ? null : vertex.getLastIndex(),
+                index = vertex.getIndex(),
+                lastIndex = vertex.getLastIndex(),
                 getForwardDist = () => latlng.distanceTo(vertex.getNext().latlng).toFixed(2),
                 getBackDist = () => latlng.distanceTo(vertex.getPrevious().latlng).toFixed(2);
 
@@ -1205,9 +1220,8 @@
 
             } else if (vertex.editor instanceof L.Editable.RectangleEditor) {
                 type = 'rectangle';
-                forwardDist = e.type === 'editable:drawing:mousedown' ? 0 : getForwardDist(); //проверяем т.к. это может быть событие не имеющее vertex в о-те Event
-                backDist = e.type === 'editable:drawing:mousedown' ? 0 : getBackDist();
-                console.log(forwardDist, e);
+                forwardDist = getForwardDist();
+                backDist = getBackDist();
             }
 
             return {

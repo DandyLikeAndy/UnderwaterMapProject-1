@@ -38,12 +38,12 @@ html, body {
     border-radius: 50%;
 }
 
-.leaflet-touch .custom-control:nth-child(n+2) {
+.leaflet-bar.custom-control:nth-child(n+2) {
     margin-top: 20px;
 }
 
-.leaflet-touch .custom-control:nth-child(n+3),
-.leaflet-touch .custom-layer-control:nth-child(n+2) {
+.leaflet-bar.custom-control:nth-child(n+3),
+.leaflet-bar.custom-layer-control:nth-child(n+2) {
     margin-top: 3px;
 }
 
