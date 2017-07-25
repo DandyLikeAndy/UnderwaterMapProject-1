@@ -20,11 +20,31 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             TM.addInitHook(function () {
-                TM.utils.setPosByIp();
+                //TM.utils.setPosByIp();
+                // define methods in window for java
+                window.getFromJava = TM.utils.getFromJava;
+                window.resizeMap = TM.utils.resizeMap;
+                window.selectLine = TM.utils.selectLine;
+                window.unSelectLine = TM.utils.unSelectLine;
+                window.startTrack = TM.utils.startTrack;
+                window.startRegion = TM.utils.startRegion;
+                window.addMarker = TM.utils.zoomPlus;
+                window.zoomMinus = TM.utils.zoomMinus;
+                window.getZoom = TM.utils.getZoom;
+                window.setPointsRadius = TM.utils.setPointsRadius;
+                window.setPointRadius = TM.utils.setPointRadius;
+                window.initJavaController = TM.utils.initJavaController;
+                window.deletePoint = TM.utils.deletePoint;
+                window.deleteLine = TM.utils.deleteLine;
+                window.removeToolBars = TM.utils.removeToolBars;
+                window.setMapUrl = TM.utils.setMapUrl;
+                window.addActiveLine = TM.utils.addActiveLine;
+                window.addMarker = TM.utils.addMarker;
+                window.startMarker = TM.utils.startMarker;
+                window.addGeoJson = TM.utils.addGeoJson;
+
             }).init();
         }, false);
-
-
     </script>
     <title>UnderwaterMapProject</title>
 </head>

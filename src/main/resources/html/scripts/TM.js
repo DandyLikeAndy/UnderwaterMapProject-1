@@ -993,7 +993,7 @@
             TM.utils.setMapUrl(params.urlTemplate, params.options);
         },
 
-        setMapUrl: function (url, opts) {//todo разобраться с subdomains
+        setMapUrl: function (url, opts) {
 
             TM.map.tileLayer.remove();
             //переработаны строки  setMapUrl из start.html
@@ -1108,7 +1108,7 @@
             TM.map.on(eventType, handler, context);
         },
 
-        //show Point Popup TODO: Сделать свой Popup, для лучшего контроля
+        //show Point Popup
         showPPopup: function (info) {
             let popup = TM._pPopup,
                 content = '';
@@ -1332,7 +1332,6 @@
             document.removeEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
         },
 
-        //TODO: Что этот метод делает??
         getFromJava: function (msg) {
             let parsed = JSON.parse(msg);
             JAVA.log("ID: " + parsed.id + " NAME: " + parsed.name)
@@ -1444,7 +1443,7 @@
             let newLine = L.polyline(JSON.parse(coords)).addTo(TM.map),
                 id = L.stamp(newLine),
                 newTrack = new TM.models.Track({id: id, layer: newLine}),
-                latLngs; //define after newLine.enableEdit();
+                latlngs; //define after newLine.enableEdit();
 
             TM.tracks.set(id, newTrack);
             newLine.enableEdit(TM.map);
@@ -1452,9 +1451,9 @@
 
             newLine.on('click', TM.intHandlers.lineClick);
 
-            latLngs = newLine.getLatLngs();
+            latlngs = newLine.getLatLngs();
 
-            latLngs.forEach(function (latlng) {
+            latlngs.forEach(function (latlng) {
                 let vertex = latlng.__vertex,
                     id = L.stamp(vertex),
                     circle = L.circle(latlng, {radius: TM.currentRadius}).addTo(TM.map),
@@ -1484,6 +1483,7 @@
             return JSON.stringify(newTrack);
 
         },
+
         //add done track to TM.tracks and TM.map from geoJson
         addGeoJson: function (geoJson) {
             let geoJsonObj = JSON.parse(geoJson);
