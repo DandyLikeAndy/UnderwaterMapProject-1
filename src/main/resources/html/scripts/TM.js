@@ -421,12 +421,12 @@
         };
     })();
 
-    //store mapHandlers, устанавливаются при инициализации MT
+    //store mapHandlers, устанавливаются при инициализации TM
     /* например:
         nameHandlers: {
             handler: fn || [fns],
             eventType: val,
-            context: context //default - windows
+            context: context //default - window
         }
      */
     TM.mapHandlers = {
@@ -727,10 +727,16 @@
         hoverMarker: function (e) { //TODO пока не используется
         },
 
-        keyDownDelTrack: function (e) {
+        keyDownTrack: function (e) {
+            //del key
             if (e.keyCode === 46) {
                 TM.utils.deleteLine(TM._selectedTrack.id);
+                TM._selectedTrack = null;
                 TM.map.closePopup();
+            }
+            //esc key
+            if (e.keyCode === 27) {
+                TM.utils.unSelectLine();
             }
         }
     };
@@ -747,7 +753,7 @@
                     html: ''
                 },
                 onAdd: function (map) {
-                    let container = L.DomUtil.create('div', 'tleaflet-conrol leaflet-bar custom-control'),
+                    let container = L.DomUtil.create('div', 'tleaflet-control leaflet-bar custom-control'),
                         link = L.DomUtil.create('a', '', container);
 
                     link.href = '#';
@@ -766,7 +772,7 @@
                     options: {
                         position: 'topleft',
                         callback: function () {
-                            TM.map.editTools.startPolyline()
+                            TM.map.editTools.startPolyline();
                         },
                         kind: 'track',
                         html: '<span class="icon-share"></span>'/*'\\/\\'*/
@@ -813,8 +819,7 @@
                     }
                 }
             },
-            noCallback: true
-            //TODO пренести callback сюда из TM._initMethods?
+            noCreateInstance: true
         },
         layerControl: {
             extendClass: L.Control,
@@ -887,7 +892,7 @@
                     }
                 }
             },
-            noCallback: true
+            noCreateInstance: true
 
         }
     };
@@ -1025,19 +1030,19 @@
         },
 
         /**
-         * Расширяет класс Leaflet
+         * Расширяет класс Leaflet, новым классом с субклассами (рекурсивно)
          * @param {object} opts о-т параметров для расширения, например:
          *    props:{
                 myCustomClass: {
                     //класс, который расширяем (необязательный параметр, если не указан, передаем во втором аргументе ф-ии -  extClass )
                     extendClass: L.Class,
-                    //объект с параметрами, передаваемый методу L.extend
+                    //объект с параметрами, передаваемый методу L.class.extend
                     props: {
                         //любые с-ва объекта передаваемого, в качестве аргумента, в L.class.extend
                         }
                     }
                 },
-                //объект с параметрами классов наследуемых от customClass
+                //объект с параметрами классов наследуемых от myCustomClass (Субклассы)
                 childOpts: {
                     myChildClass: {
                         //любые с-ва объекта передаваемого, в качестве аргумента, в L.class.extend
@@ -1045,11 +1050,12 @@
                     },
                     myChildClass2: {}
                 },
-                noCallback: true //если true  не вызываем callback
+                noCreateInstance: true //если true не создаем экземпляр класса, по умолчанию false (for abstract classes)
             }
          *
          * @param {function} extClass класс который расширяем, необязательный параметр(если не передан, должен определяется в props)
-         * @param {function} callback - callback(class, name), в качестве аргументов передаются след пар-ры class - расширенный класс, name - имя расширенного класса
+         * @param {function} callback - callback(class, name), используется для создания экземпляра класса и добавления контрола на карту,
+         *              в качестве аргументов передаются след пар-ры class - расширенный класс, name - имя расширенного класса
          */
         extLClass: function extLClass(opts, extClass, callback) {
 
@@ -1060,7 +1066,7 @@
 
                 let cl = extClass[i] = extClass.extend(props);
 
-                if (!opts[i].noCallback) {
+                if (!opts[i].noCreateInstance) {
                     if (typeof callback === 'function') callback(cl, i);
                 }
 
@@ -1319,7 +1325,7 @@
             track.layer.setStyle({"color": "#ff0000"});
             track.layer.options.oldColor = oldColor;
 
-            document.addEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
+            document.addEventListener('keydown', TM.intHandlers.keyDownTrack, false)
         },
 
         unSelectLine: function () {
@@ -1329,7 +1335,7 @@
             if (oldColor) track.layer.setStyle({color: oldColor});
             TM._selectedTrack = null;
 
-            document.removeEventListener('keydown', TM.intHandlers.keyDownDelTrack, false)
+            document.removeEventListener('keydown', TM.intHandlers.keyDownTrack, false)
         },
 
         getFromJava: function (msg) {
@@ -1584,10 +1590,11 @@
         toolbarsInit: function () {
             this.toolbar = {};
 
-            TM.utils.extLClass(this.tbInitProp, null, function (cl, i) {
-                let name = i.charAt(0).toLowerCase() + i.slice(1);
-                let c = TM.toolbar[name] = new cl();
-                TM.map.addControl(c);
+            TM.utils.extLClass(this.tbInitProp, null, function (cl, n) {
+                //create instance and add control on map
+                let name = n.charAt(0).toLowerCase() + n.slice(1),
+                    control = TM.toolbar[name] = new cl();
+                TM.map.addControl(control);
             });
         },
 
@@ -1605,8 +1612,6 @@
                     context = evHandler.context || window;
 
                 if (!type) continue;
-
-                if (evHandler.target && (evHandler.target !== '' || 'TM.map' || 'map')) continue;
 
                 if (handler instanceof Array) {
 

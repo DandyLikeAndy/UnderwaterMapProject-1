@@ -20,7 +20,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             TM.addInitHook(function () {
-                //TM.utils.setPosByIp();
+                TM.utils.setPosByIp();
                 // define methods in window for java
                 window.getFromJava = TM.utils.getFromJava;
                 window.resizeMap = TM.utils.resizeMap;
@@ -43,6 +43,12 @@
                 window.startMarker = TM.utils.startMarker;
                 window.addGeoJson = TM.utils.addGeoJson;
 
+                //for webkit and FF: dimensions of middle icon
+                L.Editable.VertexIcon = L.DivIcon.extend({
+                    options: {
+                        iconSize: new L.Point(20, 20)
+                    }
+                });
             }).init();
         }, false);
     </script>

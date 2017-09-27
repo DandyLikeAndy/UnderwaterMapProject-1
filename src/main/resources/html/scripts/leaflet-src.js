@@ -375,7 +375,7 @@ L.Class.extend = function (props) {
 // @function include(properties: Object): this
 // [Includes a mixin](#class-includes) into the current class.
 L.Class.include = function (props) {
-	L.extend(this.prototype, props); //сливает в prototype класса передаваеммые св-ва
+	L.extend(this.prototype, props); //сливает в prototype класса передаваемые св-ва
 	return this;
 };
 
@@ -390,7 +390,7 @@ L.Class.mergeOptions = function (options) {
 // Adds a [constructor hook](#class-constructor-hooks) to the class.
 L.Class.addInitHook = function (fn) { // (Function) || (String, args...)
 	var args = Array.prototype.slice.call(arguments, 1);
-	//проверяем синтаксис вызова (либо хук - передаваемая ф-ия, либо хук добавляет вызов метода, с аргументами )
+	//проверяем синтаксис вызова (либо просто добавляем передаваемую ф-ию(хук) в prototype._initHooks конструктора класса, либо обертываем вызов этого метода fn через apply с this == экземпляр класса, с аргументами и добавляем эту обертку в prototype._initHooks, _initHooks будет вызываться при создании эземпляра см. L.Class.extend)
 	var init = typeof fn === 'function' ? fn : function () {
 		this[fn].apply(this, args);
 	};
